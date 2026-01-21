@@ -1,0 +1,5 @@
+/.kiro/
+/.settings/
+/.vscode/
+/build/
+/cmake-build-debug/
