@@ -108,7 +108,7 @@ static void DBUS_rx_idle_callback(UART_HandleTypeDef* huart)
 }
 
 /**
-  * @brief      callback this function when uart interrupt
+  * @brief      请将该函数放在相应的串口中断的回调函数中。
   * @param[in]  huart: uart IRQHandler id
   * @retval
   */

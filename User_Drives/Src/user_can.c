@@ -6,12 +6,19 @@ static CAN_DRIVES *can_drives[CAN_NUM];
 static uint8_t can_num = 0;
 
 /* 函数体 --------------------------------------------------------------------*/
+
+/**
+* @brief 初始化 CAN 总线
+* @param user_can 用户自定义的 CAN 总线结构体的指针
+* @param hcan     硬件句柄
+* @param callback 用户自定义的 can 总线消息接收回调函数
+*/
 void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan, const CAN_Callback callback){
     user_can->hcan = hcan;
     user_can->callback = callback;
 
-    user_can->tx_msg.IDE = CAN_ID_STD;
-    user_can->tx_msg.RTR = CAN_RTR_DATA;
+    user_can->tx_conf.IDE = CAN_ID_STD;
+    user_can->tx_conf.RTR = CAN_RTR_DATA;
 
     CAN_FilterTypeDef can_filter;
     can_filter.FilterActivation = ENABLE;
@@ -33,13 +40,20 @@ void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan, const CAN_Callback 
     can_num ++;
 }
 
+/**
+* @brief 发送消息
+* @param user_can 用户自定义的 CAN 总线结构体的指针
+* @param id       报文标准标识符
+* @param data     报文数据
+* @param len      报文数据长度
+*/
 void CAN_Send(const CAN_DRIVES* user_can, const uint32_t id, const uint8_t *data, const uint8_t len){
     CAN_TxHeaderTypeDef tx_msg;
 
     tx_msg.StdId = id;
     tx_msg.ExtId = id;
-    tx_msg.IDE = user_can->tx_msg.IDE;
-    tx_msg.RTR = user_can->tx_msg.RTR;
+    tx_msg.IDE = user_can->tx_conf.IDE;
+    tx_msg.RTR = user_can->tx_conf.RTR;
     tx_msg.DLC = len;
     tx_msg.TransmitGlobalTime = DISABLE;
 

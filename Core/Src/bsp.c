@@ -15,10 +15,6 @@ void LOOP_EVENT_Handle(void) {
 
 /* 接口定义 --------------------------------------------------------------------*/
 
-// 状态灯
-LED_DRIVES red_led = {0};
-LED_DRIVES green_led = {0};
-
 
 
 
