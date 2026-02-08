@@ -24,11 +24,11 @@ typedef struct {
 } LED_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void LED_Init(LED_DRIVES* led, GPIO_TypeDef* GPIO, uint16_t pin, uint8_t is_reversal);
-void LED_StateSet(const LED_DRIVES* led, LED_State state);
-void LED_On(const LED_DRIVES* led);
-void LED_Off(const LED_DRIVES* led);
-void LED_Toggle(const LED_DRIVES* led);
-LED_State LED_StateGet(const LED_DRIVES* led);
+void LED_Init(LED_DRIVES* user_led, GPIO_TypeDef* GPIO, uint16_t pin, uint8_t is_reversal);
+void LED_Set_State(const LED_DRIVES* user_led, LED_State state);
+void LED_On(const LED_DRIVES* user_led);
+void LED_Off(const LED_DRIVES* user_led);
+void LED_Toggle(const LED_DRIVES* user_led);
+LED_State LED_Get_State(const LED_DRIVES* user_led);
 
 #endif //__USER_LED_H__

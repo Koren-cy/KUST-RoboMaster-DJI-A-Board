@@ -7,6 +7,9 @@
 #include "../../User_Architect/Inc/user_queue.h"
 #include "../../User_Architect/Inc/user_ring_buffe.h"
 
+/* 宏定义 --------------------------------------------------------------------*/
+#define UART_BUFFER_SIZE  (128)
+
 /* 类型定义 ------------------------------------------------------------------*/
 
 /**
@@ -39,6 +42,6 @@ typedef struct {
 
 /* 函数声明 ------------------------------------------------------------------*/
 void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart, UART_Callback callback);
-void UART_QSend(UART_DRIVES* user_uart, const char* str);
+void UART_Send(UART_DRIVES* user_uart, const char* str);
 
 #endif //__USER_UART_H__

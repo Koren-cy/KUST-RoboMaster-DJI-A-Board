@@ -54,13 +54,13 @@ static void dbus_rx_idle_callback(const UART_HandleTypeDef* huart) {
 
 /**
 * @brief 初始化大疆遥控器接收
-* @param dbus  遥控器驱动结构体指针
+* @param user_dbus  遥控器驱动结构体指针
 * @param huart UART 句柄指针
 */
-void DBUS_Init(DBUS_DRIVES* dbus, UART_HandleTypeDef* huart) {
-    dbus->is_update = 0;
-    dbus->huart = huart;
-    dbus_drive = dbus;
+void DBUS_Init(DBUS_DRIVES* user_dbus, UART_HandleTypeDef* huart) {
+    user_dbus->is_update = 0;
+    user_dbus->huart = huart;
+    dbus_drive = user_dbus;
 
     /* 清除空闲中断标志并使能空闲中断 */
     __HAL_UART_CLEAR_IDLEFLAG(huart);
@@ -82,7 +82,7 @@ void DBUS_Init(DBUS_DRIVES* dbus, UART_HandleTypeDef* huart) {
 * @param huart UART 句柄指针
 * @note  需要在相应的 UART 中断回调函数中调用
 */
-void DBUS_Receive_Handler(const UART_HandleTypeDef* huart) {
+void DBUS_Handler(const UART_HandleTypeDef* huart) {
     if (__HAL_UART_GET_FLAG(huart, UART_FLAG_IDLE) &&
         __HAL_UART_GET_IT_SOURCE(huart, UART_IT_IDLE)) {
         dbus_rx_idle_callback(huart);

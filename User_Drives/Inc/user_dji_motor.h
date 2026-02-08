@@ -71,13 +71,12 @@ typedef struct {
 } DJI_MOTOR_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void DJI_Motor_Init(DJI_MOTOR_DRIVES *motor, CAN_DRIVES* can_drive, uint8_t id, 
+void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id,
                     Dji_Motor_Type motor_type, Dji_Control_Mode mode,
                     float kp, float ki, float kd, float max_out, float max_iout);
 
-
-void DJI_Motor_SetTarget(DJI_MOTOR_DRIVES *motor, float target);
-void DJI_Motor_Handle(const CAN_DRIVES* can_drive);
-void DJI_Motor_Execute(const CAN_DRIVES* can_drive);
+void DJI_Motor_Set_Target(DJI_MOTOR_DRIVES *user_motor, float target);
+void DJI_Motor_Handle(const CAN_DRIVES* user_can);
+void DJI_Motor_Execute(const CAN_DRIVES* user_can);
 
 #endif //__USER_DJI_MOTOR_H__

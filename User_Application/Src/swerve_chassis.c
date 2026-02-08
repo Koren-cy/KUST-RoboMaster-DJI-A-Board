@@ -165,7 +165,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         // 设置转向电机目标
         // 角度控制模式：将角度转换为编码器值 [0, 8192)
         const float target_encoder = (wheel->steer_angle_target + 180.0f) * 8192.0f / 360.0f;
-        DJI_Motor_SetTarget(wheel->steer_motor, target_encoder);
+        DJI_Motor_Set_Target(wheel->steer_motor, target_encoder);
 
         // 计算驱动轮的目标转速
         const float wheel_angular_velocity = wheel->drive_speed_target / chassis->wheel_radius;
@@ -175,7 +175,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         wheel->drive_speed_current = RPM_TO_RAD(wheel->wheel_motor->rotor_speed) * chassis->wheel_radius / chassis->ratio;
         
         // 设置驱动电机目标
-        DJI_Motor_SetTarget(wheel->wheel_motor, motor_rpm * (float)wheel->reverse * chassis->ratio);
+        DJI_Motor_Set_Target(wheel->wheel_motor, motor_rpm * (float)wheel->reverse * chassis->ratio);
     }
 }
 

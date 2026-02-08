@@ -41,17 +41,17 @@ static float general_error(const float feedback, const float target) {
 
 /**
 * @brief 设置电机目标值
-* @param motor  大疆电机驱动结构体指针
+* @param user_motor  大疆电机驱动结构体指针
 * @param target 目标值
 */
-void DJI_Motor_SetTarget(DJI_MOTOR_DRIVES *motor, float target) {
-    motor->target = target;
+void DJI_Motor_Set_Target(DJI_MOTOR_DRIVES *user_motor, float target) {
+    user_motor->target = target;
 }
 
 /**
 * @brief 初始化大疆电机
-* @param motor      大疆电机驱动结构体指针
-* @param can_drive  CAN 总线结构体指针
+* @param user_motor      大疆电机驱动结构体指针
+* @param user_can  CAN 总线结构体指针
 * @param id         电机 ID (1 ~ 7)
 * @param motor_type 电机型号
 * @param mode       控制模式
@@ -61,71 +61,71 @@ void DJI_Motor_SetTarget(DJI_MOTOR_DRIVES *motor, float target) {
 * @param max_out    PID 输出限幅
 * @param max_iout   PID 积分限幅
 */
-void DJI_Motor_Init(DJI_MOTOR_DRIVES* motor, CAN_DRIVES* can_drive, uint8_t id, 
+void DJI_Motor_Init(DJI_MOTOR_DRIVES* user_motor, CAN_DRIVES* user_can, uint8_t id, 
                     Dji_Motor_Type motor_type, Dji_Control_Mode mode, 
                     float kp, float ki, float kd, float max_out, float max_iout) {
-    motor->can = can_drive;
-    motor->id = id;
-    motor->motor_type = motor_type;
-    motor->control_mode = mode;
-    motor->target = 0;
+    user_motor->can = user_can;
+    user_motor->id = id;
+    user_motor->motor_type = motor_type;
+    user_motor->control_mode = mode;
+    user_motor->target = 0;
 
     switch (motor_type) {
         case GM6020:
-            motor->controller_type = GM6020_Controller;
+            user_motor->controller_type = GM6020_Controller;
             break;
         case M3508_direct:
         case M3508_gear:
-            motor->controller_type = C620_Controller;
+            user_motor->controller_type = C620_Controller;
             break;
         case M2006:
-            motor->controller_type = C610_Controller;
+            user_motor->controller_type = C610_Controller;
             break;
     }
 
-    switch (motor->controller_type) {
+    switch (user_motor->controller_type) {
         case GM6020_Controller:
-            motor->fdb_id  = GM6020_FEEDBACK_BASE_ID + id;
-            if (1 <= id && id <= 4) motor->ctrl_id = GM6020_CURRENT_CONTROL_ID_1;
-            if (5 <= id && id <= 7) motor->ctrl_id = GM6020_CURRENT_CONTROL_ID_2;
+            user_motor->fdb_id  = GM6020_FEEDBACK_BASE_ID + id;
+            if (1 <= id && id <= 4) user_motor->ctrl_id = GM6020_CURRENT_CONTROL_ID_1;
+            if (5 <= id && id <= 7) user_motor->ctrl_id = GM6020_CURRENT_CONTROL_ID_2;
             break;
         case C620_Controller:
         case C610_Controller:
-            motor->fdb_id = C6x0_FEEDBACK_BASE_ID + id;
-            if (1 <= id && id <= 4) motor->ctrl_id = C6x0_CURRENT_CONTROL_ID_1;
-            if (5 <= id && id <= 8) motor->ctrl_id = C6x0_CURRENT_CONTROL_ID_2;
+            user_motor->fdb_id = C6x0_FEEDBACK_BASE_ID + id;
+            if (1 <= id && id <= 4) user_motor->ctrl_id = C6x0_CURRENT_CONTROL_ID_1;
+            if (5 <= id && id <= 8) user_motor->ctrl_id = C6x0_CURRENT_CONTROL_ID_2;
             break;
     }
 
-    switch (motor->control_mode) {
+    switch (user_motor->control_mode) {
         case Rotor_angle:
-            PID_Init(&motor->pid_controller, angle_error, kp, ki, kd, max_out, max_iout);
+            PID_Init(&user_motor->pid_controller, angle_error, kp, ki, kd, max_out, max_iout);
             break;
         case Rotor_speed:
         case Torque_current:
-            PID_Init(&motor->pid_controller, general_error, kp, ki, kd, max_out, max_iout);
+            PID_Init(&user_motor->pid_controller, general_error, kp, ki, kd, max_out, max_iout);
             break;
         case OpenLoop_current:
             break;
     }
 
-    motor_drives[motor_num] = motor;
+    motor_drives[motor_num] = user_motor;
     motor_num++;
 }
 
 /**
 * @brief 处理电机反馈数据
-* @param can_drive CAN 总线驱动结构体指针
+* @param user_can CAN 总线驱动结构体指针
 * @note  需要在相应的 CAN 总线接收回调函数中调用
 */
-void DJI_Motor_Handle(const CAN_DRIVES* can_drive) {
+void DJI_Motor_Handle(const CAN_DRIVES* user_can) {
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
 
-        if (motor->can->hcan != can_drive->hcan || motor->fdb_id != can_drive->rx_msg.StdId)
+        if (motor->can->hcan != user_can->hcan || motor->fdb_id != user_can->rx_msg.StdId)
             continue;
 
-        const uint8_t *data = can_drive->rx_msg.Data;
+        const uint8_t *data = user_can->rx_msg.Data;
         motor->rotor_angle    = (uint16_t)(data[0] << 8 | data[1]);
         motor->rotor_speed    = (int16_t) (data[2] << 8 | data[3]);
         motor->torque_current = (int16_t) (data[4] << 8 | data[5]);
@@ -152,10 +152,10 @@ void DJI_Motor_Handle(const CAN_DRIVES* can_drive) {
 
 /**
 * @brief 执行电机控制指令
-* @param can_drive CAN 总线驱动结构体指针
+* @param user_can CAN 总线驱动结构体指针
 * @note  将所有电机控制指令一并打包发送
 */
-void DJI_Motor_Execute(const CAN_DRIVES* can_drive) {
+void DJI_Motor_Execute(const CAN_DRIVES* user_can) {
     uint8_t GM6020_control_id_1_frame[8] = {0};
     uint8_t GM6020_control_id_2_frame[8] = {0};
     uint8_t C6x0_control_id_1_frame[8] = {0};
@@ -163,7 +163,7 @@ void DJI_Motor_Execute(const CAN_DRIVES* can_drive) {
 
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
-        if (motor->can != can_drive)
+        if (motor->can != user_can)
             continue;
 
         int16_t current = 0;
@@ -202,23 +202,23 @@ void DJI_Motor_Execute(const CAN_DRIVES* can_drive) {
 
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
-        if (motor->can != can_drive)
+        if (motor->can != user_can)
             continue;
 
         if (GM6020_control_id_1_sign) {
-            CAN_Send(can_drive, GM6020_CURRENT_CONTROL_ID_1, GM6020_control_id_1_frame, 8);
+            CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_1, GM6020_control_id_1_frame, 8);
             GM6020_control_id_1_sign = 0;
         }
         if (GM6020_control_id_2_sign) {
-            CAN_Send(can_drive, GM6020_CURRENT_CONTROL_ID_2, GM6020_control_id_2_frame, 8);
+            CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_2, GM6020_control_id_2_frame, 8);
             GM6020_control_id_2_sign = 0;
         }
         if (C6x0_control_id_1_sign) {
-            CAN_Send(can_drive, C6x0_CURRENT_CONTROL_ID_1, C6x0_control_id_1_frame, 8);
+            CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_1, C6x0_control_id_1_frame, 8);
             C6x0_control_id_1_sign = 0;
         }
         if (C6x0_control_id_2_sign) {
-            CAN_Send(can_drive, C6x0_CURRENT_CONTROL_ID_2, C6x0_control_id_2_frame, 8);
+            CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_2, C6x0_control_id_2_frame, 8);
             C6x0_control_id_2_sign = 0;
         }
 

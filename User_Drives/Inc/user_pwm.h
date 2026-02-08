@@ -18,9 +18,9 @@ typedef struct {
 } PWM_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void PWM_Init(PWM_DRIVES *pwm, TIM_HandleTypeDef *htim, uint32_t channel, uint32_t tim_clock);
-uint32_t PWM_SetDuty(PWM_DRIVES *pwm, float duty);
-uint32_t PWM_SetFreq(PWM_DRIVES *pwm, uint32_t freq);
+void PWM_Init(PWM_DRIVES *user_pwm, TIM_HandleTypeDef *htim, uint32_t channel, uint32_t tim_clock);
+uint32_t PWM_Set_Duty(PWM_DRIVES *user_pwm, float duty);
+uint32_t PWM_Set_Frequency(PWM_DRIVES *user_pwm, uint32_t freq);
 
 
 #endif  // __USER_PWM_H__

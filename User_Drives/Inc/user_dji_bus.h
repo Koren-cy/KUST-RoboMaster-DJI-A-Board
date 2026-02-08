@@ -6,6 +6,7 @@
 #include "../../Core/Inc/bsp_config.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
+#define DBUS_MAX_LEN      (64)
 #define DBUS_BUF_LEN      (18)
 
 /* 类型定义 ------------------------------------------------------------------*/
@@ -25,7 +26,7 @@ typedef struct {
 } DBUS_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void DBUS_Init(DBUS_DRIVES* dbus, UART_HandleTypeDef* huart);
-void DBUS_Receive_Handler(const UART_HandleTypeDef* huart);
+void DBUS_Init(DBUS_DRIVES* user_dbus, UART_HandleTypeDef* huart);
+void DBUS_Handler(const UART_HandleTypeDef* huart);
 
 #endif //__USER_DJI_BUS_H__

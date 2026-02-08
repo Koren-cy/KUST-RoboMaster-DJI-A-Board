@@ -6,9 +6,6 @@
 
 /* 接口定义 ------------------------------------------------------------------*/
 #define UART_NUM          (5)
-#define UART_BUFFER_SIZE  (128)
-
-#define DBUS_MAX_LEN      (64)
 
 #define CAN_NUM           (2)
 

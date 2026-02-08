@@ -67,7 +67,7 @@ void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart, UART_Callback 
 * @param user_uart UART 驱动结构体指针
 * @param str       要发送的字符串
 */
-void UART_QSend(UART_DRIVES* user_uart, const char* str) {
+void UART_Send(UART_DRIVES* user_uart, const char* str) {
     Queue_Push(&user_uart->tx_queue, (char*)str, strlen(str));
 }
 
