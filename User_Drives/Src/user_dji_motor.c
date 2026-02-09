@@ -160,45 +160,50 @@ void DJI_Motor_Execute(const CAN_DRIVES* user_can) {
     uint8_t GM6020_control_id_2_frame[8] = {0};
     uint8_t C6x0_control_id_1_frame[8] = {0};
     uint8_t C6x0_control_id_2_frame[8] = {0};
+    uint8_t GM6020_control_id_1_sign = 0;
+    uint8_t GM6020_control_id_2_sign = 0;
+    uint8_t C6x0_control_id_1_sign = 0;
+    uint8_t C6x0_control_id_2_sign = 0;
 
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
         if (motor->can != user_can)
             continue;
 
-        int16_t current = 0;
+        int16_t current_target = 0;
+
         if (motor->control_mode == OpenLoop_current) {
-            current = (int16_t)motor->target;
+            current_target = (int16_t)motor->target;
         } else {
-            current = (int16_t)motor->pid_controller.out;
+            current_target = (int16_t)motor->pid_controller.out;
         }
 
         switch (motor->ctrl_id) {
             case GM6020_CURRENT_CONTROL_ID_1:
-                GM6020_control_id_1_frame[2 * motor->id - 2] = (uint8_t)(current >> 8);
-                GM6020_control_id_1_frame[2 * motor->id - 1] = (uint8_t)(current >> 0);
+                GM6020_control_id_1_frame[2 * motor->id - 2] = (uint8_t)(current_target >> 8);
+                GM6020_control_id_1_frame[2 * motor->id - 1] = (uint8_t)(current_target >> 0);
+                GM6020_control_id_1_sign = 1;
                 break;
             case GM6020_CURRENT_CONTROL_ID_2:
-                GM6020_control_id_2_frame[2 * motor->id - 10] = (uint8_t)(current >> 8);
-                GM6020_control_id_2_frame[2 * motor->id - 9]  = (uint8_t)(current >> 0);
+                GM6020_control_id_2_frame[2 * motor->id - 10] = (uint8_t)(current_target >> 8);
+                GM6020_control_id_2_frame[2 * motor->id - 9]  = (uint8_t)(current_target >> 0);
+                GM6020_control_id_2_sign = 1;
                 break;
             case C6x0_CURRENT_CONTROL_ID_1:
-                C6x0_control_id_1_frame[2 * motor->id - 2] = (uint8_t)(current >> 8);
-                C6x0_control_id_1_frame[2 * motor->id - 1] = (uint8_t)(current >> 0);
+                C6x0_control_id_1_frame[2 * motor->id - 2] = (uint8_t)(current_target >> 8);
+                C6x0_control_id_1_frame[2 * motor->id - 1] = (uint8_t)(current_target >> 0);
+                C6x0_control_id_1_sign = 1;
                 break;
             case C6x0_CURRENT_CONTROL_ID_2:
-                C6x0_control_id_2_frame[2 * motor->id - 10] = (uint8_t)(current >> 8);
-                C6x0_control_id_2_frame[2 * motor->id - 9]  = (uint8_t)(current >> 0);
+                C6x0_control_id_2_frame[2 * motor->id - 10] = (uint8_t)(current_target >> 8);
+                C6x0_control_id_2_frame[2 * motor->id - 9]  = (uint8_t)(current_target >> 0);
+                C6x0_control_id_2_sign = 1;
                 break;
             default:
                 break;
         }
     }
 
-    uint8_t GM6020_control_id_1_sign = 1;
-    uint8_t GM6020_control_id_2_sign = 1;
-    uint8_t C6x0_control_id_1_sign = 1;
-    uint8_t C6x0_control_id_2_sign = 1;
 
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
