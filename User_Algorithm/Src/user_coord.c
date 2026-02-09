@@ -2,58 +2,8 @@
 #include "../Inc/user_coord.h"
 #include <math.h>
 
-/* 基础数学函数 --------------------------------------------------------------*/
-
-/**
- * @brief  角度转弧度
- * @param  deg: 角度值
- * @retval 弧度值
- */
-float Math_Deg2Rad(float deg) {
-    return deg * (USER_PI / 180.0f);
-}
-
-/**
- * @brief  弧度转角度
- * @param  rad: 弧度值
- * @retval 角度值
- */
-float Math_Rad2Deg(float rad) {
-    return rad * (180.0f / USER_PI);
-}
-
-/**
- * @brief  弧度角归一化到[-π, π]
- * @param  rad: 输入弧度值
- * @retval 归一化后的弧度值
- */
-float Math_WrapAngleRad(float rad) {
-    float x = fmodf(rad, USER_TWO_PI);
-    if (x > USER_PI) {
-        x -= USER_TWO_PI;
-    } else if (x < -USER_PI) {
-        x += USER_TWO_PI;
-    }
-    return x;
-}
-
-/**
- * @brief  角度归一化到[-180°, 180°]
- * @param  deg: 输入角度值
- * @retval 归一化后的角度值
- */
-float Math_WrapAngleDeg(float deg) {
-    float x = fmodf(deg, 360.0f);
-    if (x > 180.0f) {
-        x -= 360.0f;
-    } else if (x < -180.0f) {
-        x += 360.0f;
-    }
-    return x;
-}
-
-/* 笛卡尔坐标运算函数 --------------------------------------------------------*/
-
+/* 函数体 --------------------------------------------------------------------*/
+/* 笛卡尔坐标运算函数 ----------------------------------------------------------*/
 /**
  * @brief  计算两点间欧氏距离
  * @param  p1: 点1
@@ -73,7 +23,30 @@ float Distance_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Po
  * @retval 模长
  */
 float Magnitude_Cartesian(const CartesianCoord_Point* point) {
-    return sqrtf(point->x * point->x + point->y * point->y + point->z * point->z);
+    const float x2 = point->x * point->x;
+    const float y2 = point->y * point->y;
+    const float z2 = point->z * point->z;
+    return sqrtf(x2 + y2 + z2);
+}
+
+/**
+ * @brief  向量归一化
+ * @param  point: 输入向量
+ * @param  result: 单位向量
+ */
+void Normalize_Cartesian(const CartesianCoord_Point* point, CartesianCoord_Point* result) {
+    const float mag_sq = point->x * point->x + point->y * point->y + point->z * point->z;
+
+    if (mag_sq < PRECISION_SQ) {
+        result->x = 0.0f;
+        result->y = 0.0f;
+        result->z = 0.0f;
+    } else {
+        const float inv_mag = FastInvSqrt(mag_sq);
+        result->x = point->x * inv_mag;
+        result->y = point->y * inv_mag;
+        result->z = point->z * inv_mag;
+    }
 }
 
 /**
@@ -83,82 +56,22 @@ float Magnitude_Cartesian(const CartesianCoord_Point* point) {
  * @retval 夹角(度), 范围[0°, 180°]
  */
 float AngleDifference_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2) {
-    const float mag1 = Magnitude_Cartesian(p1);
-    const float mag2 = Magnitude_Cartesian(p2);
+    const float mag1_sq = p1->x * p1->x + p1->y * p1->y + p1->z * p1->z;
+    const float mag2_sq = p2->x * p2->x + p2->y * p2->y + p2->z * p2->z;
     
-    if (mag1 < PRECISION || mag2 < PRECISION) {
+    if (mag1_sq < PRECISION_SQ || mag2_sq < PRECISION_SQ) {
         return 0.0f;
     }
     
-    float cos_angle = DotProduct_Cartesian(p1, p2) / (mag1 * mag2);
+    const float dot = DotProduct_Cartesian(p1, p2);
+    const float inv_mag_product = FastInvSqrt(mag1_sq * mag2_sq);
+    float cos_angle = dot * inv_mag_product;
     
     // 限制在[-1, 1]范围内
     if (cos_angle > 1.0f) cos_angle = 1.0f;
     if (cos_angle < -1.0f) cos_angle = -1.0f;
     
     return Math_Rad2Deg(acosf(cos_angle));
-}
-
-/**
- * @brief  向量加法
- * @param  p1: 向量1
- * @param  p2: 向量2
- * @param  result: 结果向量(p1 + p2)
- */
-void Add_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result) {
-    result->x = p1->x + p2->x;
-    result->y = p1->y + p2->y;
-    result->z = p1->z + p2->z;
-}
-
-/**
- * @brief  向量减法
- * @param  p1: 向量1
- * @param  p2: 向量2
- * @param  result: 结果向量(p1 - p2)
- */
-void Subtract_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result) {
-    result->x = p1->x - p2->x;
-    result->y = p1->y - p2->y;
-    result->z = p1->z - p2->z;
-}
-
-/**
- * @brief  向量标量乘法
- * @param  point: 输入向量
- * @param  scale: 缩放系数
- * @param  result: 结果向量
- */
-void Scale_Cartesian(const CartesianCoord_Point* point, float scale, CartesianCoord_Point* result) {
-    result->x = point->x * scale;
-    result->y = point->y * scale;
-    result->z = point->z * scale;
-}
-
-/**
- * @brief  向量归一化
- * @param  point: 输入向量
- * @param  result: 单位向量
- */
-void Normalize_Cartesian(const CartesianCoord_Point* point, CartesianCoord_Point* result) {
-    const float mag = Magnitude_Cartesian(point);
-    if (mag < PRECISION) {
-        result->x = 0.0f;
-        result->y = 0.0f;
-        result->z = 0.0f;
-    } else {
-        Scale_Cartesian(point, 1.0f / mag, result);
-    }
-}
-
-/**
- * @brief  向量点积
- * @param  p1: 向量1
- * @param  p2: 向量2
- * @retval 点积结果
- */
-float DotProduct_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2) {
-    return p1->x * p2->x + p1->y * p2->y + p1->z * p2->z;
 }
 
 /**
@@ -320,8 +233,8 @@ void Lerp_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2, float t,
     result->radius = p1->radius + t * (p2->radius - p1->radius);
     
     // 角度插值考虑最短路径
-    float yaw_diff = Math_WrapAngleDeg(p2->yaw - p1->yaw);
-    float pitch_diff = Math_WrapAngleDeg(p2->pitch - p1->pitch);
+    const float yaw_diff = Math_WrapAngleDeg(p2->yaw - p1->yaw);
+    const float pitch_diff = Math_WrapAngleDeg(p2->pitch - p1->pitch);
     
     result->yaw = Math_WrapAngleDeg(p1->yaw + t * yaw_diff);
     result->pitch = Math_WrapAngleDeg(p1->pitch + t * pitch_diff);
@@ -335,13 +248,18 @@ void Lerp_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2, float t,
  * @param  result: 极坐标(角度单位:度)
  */
 void CartesianToPolar(const CartesianCoord_Point* cartesian_point, PolarCoord_Point* result) {
-    result->radius = Magnitude_Cartesian(cartesian_point);
+    const float x = cartesian_point->x;
+    const float y = cartesian_point->y;
+    const float z = cartesian_point->z;
     
-    result->yaw = Math_Rad2Deg(atan2f(cartesian_point->y, cartesian_point->x));
+    const float x_sq = x * x;
+    const float y_sq = y * y;
     
-    const float horizontal_dist = sqrtf(cartesian_point->x * cartesian_point->x + 
-                                       cartesian_point->y * cartesian_point->y);
-    result->pitch = Math_Rad2Deg(atan2f(cartesian_point->z, horizontal_dist));
+    result->radius = sqrtf(x_sq + y_sq + z * z);
+    result->yaw = Math_Rad2Deg(atan2f(y, x));
+    
+    const float horizontal_dist = sqrtf(x_sq + y_sq);
+    result->pitch = Math_Rad2Deg(atan2f(z, horizontal_dist));
 }
 
 /**
@@ -371,10 +289,13 @@ void RotateX_Cartesian(const CartesianCoord_Point* point, float angle_deg, Carte
     const float angle_rad = Math_Deg2Rad(angle_deg);
     const float cos_a = cosf(angle_rad);
     const float sin_a = sinf(angle_rad);
-    
+
+    const float y = point->y;
+    const float z = point->z;
+
     result->x = point->x;
-    result->y = point->y * cos_a - point->z * sin_a;
-    result->z = point->y * sin_a + point->z * cos_a;
+    result->y = y * cos_a - z * sin_a;
+    result->z = y * sin_a + z * cos_a;
 }
 
 /**
@@ -388,9 +309,12 @@ void RotateY_Cartesian(const CartesianCoord_Point* point, float angle_deg, Carte
     const float cos_a = cosf(angle_rad);
     const float sin_a = sinf(angle_rad);
     
-    result->x = point->x * cos_a + point->z * sin_a;
+    const float x = point->x;
+    const float z = point->z;
+    
+    result->x = x * cos_a + z * sin_a;
     result->y = point->y;
-    result->z = -point->x * sin_a + point->z * cos_a;
+    result->z = -x * sin_a + z * cos_a;
 }
 
 /**
@@ -404,8 +328,11 @@ void RotateZ_Cartesian(const CartesianCoord_Point* point, float angle_deg, Carte
     const float cos_a = cosf(angle_rad);
     const float sin_a = sinf(angle_rad);
     
-    result->x = point->x * cos_a - point->y * sin_a;
-    result->y = point->x * sin_a + point->y * cos_a;
+    const float x = point->x;
+    const float y = point->y;
+    
+    result->x = x * cos_a - y * sin_a;
+    result->y = x * sin_a + y * cos_a;
     result->z = point->z;
 }
 
@@ -430,23 +357,22 @@ void RotateByMatrix_Cartesian(const CartesianCoord_Point* point, const RotationM
  */
 void RotateByQuaternion_Cartesian(const CartesianCoord_Point* point, const Quaternion* quat, 
                                   CartesianCoord_Point* result) {
-    const float qw = quat->w;
     const float qx = quat->x;
     const float qy = quat->y;
     const float qz = quat->z;
+    const float qw = quat->w;
     
     const float px = point->x;
     const float py = point->y;
     const float pz = point->z;
     
-    const float ix = qw * px + qy * pz - qz * py;
-    const float iy = qw * py + qz * px - qx * pz;
-    const float iz = qw * pz + qx * py - qy * px;
-    const float iw = -qx * px - qy * py - qz * pz;
+    const float tx = 2.0f * (qy * pz - qz * py);
+    const float ty = 2.0f * (qz * px - qx * pz);
+    const float tz = 2.0f * (qx * py - qy * px);
     
-    result->x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
-    result->y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
-    result->z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+    result->x = px + qw * tx + (qy * tz - qz * ty);
+    result->y = py + qw * ty + (qz * tx - qx * tz);
+    result->z = pz + qw * tz + (qx * ty - qy * tx);
 }
 
 /* 四元数运算函数 ------------------------------------------------------------*/
@@ -681,7 +607,7 @@ void RotationMatrix_FromQuaternion(const Quaternion* quat, RotationMatrix* matri
     const float qx = quat->x;
     const float qy = quat->y;
     const float qz = quat->z;
-    
+
     const float qx2 = qx * qx;
     const float qy2 = qy * qy;
     const float qz2 = qz * qz;

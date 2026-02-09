@@ -28,19 +28,6 @@ Core/Src/bsp.o: ../Core/Src/bsp.c ../Core/Inc/bsp.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/../../User_Algorithm/Inc/user_coord.h ../Core/Inc/main.h \
- ../Core/Inc/../../User_Drives/Inc/user_uart.h \
- ../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h \
- ../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h \
- ../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h \
- ../Core/Inc/../../User_Drives/Inc/user_dji_bus.h \
- ../Core/Inc/../../User_Drives/Inc/user_led.h \
- ../Core/Inc/../../User_Drives/Inc/user_can.h \
- ../Core/Inc/../../User_Drives/Inc/user_dji_motor.h \
- ../Core/Inc/../../User_Drives/Inc/../../User_Algorithm/Inc/user_pid.h \
- ../Core/Inc/../../User_Drives/Inc/../../User_Drives/Inc/user_can.h \
- ../Core/Inc/../../User_Application/Inc/swerve_chassis.h \
- ../User_Drives/Inc/user_dji_motor.h ../User_Algorithm/Inc/user_coord.h \
  ../Core/Inc/bsp_config.h
 ../Core/Inc/bsp.h:
 ../Core/Inc/main.h:
@@ -73,19 +60,4 @@ Core/Src/bsp.o: ../Core/Src/bsp.c ../Core/Inc/bsp.h ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/../../User_Algorithm/Inc/user_coord.h:
-../Core/Inc/main.h:
-../Core/Inc/../../User_Drives/Inc/user_uart.h:
-../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h:
-../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h:
-../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h:
-../Core/Inc/../../User_Drives/Inc/user_dji_bus.h:
-../Core/Inc/../../User_Drives/Inc/user_led.h:
-../Core/Inc/../../User_Drives/Inc/user_can.h:
-../Core/Inc/../../User_Drives/Inc/user_dji_motor.h:
-../Core/Inc/../../User_Drives/Inc/../../User_Algorithm/Inc/user_pid.h:
-../Core/Inc/../../User_Drives/Inc/../../User_Drives/Inc/user_can.h:
-../Core/Inc/../../User_Application/Inc/swerve_chassis.h:
-../User_Drives/Inc/user_dji_motor.h:
-../User_Algorithm/Inc/user_coord.h:
 ../Core/Inc/bsp_config.h:

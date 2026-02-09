@@ -1,6 +1,6 @@
-../User_Drives/Src/user_dji_motor.c:11:7:angle_error	3
-../User_Drives/Src/user_dji_motor.c:23:7:general_error	1
-../User_Drives/Src/user_dji_motor.c:30:6:DJI_Motor_Target	1
-../User_Drives/Src/user_dji_motor.c:37:6:DJI_Motor_Init	22
-../User_Drives/Src/user_dji_motor.c:91:6:DJI_Motor_Handle	8
-../User_Drives/Src/user_dji_motor.c:121:6:DJI_Motor_Execute	18
+../User_Drives/Src/user_dji_motor.c:18:14:angle_error	3
+../User_Drives/Src/user_dji_motor.c:36:14:general_error	1
+../User_Drives/Src/user_dji_motor.c:47:6:DJI_Motor_Set_Target	1
+../User_Drives/Src/user_dji_motor.c:64:6:DJI_Motor_Init	22
+../User_Drives/Src/user_dji_motor.c:121:6:DJI_Motor_Handle	9
+../User_Drives/Src/user_dji_motor.c:158:6:DJI_Motor_Execute	16

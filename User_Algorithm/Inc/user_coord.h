@@ -2,13 +2,17 @@
 #define __USER_COORD_H__
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
+#include "arm_math.h"
 
-/* 常量定义 --------------------------------------------------------------*/
-#define USER_PI        (3.14159265358979323846f)  // π
-#define USER_TWO_PI    (6.28318530717958647692f)  // 2π
-#define USER_HALF_PI   (1.57079632679489661923f)  // π/2
-#define PRECISION      (1e-6f)                    // 浮点数精度阈值
+// /* 常量定义 --------------------------------------------------------------*/
+#define TWO_PI            (6.28318530717959f)  // 2π
+#define HALF_PI           (1.57079632679490f)  // π/2
+#define INV_TWO_PI        (0.15915494309190f)  // 1/2π
+#define INV_360           (0.00277777777778f)  // 1/360
+#define DEG_TO_RAD_FACTOR (0.01745329251994f)  // π/180
+#define RAD_TO_DEG_FACTOR (57.2957795130823f)  // 180/π
+#define PRECISION         (1e-6f )             // 浮点数精度阈值
+#define PRECISION_SQ      (1e-12f)             // 浮点数平方精度阈值
 
 /* 类型定义 --------------------------------------------------------------*/
 
@@ -61,23 +65,54 @@ typedef struct {
     float m[3][3];  // 矩阵元素[行][列]
 } RotationMatrix;
 
+/* 内联函数声明 --------------------------------------------------------------*/
+
+//  弧度角归一化到[-π, π]
+static inline float Math_WrapAngleRad(const float rad) {
+    return (-PI <= rad && rad <= PI) ? rad : rad - TWO_PI * floorf(rad * INV_TWO_PI + 0.5f);
+}
+
+// 角度归一化到[-180°, 180°]
+static inline float Math_WrapAngleDeg(const float deg) {
+    return (-180.0f <= deg && deg <= 180.0f) ? deg : deg - 360.0f * floorf(deg * INV_360 + 0.5f);
+}
+
+static inline float Math_Deg2Rad(const float deg) {
+    return deg * DEG_TO_RAD_FACTOR;
+}
+
+static inline float Math_Rad2Deg(const float rad) {
+    return rad * RAD_TO_DEG_FACTOR;
+}
+
+static inline float FastInvSqrt(const float x) {
+    return 1.0f / sqrtf(x);
+}
+
+/* 笛卡尔坐标运算*/
+static inline float DotProduct_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2) {
+    return p1->x * p2->x + p1->y * p2->y + p1->z * p2->z;
+}
+
+static inline void Add_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result) {
+    result->x = p1->x + p2->x;      result->y = p1->y + p2->y;      result->z = p1->z + p2->z;
+}
+
+static inline void Subtract_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result) {
+    result->x = p1->x - p2->x;      result->y = p1->y - p2->y;      result->z = p1->z - p2->z;
+}
+
+static inline void Scale_Cartesian(const CartesianCoord_Point* point, const float scale, CartesianCoord_Point* result) {
+    result->x = point->x * scale;   result->y = point->y * scale;   result->z = point->z * scale;
+}
+
 /* 函数声明 ------------------------------------------------------------------*/
 
-/* 基础数学函数 */
-float Math_Deg2Rad(float deg);
-float Math_Rad2Deg(float rad);
-float Math_WrapAngleRad(float rad);
-float Math_WrapAngleDeg(float deg);
-
-/* 笛卡尔坐标运算 */
+/* 笛卡尔坐标运算*/
 float Distance_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2);
 float Magnitude_Cartesian(const CartesianCoord_Point* point);
 float AngleDifference_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2);
-void  Add_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result);
-void  Subtract_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result);
-void  Scale_Cartesian(const CartesianCoord_Point* point, float scale, CartesianCoord_Point* result);
 void  Normalize_Cartesian(const CartesianCoord_Point* point, CartesianCoord_Point* result);
-float DotProduct_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2);
 void  CrossProduct_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, CartesianCoord_Point* result);
 void  Project_Cartesian(const CartesianCoord_Point* point, const CartesianCoord_Point* onto, CartesianCoord_Point* result);
 void  Lerp_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2, float t, CartesianCoord_Point* result);

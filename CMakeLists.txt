@@ -1,7 +1,7 @@
 #此文件从模板自动生成! 请勿更改!
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 4.1)
 
 # specify cross-compilers and tools
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
@@ -49,11 +49,11 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc)
+include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Application/Inc User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc Middlewares/ST/ARM/DSP/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc)
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F427xx)
 
-file(GLOB_RECURSE SOURCES "User_Drives/*.*" "User_Algorithm/*.*" "User_Status/*.*" "User_Architect/*.*" "User_Application/*.*" "User_Lib/*.*" "Core/*.*" "Drivers/*.*")
+file(GLOB_RECURSE SOURCES "User_Drives/*.*" "User_Algorithm/*.*" "User_Status/*.*" "User_Architect/*.*" "User_Application/*.*" "User_Lib/*.*" "Core/*.*" "Middlewares/*.*" "Drivers/*.*")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F427IIHX_FLASH.ld)
 

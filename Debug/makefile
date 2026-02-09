@@ -64,8 +64,8 @@ all: main-build
 main-build: DJI-A-Board.elf secondary-outputs
 
 # 工具调用
-DJI-A-Board.elf DJI-A-Board.map: $(OBJS) $(USER_OBJS) C:\Users\Koren\STM32\CubeIDE\DJI-A-Board\STM32F427IIHX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "DJI-A-Board.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Koren\STM32\CubeIDE\DJI-A-Board\STM32F427IIHX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DJI-A-Board.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+DJI-A-Board.elf DJI-A-Board.map: $(OBJS) $(USER_OBJS) C:\Users\Koren\RoboMaster\KUST-RoboMaster-DJI-A-Board\STM32F427IIHX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "DJI-A-Board.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Koren\RoboMaster\KUST-RoboMaster-DJI-A-Board\STM32F427IIHX_FLASH.ld" --specs=nosys.specs -Wl,-Map="DJI-A-Board.map" -Wl,--gc-sections -static -L../Middlewares/ST/ARM/DSP/Lib --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo '已结束构建目标： $@'
 	@echo ' '
 

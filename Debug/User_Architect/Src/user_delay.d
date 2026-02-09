@@ -1,6 +1,5 @@
 User_Architect/Src/user_delay.o: ../User_Architect/Src/user_delay.c \
- ../User_Architect/Src/../../Core/Inc/bsp.h \
- ../User_Architect/Src/../../Core/Inc/main.h \
+ ../User_Architect/Src/../Inc/user_delay.h ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -30,24 +29,11 @@ User_Architect/Src/user_delay.o: ../User_Architect/Src/user_delay.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Algorithm/Inc/user_coord.h \
- ../Core/Inc/main.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_uart.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_dji_bus.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_led.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_can.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_dji_motor.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Algorithm/Inc/user_pid.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Drives/Inc/user_can.h \
- ../User_Architect/Src/../../Core/Inc/../../User_Application/Inc/swerve_chassis.h \
- ../User_Drives/Inc/user_dji_motor.h ../User_Algorithm/Inc/user_coord.h \
- ../User_Architect/Src/../Inc/user_delay.h \
- ../User_Architect/Src/../Inc/../../Core/Inc/bsp_config.h
-../User_Architect/Src/../../Core/Inc/bsp.h:
-../User_Architect/Src/../../Core/Inc/main.h:
+ ../User_Architect/Src/../Inc/../../Core/Inc/bsp_config.h \
+ ../User_Architect/Src/../../Core/Inc/bsp.h \
+ ../User_Architect/Src/../../Core/Inc/main.h
+../User_Architect/Src/../Inc/user_delay.h:
+../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -77,20 +63,6 @@ User_Architect/Src/user_delay.o: ../User_Architect/Src/user_delay.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../User_Architect/Src/../../Core/Inc/../../User_Algorithm/Inc/user_coord.h:
-../Core/Inc/main.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_uart.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_dji_bus.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_led.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_can.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_dji_motor.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Algorithm/Inc/user_pid.h:
-../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Drives/Inc/user_can.h:
-../User_Architect/Src/../../Core/Inc/../../User_Application/Inc/swerve_chassis.h:
-../User_Drives/Inc/user_dji_motor.h:
-../User_Algorithm/Inc/user_coord.h:
-../User_Architect/Src/../Inc/user_delay.h:
 ../User_Architect/Src/../Inc/../../Core/Inc/bsp_config.h:
+../User_Architect/Src/../../Core/Inc/bsp.h:
+../User_Architect/Src/../../Core/Inc/main.h:

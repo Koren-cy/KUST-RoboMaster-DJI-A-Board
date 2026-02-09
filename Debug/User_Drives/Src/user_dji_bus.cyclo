@@ -1,6 +1,4 @@
-../User_Drives/Src/user_dji_bus.c:21:13:DBUS_receive_dma_no_it	2
-../User_Drives/Src/user_dji_bus.c:48:10:dma_current_data_counter	1
-../User_Drives/Src/user_dji_bus.c:62:6:rc_callback_handler	1
-../User_Drives/Src/user_dji_bus.c:87:13:DBUS_rx_idle_callback	3
-../User_Drives/Src/user_dji_bus.c:115:6:DBUS_receive_handler	3
-../User_Drives/Src/user_dji_bus.c:124:6:DBUS_Init	1
+../User_Drives/Src/user_dji_bus.c:14:13:rc_callback_handler	1
+../User_Drives/Src/user_dji_bus.c:33:13:dbus_rx_idle_callback	3
+../User_Drives/Src/user_dji_bus.c:60:6:DBUS_Init	1
+../User_Drives/Src/user_dji_bus.c:85:6:DBUS_Handler	3

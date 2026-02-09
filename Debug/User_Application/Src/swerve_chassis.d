@@ -36,6 +36,8 @@ User_Application/Src/swerve_chassis.o: \
  ../User_Drives/Inc/../../User_Drives/Inc/user_can.h \
  ../User_Drives/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h \
  ../User_Algorithm/Inc/user_coord.h \
+ ../User_Algorithm/Inc/../../Middlewares/ST/ARM/DSP/Inc/arm_math.h \
+ ../Drivers/CMSIS/Include/cmsis_compiler.h \
  ../User_Application/Src/../../User_Algorithm/Inc/user_coord.h
 ../User_Application/Src/../../User_Application/Inc/swerve_chassis.h:
 ../Core/Inc/main.h:
@@ -74,4 +76,6 @@ User_Application/Src/swerve_chassis.o: \
 ../User_Drives/Inc/../../User_Drives/Inc/user_can.h:
 ../User_Drives/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h:
 ../User_Algorithm/Inc/user_coord.h:
+../User_Algorithm/Inc/../../Middlewares/ST/ARM/DSP/Inc/arm_math.h:
+../Drivers/CMSIS/Include/cmsis_compiler.h:
 ../User_Application/Src/../../User_Algorithm/Inc/user_coord.h:

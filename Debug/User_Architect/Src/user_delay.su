@@ -1,4 +1,7 @@
-../User_Architect/Src/user_delay.c:8:6:delay_init	16	static
-../User_Architect/Src/user_delay.c:13:6:delay_us	32	static
-../User_Architect/Src/user_delay.c:38:6:delay_ms	40	static
-../User_Architect/Src/user_delay.c:64:6:delay_s	40	static
+../User_Architect/Src/user_delay.c:18:20:get_stable_time	16	static
+../User_Architect/Src/user_delay.c:35:24:calculate_elapsed_time	24	static
+../User_Architect/Src/user_delay.c:49:6:Delay_Init	16	static
+../User_Architect/Src/user_delay.c:57:6:Delay_Update_TimeFlag	4	static
+../User_Architect/Src/user_delay.c:66:6:Delay_us	32	static
+../User_Architect/Src/user_delay.c:83:6:Delay_ms	40	static
+../User_Architect/Src/user_delay.c:103:6:Delay_s	40	static
