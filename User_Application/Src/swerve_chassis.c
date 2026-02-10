@@ -3,8 +3,8 @@
 #include "../../User_Algorithm/Inc/user_coord.h"
 
 /* 私有宏定义 ----------------------------------------------------------------*/
-#define RPM_TO_RAD(RPM) ((RPM) * USER_TWO_PI / 60)
-#define RAD_TO_RPM(RAD) ((RAD) * 60 / USER_TWO_PI)
+#define RPM_TO_RAD(RPM) ((RPM) * TWO_PI / 60.0f)
+#define RAD_TO_RPM(RAD) ((RAD) * 60.0f / TWO_PI)
 
 /* 函数体 --------------------------------------------------------------------*/
 
