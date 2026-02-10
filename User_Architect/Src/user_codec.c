@@ -9,7 +9,7 @@
 /**
 * @brief 获取指定位宽的掩码
 * @param bitwidth 位宽
-* @return 掩码值
+* @return 掩码
 */
 static uint32_t get_mask(const uint8_t bitwidth) {
     if (32 - bitwidth <= 0 )
@@ -25,10 +25,10 @@ static uint32_t get_mask(const uint8_t bitwidth) {
 * @brief 初始化编解码器
 * @param codec      编解码器结构体指针
 * @param ptr        数据缓冲区指针
-* @param length     缓冲区长度
 * @param byte_order 字节序
+* @note 如果用于编码，请确保缓冲区中全 0
 */
-void Codec_Init(CODEC *codec, uint8_t *ptr, const uint16_t length, const Byte_Order byte_order) {
+void Codec_Init(CODEC *codec, uint8_t *ptr, const Byte_Order byte_order) {
     codec->ptr = ptr;
     codec->byte_order = byte_order;
     codec->byte_index = 0;

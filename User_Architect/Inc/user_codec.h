@@ -25,7 +25,7 @@ typedef struct {
 } CODEC;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void Codec_Init(CODEC *codec, uint8_t *ptr, uint16_t length, Byte_Order byte_order);
+void Codec_Init(CODEC *codec, uint8_t *ptr, Byte_Order byte_order);
 
 uint32_t Codec_Decode_Unsigned(CODEC *codec, uint8_t bitwidth);
 int32_t Codec_Decode_Signed(CODEC *codec, uint8_t bitwidth);
