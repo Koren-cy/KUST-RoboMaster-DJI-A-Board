@@ -21,9 +21,9 @@ typedef struct {
 /* 函数声明 ------------------------------------------------------------------*/
 uint16_t RingBuffer_GetLength(const RING_BUFFER *buffer);
 uint16_t RingBuffer_Put(RING_BUFFER *buffer, const uint8_t *data, uint16_t length);
-uint16_t RingBuffer_GetWithHT(RING_BUFFER *buffer, uint8_t *message, const char *head, const char *tail);
-uint16_t RingBuffer_GetWithHLen(RING_BUFFER *buffer, uint8_t *message, const char *head, uint16_t len);
-uint16_t RingBuffer_GetWithLen(RING_BUFFER *buffer, uint8_t *message, uint16_t len);
-uint16_t RingBuffer_GetWithH(RING_BUFFER *buffer, uint8_t *message, const char *head);
+uint16_t RingBuffer_GetWithHT(RING_BUFFER *buffer, uint8_t *data, const char *head, const char *tail);
+uint16_t RingBuffer_GetWithHLen(RING_BUFFER *buffer, uint8_t *data, const char *head, uint16_t len);
+uint16_t RingBuffer_GetWithLen(RING_BUFFER *buffer, uint8_t *data, uint16_t len);
+uint16_t RingBuffer_GetWithH(RING_BUFFER *buffer, uint8_t *data, const char *head);
 
 #endif //__USER_RING_BUFFER_H__
