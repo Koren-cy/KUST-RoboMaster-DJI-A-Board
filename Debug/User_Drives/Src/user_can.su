@@ -1,3 +1,0 @@
-../User_Drives/Src/user_can.c:17:6:CAN_Init	64	static
-../User_Drives/Src/user_can.c:51:6:CAN_Send	48	static
-../User_Drives/Src/user_can.c:71:6:HAL_CAN_RxFifo0MsgPendingCallback	56	static

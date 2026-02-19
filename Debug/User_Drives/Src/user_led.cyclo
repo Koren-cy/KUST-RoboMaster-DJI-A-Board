@@ -1,6 +1,0 @@
-../User_Drives/Src/user_led.c:14:6:LED_Init	1
-../User_Drives/Src/user_led.c:25:6:LED_Set_State	6
-../User_Drives/Src/user_led.c:51:6:LED_On	2
-../User_Drives/Src/user_led.c:62:6:LED_Off	2
-../User_Drives/Src/user_led.c:73:6:LED_Toggle	1
-../User_Drives/Src/user_led.c:82:11:LED_Get_State	6

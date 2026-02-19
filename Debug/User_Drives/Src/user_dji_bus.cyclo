@@ -1,4 +1,0 @@
-../User_Drives/Src/user_dji_bus.c:14:13:rc_callback_handler	1
-../User_Drives/Src/user_dji_bus.c:33:13:dbus_rx_idle_callback	3
-../User_Drives/Src/user_dji_bus.c:60:6:DBUS_Init	1
-../User_Drives/Src/user_dji_bus.c:85:6:DBUS_Handler	3

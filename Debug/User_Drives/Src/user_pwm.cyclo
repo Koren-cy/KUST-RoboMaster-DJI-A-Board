@@ -1,3 +1,0 @@
-../User_Drives/Src/user_pwm.c:14:6:PWM_Init	4
-../User_Drives/Src/user_pwm.c:30:10:PWM_Set_Duty	4
-../User_Drives/Src/user_pwm.c:43:10:PWM_Set_Frequency	1

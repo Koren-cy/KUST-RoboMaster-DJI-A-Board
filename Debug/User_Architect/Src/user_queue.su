@@ -1,7 +1,0 @@
-../User_Architect/Src/user_queue.c:14:6:Queue_Push	32	static
-../User_Architect/Src/user_queue.c:42:6:Queue_PushWA	32	static
-../User_Architect/Src/user_queue.c:68:7:Queue_Pop	16	static
-../User_Architect/Src/user_queue.c:89:9:Queue_IsEmpty	16	static
-../User_Architect/Src/user_queue.c:98:10:Queue_GetSize	16	static
-../User_Architect/Src/user_queue.c:106:6:Queue_FreeNode	16	static
-../User_Architect/Src/user_queue.c:120:6:Queue_Free	24	static

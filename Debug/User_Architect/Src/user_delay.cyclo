@@ -1,7 +1,0 @@
-../User_Architect/Src/user_delay.c:18:20:get_stable_time	2
-../User_Architect/Src/user_delay.c:35:24:calculate_elapsed_time	1
-../User_Architect/Src/user_delay.c:49:6:Delay_Init	1
-../User_Architect/Src/user_delay.c:57:6:Delay_Update_TimeFlag	1
-../User_Architect/Src/user_delay.c:66:6:Delay_us	2
-../User_Architect/Src/user_delay.c:83:6:Delay_ms	3
-../User_Architect/Src/user_delay.c:103:6:Delay_s	3

@@ -1,6 +1,0 @@
-../User_Drives/Src/user_dji_motor.c:18:14:angle_error	24	static
-../User_Drives/Src/user_dji_motor.c:36:14:general_error	16	static
-../User_Drives/Src/user_dji_motor.c:47:6:DJI_Motor_Set_Target	16	static
-../User_Drives/Src/user_dji_motor.c:64:6:DJI_Motor_Init	40	static
-../User_Drives/Src/user_dji_motor.c:121:6:DJI_Motor_Handle	32	static
-../User_Drives/Src/user_dji_motor.c:158:6:DJI_Motor_Execute	72	static

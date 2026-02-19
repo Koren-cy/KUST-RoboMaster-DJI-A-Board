@@ -1,8 +1,0 @@
-../User_Application/Src/../../User_Algorithm/Inc/user_coord.h:76:21:Math_WrapAngleDeg	3
-../User_Application/Src/../../User_Algorithm/Inc/user_coord.h:97:20:Add_Cartesian	1
-../User_Application/Src/../../User_Algorithm/Inc/user_coord.h:101:20:Subtract_Cartesian	1
-../User_Application/Src/swerve_chassis.c:30:6:SwerveChassis_Init	1
-../User_Application/Src/swerve_chassis.c:73:6:SwerveChassis_Kinematics	2
-../User_Application/Src/swerve_chassis.c:125:13:OptimizeSteerAngle	2
-../User_Application/Src/swerve_chassis.c:142:6:SwerveChassis_Set_Motor_Target	2
-../User_Application/Src/swerve_chassis.c:187:6:SwerveChassis_InverseKinematics	1
