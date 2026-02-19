@@ -26,6 +26,7 @@
 "./User_Algorithm/Src/user_coord.o"
 "./User_Algorithm/Src/user_pid.o"
 "./User_Application/Src/swerve_chassis.o"
+"./User_Architect/Src/user_codec.o"
 "./User_Architect/Src/user_delay.o"
 "./User_Architect/Src/user_queue.o"
 "./User_Architect/Src/user_ring_buffe.o"

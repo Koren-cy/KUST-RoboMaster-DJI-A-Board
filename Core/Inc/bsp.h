@@ -13,4 +13,22 @@ extern uint8_t loop_event_num;
 
 /* 接口定义 ------------------------------------------------------------------*/
 
+// 调试串口
+#include "../../User_Drives/Inc/user_uart.h"
+extern UART_DRIVES user_debug_uart;
+void user_debug_uart_callback(void * user_uart);
+
+// 状态灯
+#include "../../User_Drives/Inc/user_led.h"
+extern LED_DRIVES user_red_led;
+extern LED_DRIVES user_green_led;
+
+// can 总线
+#include "../../User_Drives/Inc/user_can.h"
+extern CAN_DRIVES user_can_1;
+void user_can_1_callback(void * user_can);
+extern CAN_DRIVES user_can_2;
+void user_can_2_callback(void * user_can);
+
+
 #endif //__USER_BSP_H__

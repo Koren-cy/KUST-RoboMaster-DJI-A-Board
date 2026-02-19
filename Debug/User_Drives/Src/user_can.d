@@ -31,7 +31,13 @@ User_Drives/Src/user_can.o: ../User_Drives/Src/user_can.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../User_Drives/Src/../Inc/../../Core/Inc/bsp_config.h \
  ../User_Drives/Src/../../Core/Inc/bsp.h \
- ../User_Drives/Src/../../Core/Inc/main.h
+ ../User_Drives/Src/../../Core/Inc/main.h \
+ ../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/user_uart.h \
+ ../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h \
+ ../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h \
+ ../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h \
+ ../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/user_led.h \
+ ../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/user_can.h
 ../User_Drives/Src/../Inc/user_can.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -66,3 +72,9 @@ User_Drives/Src/user_can.o: ../User_Drives/Src/user_can.c \
 ../User_Drives/Src/../Inc/../../Core/Inc/bsp_config.h:
 ../User_Drives/Src/../../Core/Inc/bsp.h:
 ../User_Drives/Src/../../Core/Inc/main.h:
+../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/user_uart.h:
+../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h:
+../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h:
+../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h:
+../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/user_led.h:
+../User_Drives/Src/../../Core/Inc/../../User_Drives/Inc/user_can.h:

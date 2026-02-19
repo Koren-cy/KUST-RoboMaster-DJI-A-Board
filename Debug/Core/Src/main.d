@@ -28,7 +28,13 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/bsp.h ../Core/Inc/main.h
+ ../Core/Inc/bsp.h ../Core/Inc/main.h \
+ ../Core/Inc/../../User_Drives/Inc/user_uart.h \
+ ../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h \
+ ../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h \
+ ../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h \
+ ../Core/Inc/../../User_Drives/Inc/user_led.h \
+ ../Core/Inc/../../User_Drives/Inc/user_can.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -61,3 +67,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/bsp.h:
 ../Core/Inc/main.h:
+../Core/Inc/../../User_Drives/Inc/user_uart.h:
+../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h:
+../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h:
+../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h:
+../Core/Inc/../../User_Drives/Inc/user_led.h:
+../Core/Inc/../../User_Drives/Inc/user_can.h:

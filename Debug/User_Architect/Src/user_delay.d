@@ -31,7 +31,13 @@ User_Architect/Src/user_delay.o: ../User_Architect/Src/user_delay.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../User_Architect/Src/../Inc/../../Core/Inc/bsp_config.h \
  ../User_Architect/Src/../../Core/Inc/bsp.h \
- ../User_Architect/Src/../../Core/Inc/main.h
+ ../User_Architect/Src/../../Core/Inc/main.h \
+ ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_uart.h \
+ ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h \
+ ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h \
+ ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h \
+ ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_led.h \
+ ../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_can.h
 ../User_Architect/Src/../Inc/user_delay.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -66,3 +72,9 @@ User_Architect/Src/user_delay.o: ../User_Architect/Src/user_delay.c \
 ../User_Architect/Src/../Inc/../../Core/Inc/bsp_config.h:
 ../User_Architect/Src/../../Core/Inc/bsp.h:
 ../User_Architect/Src/../../Core/Inc/main.h:
+../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_uart.h:
+../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../Core/Inc/bsp_config.h:
+../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_queue.h:
+../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/../../User_Architect/Inc/user_ring_buffe.h:
+../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_led.h:
+../User_Architect/Src/../../Core/Inc/../../User_Drives/Inc/user_can.h:

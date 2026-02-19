@@ -1,1 +1,4 @@
 ../Core/Src/bsp.c:10:6:LOOP_EVENT_Handle	16	static
+../Core/Src/bsp.c:20:6:user_debug_uart_callback	24	static
+../Core/Src/bsp.c:30:6:user_can_1_callback	24	static
+../Core/Src/bsp.c:35:6:user_can_2_callback	24	static

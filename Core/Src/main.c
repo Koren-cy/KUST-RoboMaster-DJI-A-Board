@@ -112,14 +112,20 @@ int main(void)
   MX_CAN2_Init();
   /* USER CODE BEGIN 2 */
 
+  UART_Init(&user_debug_uart, &huart6, user_debug_uart_callback);
 
+  LED_Init(&user_red_led, LED_RED_GPIO_Port, LED_RED_Pin, 1);
+  LED_Init(&user_green_led, LED_GREEN_GPIO_Port, LED_GREEN_Pin, 1);
+
+  CAN_Init(&user_can_1, &hcan1, user_can_1_callback);
+  CAN_Init(&user_can_2, &hcan2, user_can_2_callback);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+    LED_Toggle(&user_red_led);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

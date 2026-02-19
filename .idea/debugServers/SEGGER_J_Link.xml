@@ -6,8 +6,8 @@
     </debugger>
     <gdbserver exe="C:\Program Files\SEGGER\JLink_V916a\JLinkGDBServerCL.exe" />
     <console port="2334" />
-    <target device="STM32F427II" reset-before="false" />
-    <connection port="4444" warmup-ms="500" />
+    <target device="STM32F427II" reset-before="false" frequency="6000" />
+    <connection extended-remote="false" port="4444" warmup-ms="500" />
     <swo />
   </jlink-debug-target>
 </component>
