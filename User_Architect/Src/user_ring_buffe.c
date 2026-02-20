@@ -1,5 +1,5 @@
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../Inc/user_ring_buffe.h"
+#include "../user_ring_buffe.h"
 
 /* 私有函数声明 --------------------------------------------------------------*/
 static void RingBuffer_AddReadIndex(RING_BUFFER *buffer, uint16_t length);

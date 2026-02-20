@@ -1,5 +1,5 @@
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../Inc/user_pid.h"
+#include "../user_pid.h"
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -37,14 +37,21 @@ void PID_Init(PID_Controller *pid, const Err_Calculate err_calculate,
 }
 
 /**
-* @brief 计算 PID 控制输出
+* @brief 设定 PID 目标值
 * @param pid      PID 控制器结构体指针
 * @param target   目标值
+*/
+void PID_SetTarget(PID_Controller *pid, const float target) {
+    pid->set = target;
+}
+
+/**
+* @brief 计算 PID 控制输出
+* @param pid      PID 控制器结构体指针
 * @param feedback 反馈值
 * @return PID 控制输出值
 */
-float PID_Calculate(PID_Controller *pid, const float target, const float feedback) {
-    pid->set = target;
+float PID_Calculate(PID_Controller *pid, const float feedback) {
     pid->fdb = feedback;
 
     pid->err[0] = pid->err_calculate(pid->fdb, pid->set);

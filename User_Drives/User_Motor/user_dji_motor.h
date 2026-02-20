@@ -4,8 +4,8 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
 #include "../../Core/Inc/bsp_config.h"
-#include "../../User_Algorithm/Inc/user_pid.h"
-#include "../../User_Drives/Inc/user_can.h"
+#include "../../User_Algorithm/user_pid.h"
+#include "../../User_Drives/user_can.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
 #define GM6020_CURRENT_CONTROL_ID_1   (0x1FE)
@@ -15,7 +15,6 @@
 #define C6x0_CURRENT_CONTROL_ID_1     (0x200)
 #define C6x0_CURRENT_CONTROL_ID_2     (0x1FF)
 #define C6x0_FEEDBACK_BASE_ID         (0x200)
-
 
 // 可以看到，大疆不同型号电调的 ID 可能存在冲突。
 // 其中 C610 电调和 C620 电调的 ID 全部一致。
@@ -59,7 +58,7 @@ typedef struct {
     Dji_Motor_Type motor_type;            /* 电机型号 */
     Dji_Controller_Type controller_type;  /* 电调型号 */
     Dji_Control_Mode control_mode;        /* 控制模式 */
-    float target;                         /* 目标值 */
+    float target;                         /* 开环模式目标值 */
     uint8_t id;                           /* 电机 ID (1 ~ 7) */
     uint16_t ctrl_id;                     /* 控制帧 ID */
     uint16_t fdb_id;                      /* 反馈帧 ID */

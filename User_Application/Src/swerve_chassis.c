@@ -1,6 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../../User_Application/Inc/swerve_chassis.h"
-#include "../../User_Algorithm/Inc/user_coord.h"
+#include "../../User_Application/swerve_chassis.h"
+#include "../../User_Algorithm/user_coord.h"
 
 /* 私有宏定义 ----------------------------------------------------------------*/
 #define RPM_TO_RAD(RPM) ((RPM) * TWO_PI / 60.0f)

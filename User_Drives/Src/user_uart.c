@@ -1,5 +1,5 @@
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../Inc/user_uart.h"
+#include "../user_uart.h"
 #include "../../Core/Inc/bsp.h"
 #include <stdio.h>
 #include <stdlib.h>

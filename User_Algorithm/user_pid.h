@@ -37,6 +37,8 @@ void PID_Init(PID_Controller *pid, Err_Calculate err_calculate,
               float kp, float ki, float kd,
               float max_out, float max_iout);
 
-float PID_Calculate(PID_Controller *pid, float target, float feedback);
+void PID_SetTarget(PID_Controller *pid, float target);
+
+float PID_Calculate(PID_Controller *pid, float feedback);
 
 #endif //__USER_PID_H__

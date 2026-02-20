@@ -35,3 +35,6 @@ CAN_DRIVES user_can_2 = {0};
 void user_can_2_callback(void * user_can) {
     CAN_DRIVES *can = (CAN_DRIVES*)user_can;
 }
+
+// 蜂鸣器
+PWM_DRIVES user_buzzer = {0};

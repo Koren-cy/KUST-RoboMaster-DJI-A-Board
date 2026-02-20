@@ -1,6 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include <math.h>
-#include "../Inc/user_dji_motor.h"
+#include "../user_dji_motor.h"
 #include "../../Core/Inc/bsp.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
@@ -44,8 +44,12 @@ static float general_error(const float feedback, const float target) {
 * @param user_motor  大疆电机驱动结构体指针
 * @param target 目标值
 */
-void DJI_Motor_Set_Target(DJI_MOTOR_DRIVES *user_motor, float target) {
-    user_motor->target = target;
+void DJI_Motor_Set_Target(DJI_MOTOR_DRIVES *user_motor, const float target) {
+    if (user_motor->control_mode == OpenLoop_current) {
+        user_motor->target = target;
+    } else {
+        PID_SetTarget(&user_motor->pid_controller, target);
+    }
 }
 
 /**
@@ -68,7 +72,7 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES* user_motor, CAN_DRIVES* user_can, uint8_t 
     user_motor->id = id;
     user_motor->motor_type = motor_type;
     user_motor->control_mode = mode;
-    user_motor->target = 0;
+    user_motor->target = 0.0f;
 
     switch (motor_type) {
         case GM6020:
@@ -136,13 +140,13 @@ void DJI_Motor_Handle(const CAN_DRIVES* user_can) {
 
         switch (motor->control_mode) {
             case Rotor_speed:
-                PID_Calculate(&motor->pid_controller, motor->target, (float)motor->rotor_speed);
+                PID_Calculate(&motor->pid_controller, motor->rotor_speed);
                 break;
             case Rotor_angle:
-                PID_Calculate(&motor->pid_controller, motor->target, (float)motor->rotor_angle);
+                PID_Calculate(&motor->pid_controller, motor->rotor_angle);
                 break;
             case Torque_current:
-                PID_Calculate(&motor->pid_controller, motor->target, (float)motor->torque_current);
+                PID_Calculate(&motor->pid_controller, motor->torque_current);
                 break;
             default:
                 break;

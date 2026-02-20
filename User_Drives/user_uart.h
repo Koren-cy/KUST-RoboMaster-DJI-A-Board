@@ -4,8 +4,8 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
 #include "../../Core/Inc/bsp_config.h"
-#include "../../User_Architect/Inc/user_queue.h"
-#include "../../User_Architect/Inc/user_ring_buffe.h"
+#include "../../User_Architect/user_queue.h"
+#include "../../User_Architect/user_ring_buffe.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
 #define UART_BUFFER_SIZE  (128)

@@ -1,5 +1,5 @@
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../Inc/user_pwm.h"
+#include "../user_pwm.h"
 #include "../../Core/Inc/bsp.h"
 
 /* 函数体 --------------------------------------------------------------------*/
@@ -44,6 +44,9 @@ uint32_t PWM_Set_Frequency(PWM_DRIVES *user_pwm, const uint32_t freq){
     user_pwm->freq = freq;
     const uint32_t reload_reg = user_pwm->clock / freq - 1;
     __HAL_TIM_SET_AUTORELOAD(user_pwm->htim, reload_reg);
+
+    PWM_Set_Duty(user_pwm, user_pwm->duty);
+
     return reload_reg;
 }
 
