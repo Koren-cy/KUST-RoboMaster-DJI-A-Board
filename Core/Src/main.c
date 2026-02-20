@@ -84,6 +84,13 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 
+  // 配置 JScope
+  // 这里只注册了一个四位无符号整型
+  // 向 JScope_RTT_Channel 写入数据即可 SEGGER_RTT_Write(JScope_RTT_Channel, &time, 4); 向 JScope 发送四位无符号整型
+  static uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP] = {0};
+  const int JScope_RTT_Channel = 1;
+  SEGGER_RTT_ConfigUpBuffer(JScope_RTT_Channel, "JScope_U4", &JScope_RTT_UpBuffer[0], sizeof(JScope_RTT_UpBuffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -125,7 +132,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    LED_Toggle(&user_red_led);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
