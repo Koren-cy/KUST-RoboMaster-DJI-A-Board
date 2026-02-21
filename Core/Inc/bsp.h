@@ -1,6 +1,9 @@
 #ifndef __USER_BSP_H__
 #define __USER_BSP_H__
 
+/* 定义内存分段 ----------------------------------------------------------------*/
+#define CCMRAM __attribute__((section(".ccmram")))
+
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
 #include "../../SEGGER_RTT/SEGGER_RTT.h"

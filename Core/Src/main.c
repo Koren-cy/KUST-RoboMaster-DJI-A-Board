@@ -42,6 +42,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
 CAN_HandleTypeDef hcan1;
 CAN_HandleTypeDef hcan2;
 
@@ -78,6 +80,7 @@ static void MX_UART8_Init(void);
 static void MX_UART7_Init(void);
 static void MX_TIM12_Init(void);
 static void MX_TIM8_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -99,7 +102,7 @@ int main(void)
   // 配置 JScope
   // 这里只注册了一个四位无符号整型
   // 向 JScope_RTT_Channel 写入数据即可 SEGGER_RTT_Write(JScope_RTT_Channel, &time, 4); 向 JScope 发送四位无符号整型
-  static uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP] = {0};
+  static CCMRAM uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP] = {0};
   const int JScope_RTT_Channel = 1;
   SEGGER_RTT_ConfigUpBuffer(JScope_RTT_Channel, "JScope_U4", &JScope_RTT_UpBuffer[0], sizeof(JScope_RTT_UpBuffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
 
@@ -133,6 +136,7 @@ int main(void)
   MX_UART7_Init();
   MX_TIM12_Init();
   MX_TIM8_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   UART_Init(&user_debug_uart, &huart6, user_debug_uart_callback);
 
@@ -143,8 +147,8 @@ int main(void)
   CAN_Init(&user_can_2, &hcan2, user_can_2_callback);
 
   // 初始化蜂鸣器 （用于播放启动音）
-  PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
-  PWM_Set_Duty(&user_buzzer, 0.5f);
+  // PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
+  // PWM_Set_Duty(&user_buzzer, 0.5f);
 
   /* USER CODE END 2 */
 
@@ -211,6 +215,58 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode = DISABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
 /**

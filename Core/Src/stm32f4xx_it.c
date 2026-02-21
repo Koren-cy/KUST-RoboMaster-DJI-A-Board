@@ -198,22 +198,25 @@ void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
   // 播放启动音
-  static const uint16_t (*music)[3][2] = &dji_starting_music;
-  static const uint16_t note_num = sizeof(*music) / sizeof((*music)[0]);
-  static uint16_t note_index = 0;
-  static uint16_t time = 0;
-  if (note_index < note_num || time > 0) {
-    if (time == 0) {
-      PWM_Set_Frequency(&user_buzzer, (*music)[note_index%note_num][0]);
-      time = (*music)[note_index%note_num][1];
-      note_index++;
+  if (user_buzzer.htim != NULL) {
+    static const uint16_t (*music)[3][2] = &dji_starting_music;
+    static const uint16_t note_num = sizeof(*music) / sizeof((*music)[0]);
+    static uint16_t note_index = 0;
+    static uint16_t time = 0;
+    if (note_index < note_num || time > 0) {
+      if (time == 0) {
+        PWM_Set_Frequency(&user_buzzer, (*music)[note_index%note_num][0]);
+        time = (*music)[note_index%note_num][1];
+        note_index++;
+      }
+      else {
+        time--;
+      }
+    } else {
+      PWM_Set_Duty(&user_buzzer, 0);
     }
-    else {
-      time--;
-    }
-  } else {
-    PWM_Set_Duty(&user_buzzer, 0);
   }
+
 
 
   /* USER CODE END SysTick_IRQn 0 */

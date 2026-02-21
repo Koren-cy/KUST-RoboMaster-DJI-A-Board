@@ -73,6 +73,8 @@ void Error_Handler(void);
 #define Buzzer_GPIO_Port GPIOH
 #define LED_RED_Pin GPIO_PIN_11
 #define LED_RED_GPIO_Port GPIOE
+#define ADC1_IN8_Pin GPIO_PIN_0
+#define ADC1_IN8_GPIO_Port GPIOB
 #define LED_GREEN_Pin GPIO_PIN_14
 #define LED_GREEN_GPIO_Port GPIOF
 
