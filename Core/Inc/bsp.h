@@ -15,6 +15,7 @@ extern uint8_t loop_event_num;
 /* JScope ------------------------------------------------------------------*/
 #include "../../SEGGER_RTT/user_JScope_Transmit.h"
 extern CCMRAM JScope_Transmit_t jscope_transmit;
+extern CCMRAM uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP];
 
 /* 接口定义 ------------------------------------------------------------------*/
 

@@ -90,10 +90,6 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
 
-  // 配置 JScope
-  static CCMRAM uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP] = {0};
-  SEGGER_RTT_ConfigUpBuffer(1, "JScope_T4F4F4F4", &JScope_RTT_UpBuffer[0], sizeof(JScope_RTT_UpBuffer), SEGGER_RTT_MODE_NO_BLOCK_SKIP);
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -123,6 +119,8 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  JScope_Init(&htim2);
+
   UART_Init(&user_debug_uart, &huart6, user_debug_uart_callback);
 
   LED_Init(&user_red_led, LED_RED_GPIO_Port, LED_RED_Pin, 1);
@@ -138,8 +136,6 @@ int main(void)
   PWM_Set_Duty(&user_buzzer, 0.5f);
 
   FIR_Init(&user_fir_1,fir_coeffs,30);
-
-  HAL_TIM_Base_Start_IT(&htim2);
 
   /* USER CODE END 2 */
 

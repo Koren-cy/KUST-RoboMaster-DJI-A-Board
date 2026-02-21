@@ -214,7 +214,6 @@ void SysTick_Handler(void)
   }
 
 
-
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -250,12 +249,8 @@ void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
-  // jscope 上传数据
-  jscope_transmit.timestamp += 200;
-  const float voltage =  ADC_GetVoltage(&user_adc_1, 1);
-  jscope_transmit.val_1 = voltage;
-  jscope_transmit.val_2 = FIR_Update(&user_fir_1, voltage);
-  SEGGER_RTT_Write(1, &jscope_transmit, sizeof(jscope_transmit));
+  jscope_transmit.val_1 = ADC_GetVoltage(&user_adc_1, 1);
+  JScope_Transmit(htim2.Init.AutoReloadPreload + 1);
 
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);

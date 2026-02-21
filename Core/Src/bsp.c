@@ -15,6 +15,7 @@ void LOOP_EVENT_Handle(void) {
 
 /* JScope ------------------------------------------------------------------*/
 JScope_Transmit_t jscope_transmit = {0};
+uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP] = {0};
 
 /* 接口定义 --------------------------------------------------------------------*/
 
