@@ -47,6 +47,9 @@ extern "C" {
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
 
+/* 定义内存分段 ----------------------------------------------------------------*/
+#define CCMRAM __attribute__((section(".ccmram")))
+
 /* USER CODE END EM */
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);

@@ -22,7 +22,8 @@ static void UART_QueueHandle(void) {
 
         // 处理接收队列
         if (RingBuffer_GetLength(&uart->rx_ringBuffer)) {
-            uart->callback(uart);
+            if (uart->callback != NULL)
+                uart->callback(uart);
         }
 
         // 处理发送队列

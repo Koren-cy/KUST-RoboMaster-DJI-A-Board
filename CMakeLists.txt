@@ -49,11 +49,11 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Middlewares/ST/ARM/DSP/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc)
+include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Drivers/CMSIS/DSP/Include Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc)
 
-add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F427xx)
+add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F427xx -DARM_MATH_CM4 -D__FPU_PRESENT=1U)
 
-file(GLOB_RECURSE SOURCES "User_Drives/*.*" "User_Algorithm/*.*" "User_Status/*.*" "User_Architect/*.*" "User_Application/*.*" "SEGGER_RTT/*.*" "User_Lib/*.*" "Core/*.*" "Middlewares/*.*" "Drivers/*.*")
+file(GLOB_RECURSE SOURCES "User_Drives/*.*" "User_Algorithm/*.*" "User_Status/*.*" "User_Architect/*.*" "User_Application/*.*" "SEGGER_RTT/*.*" "User_Lib/*.*" "Core/*.*" "Drivers/*.*")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F427IIHX_FLASH.ld)
 

@@ -84,7 +84,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
             can_drive->rx_msg.RTR = RxHeader.RTR;
             can_drive->rx_msg.DLC = RxHeader.DLC;
 
-            can_drive->callback(can_drive);
+            if (can_drive->callback != NULL)
+                can_drive->callback(can_drive);
         }
     }
 }

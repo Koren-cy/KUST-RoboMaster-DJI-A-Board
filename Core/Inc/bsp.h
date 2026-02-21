@@ -1,9 +1,6 @@
 #ifndef __USER_BSP_H__
 #define __USER_BSP_H__
 
-/* 定义内存分段 ----------------------------------------------------------------*/
-#define CCMRAM __attribute__((section(".ccmram")))
-
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
 #include "../../SEGGER_RTT/SEGGER_RTT.h"
@@ -14,6 +11,10 @@ void LOOP_EVENT_Handle(void);
 typedef void (*LOOP_Event)(void);
 extern LOOP_Event loop_event[MAX_LOOP_EVENT];
 extern uint8_t loop_event_num;
+
+/* JScope ------------------------------------------------------------------*/
+#include "../../SEGGER_RTT/user_JScope_Transmit.h"
+extern CCMRAM JScope_Transmit_t jscope_transmit;
 
 /* 接口定义 ------------------------------------------------------------------*/
 
@@ -37,5 +38,14 @@ void user_can_2_callback(void * user_can);
 // 蜂鸣器
 #include "../../User_Drives/user_pwm.h"
 extern PWM_DRIVES user_buzzer;
+
+// ADC
+#include "../../User_Drives/user_adc.h"
+extern ADC_DRIVES user_adc_1;
+
+// FIR 滤波器
+#include "../../User_Algorithm/user_fir.h"
+extern FIR_Filter user_fir_1;
+extern float fir_coeffs[31];
 
 #endif //__USER_BSP_H__
