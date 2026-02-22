@@ -524,24 +524,10 @@ int SEGGER_RTT_printf(unsigned BufferIndex, const char * sFormat, ...) {
 
 /*************************** 重定向 printf ****************************/
 
-#ifdef __GNUC__
-/* With GCC, small printf (option LD Linker->Libraries->Small printf
-   set to 'Yes') calls __io_putchar() */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
-
-/**
-  * @brief  Retargets the C library printf function to the RTT.
-  */
-PUTCHAR_PROTOTYPE
-{
-  /* Place your implementation of fputc here */
-
-  SEGGER_RTT_Write(0, (uint8_t *)&ch, 1);
-
-  return ch;
+int _write(int file, char *ptr, int len) {
+    (void) file;
+    SEGGER_RTT_Write(0, ptr, len);
+    return len;
 }
 
 /*************************** End of file ****************************/

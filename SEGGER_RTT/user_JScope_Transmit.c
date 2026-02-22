@@ -13,6 +13,7 @@
  * @note  配置 RTT 上行缓冲区用于 JScope 数据传输
  */
 void JScope_Init(TIM_HandleTypeDef *htim) {
+    SEGGER_RTT_Init();
     SEGGER_RTT_ConfigUpBuffer(JSCOPE_BUFFER_INDEX, JSCOPE_BUFFER_NAME, &JScope_RTT_UpBuffer[0], BUFFER_SIZE_UP, SEGGER_RTT_MODE_NO_BLOCK_SKIP);
     if (htim != NULL)
         HAL_TIM_Base_Start_IT(htim);
