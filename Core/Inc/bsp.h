@@ -47,6 +47,14 @@ extern ADC_DRIVES user_adc_1;
 // FIR 滤波器
 #include "../../User_Algorithm/user_fir.h"
 extern FIR_Filter user_fir_1;
-extern float fir_coeffs[31];
+extern FIR_Filter user_fir_2;
+extern FIR_Filter user_fir_3;
+extern FIR_Filter user_fir_4;
+extern FIR_Filter user_fir_5;
+extern float fir_coeffs[6];
+
+// 大疆电机
+#include "../../User_Drives/User_Motor/user_dji_motor.h"
+extern DJI_MOTOR_DRIVES test_GM6020;
 
 #endif //__USER_BSP_H__

@@ -135,7 +135,18 @@ int main(void)
   PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
   PWM_Set_Duty(&user_buzzer, 0.5f);
 
-  FIR_Init(&user_fir_1,fir_coeffs,30);
+  FIR_Init(&user_fir_1,fir_coeffs,5);
+  FIR_Init(&user_fir_2,fir_coeffs,5);
+  FIR_Init(&user_fir_3,fir_coeffs,5);
+  FIR_Init(&user_fir_4,fir_coeffs,5);
+  FIR_Init(&user_fir_5,fir_coeffs,5);
+
+
+  DJI_Motor_Init(&test_GM6020, &user_can_1, 1, GM6020, Rotor_angle, 45.0f , 1.0f, 2000.0f, 16000, 1500);
+  // DJI_Motor_Init(&test_GM6020, &user_can_1, 1, GM6020, Rotor_speed, 1000.0f , 0.0f, 0.0f, 5000, 0);
+
+  DJI_Motor_Set_Target(&test_GM6020, 1);
+
 
   /* USER CODE END 2 */
 

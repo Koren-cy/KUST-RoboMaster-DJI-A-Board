@@ -32,12 +32,13 @@ LED_DRIVES user_green_led = {0};
 // can 总线
 CAN_DRIVES user_can_1 = {0};
 void user_can_1_callback(void * user_can) {
-    CAN_DRIVES *can = (CAN_DRIVES*)user_can;
+    const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
+    DJI_Motor_Handle(can);
 }
 
 CAN_DRIVES user_can_2 = {0};
 void user_can_2_callback(void * user_can) {
-    CAN_DRIVES *can = (CAN_DRIVES*)user_can;
+    const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
 }
 
 // 蜂鸣器
@@ -48,12 +49,14 @@ ADC_DRIVES user_adc_1 = {0};
 
 // FIR 滤波器
 FIR_Filter user_fir_1 = {0};
-float fir_coeffs[31] = {
-    -0.004558113404f,  -0.00512371771f,  -0.004717321601f,  -0.002941794228f,  0.0005305341328f,
-     0.005903918296f,   0.01321454626f,     0.0223021321f,    0.03280295804f,    0.04416700453f,
-      0.05569869652f,   0.06661761552f,     0.0761327371f,    0.08352165669f,    0.08820542693f,
-      0.08980982006f,   0.08820542693f,    0.08352165669f,     0.0761327371f,    0.06661761552f,
-      0.05569869652f,   0.04416700453f,    0.03280295804f,     0.0223021321f,    0.01321454626f,
-     0.005903918296f, 0.0005305341328f,  -0.002941794228f,  -0.004717321601f,   -0.00512371771f,
-    -0.004558113404f
+FIR_Filter user_fir_2 = {0};
+FIR_Filter user_fir_3 = {0};
+FIR_Filter user_fir_4 = {0};
+FIR_Filter user_fir_5 = {0};
+float fir_coeffs[6] = {
+    0.04502611607f,   0.1661649346f,   0.2888089418f,   0.2888089418f,   0.1661649346f,
+    0.04502611607f
 };
+
+// 大疆电机
+DJI_MOTOR_DRIVES test_GM6020 = {0};

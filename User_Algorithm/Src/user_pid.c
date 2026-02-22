@@ -1,5 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_pid.h"
+#include "../../Core/Inc/bsp.h"
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -22,18 +23,8 @@ void PID_Init(PID_Controller *pid, const Err_Calculate err_calculate,
     pid->max_out = max_out;
     pid->max_iout = max_iout;
 
-    pid->err[0] = 0.0f;
-    pid->err[1] = 0.0f;
-
-    pid->Pout = 0.0f;
-    pid->Iout = 0.0f;
-    pid->Dout = 0.0f;
-    pid->out = 0.0f;
-
     pid->err_calculate = err_calculate;
 
-    pid->set = 0.0f;
-    pid->fdb = 0.0f;
 }
 
 /**
@@ -56,27 +47,40 @@ float PID_Calculate(PID_Controller *pid, const float feedback) {
 
     pid->err[0] = pid->err_calculate(pid->fdb, pid->set);
 
-    pid->Pout = pid->kp * pid->err[0];
+    pid->err[0] = FIR_Update(&user_fir_1, pid->err[0]);
+    pid->err[0] = FIR_Update(&user_fir_1, pid->err[0]);
+
+    pid->Pout = pid->kp * pid->err[0] * (1 / (pid->err[0] * pid->err[0] / 10000000.0f + 1));
     pid->Iout += pid->ki * pid->err[0];
-    pid->Dout = pid->kd * (pid->err[0] - pid->err[1]);
+    pid->Dout = pid->kd * (pid->err[0] - pid->err[1]) * (( 1 - (1 / (pid->err[0] * pid->err[0] / 1000000.0f + 1))) * 0.7f + 0.3f);
+
+    pid->Dout = FIR_Update(&user_fir_2, pid->Dout);
+    pid->Dout = FIR_Update(&user_fir_2, pid->Dout);
 
     // 积分限幅
     if (pid->Iout > pid->max_iout) {
-        pid->Iout = pid->max_iout;
+        pid->Iout =  pid->max_iout * (1 / (pid->err[0] * pid->err[0] / 3000.0f + 1));
     } else if (pid->Iout < -pid->max_iout) {
-        pid->Iout = -pid->max_iout;
+        pid->Iout = -pid->max_iout * (1 / (pid->err[0] * pid->err[0] / 3000.0f + 1));
     }
 
     pid->out = pid->Pout + pid->Iout + pid->Dout;
 
     // 输出限幅
     if (pid->out > pid->max_out) {
-        pid->out = pid->max_out;
+        pid->out =  pid->max_out;
     } else if (pid->out < -pid->max_out) {
         pid->out = -pid->max_out;
     }
 
     pid->err[1] = pid->err[0];
+
+    pid->out = FIR_Update(&user_fir_3, pid->out);
+    pid->out = FIR_Update(&user_fir_3, pid->out);
+
+    jscope_transmit.val_1 = pid->Pout;
+    jscope_transmit.val_2 = pid->Iout;
+    jscope_transmit.val_3 = pid->Dout;
 
     return pid->out;
 }

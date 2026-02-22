@@ -213,6 +213,12 @@ void SysTick_Handler(void)
     }
   }
 
+  const uint8_t key = SEGGER_RTT_GetKey();
+  if (48 <= key && key <= 57) {
+    DJI_Motor_Set_Target(&test_GM6020,(float)(key - 48) / 2.0f);
+  }
+
+  DJI_Motor_Execute(&user_can_1);
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
@@ -249,8 +255,7 @@ void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
-  jscope_transmit.val_1 = ADC_GetVoltage(&user_adc_1, 1);
-  JScope_Transmit(htim2.Init.AutoReloadPreload + 1);
+  // JScope_Transmit(htim2.Init.AutoReloadPreload + 1);
 
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
