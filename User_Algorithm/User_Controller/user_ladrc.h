@@ -3,6 +3,7 @@
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
+#include "user_controller.h"
 
 /* 类型定义 ------------------------------------------------------------------*/
 
@@ -28,17 +29,18 @@ typedef struct {
  * @brief LADRC 控制器结构体
  */
 typedef struct {
-    LESO_Controller leso;      /* 线性扩张状态观测器 */
-    LSEF_Controller lsef;      /* 线性状态误差反馈控制律 */
+    CONTROLLER_INTERFACE_FUNC      /* 控制器接口函数 */
+    LESO_Controller leso;          /* 线性扩张状态观测器 */
+    LSEF_Controller lsef;          /* 线性状态误差反馈控制律 */
     
-    float b0;                  /* 控制增益补偿 */
-    float max_out;             /* 输出限幅 */
-    float dt;                  /* 采样时间 */
+    float b0;                      /* 控制增益补偿 */
+    float max_out;                 /* 输出限幅 */
+    float dt;                      /* 采样时间 */
     
-    float set;                 /* 目标值 */
-    float fdb;                 /* 反馈值 */
-    float out;                 /* 控制输出 */
-    float u0;                  /* 线性组合输出 */
+    float set;                     /* 目标值 */
+    float fdb;                     /* 反馈值 */
+    float out;                     /* 控制输出 */
+    float u0;                      /* 线性组合输出 */
 } LADRC_Controller;
 
 /* 函数声明 ------------------------------------------------------------------*/
@@ -46,8 +48,10 @@ void LADRC_Init(LADRC_Controller *ladrc,
                 float wc, float kp, float kd,
                 float b0, float max_out, float dt);
 
-void LADRC_SetTarget(LADRC_Controller *ladrc, float target);
+/* 接口函数声明 --------------------------------------------------------------*/
+void LADRC_Set_Target(void* controller, float target);
+float LADRC_Calculate(void* controller, float main_feedback, float sub_feedback);
+float LADRC_Get_Output(void* controller);
 
-float LADRC_Calculate(LADRC_Controller *ladrc, float feedback);
 
 #endif //__USER_LADRC_H__

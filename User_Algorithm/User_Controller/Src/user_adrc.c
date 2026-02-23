@@ -34,20 +34,20 @@ void ADRC_Init(ADRC_Controller *adrc,
                const float beta1_eso, const float beta2_eso, const float beta3_eso, const float delta_eso,
                const float beta1_nlsef, const float beta2_nlsef, const float alpha1, const float alpha2, const float delta_nlsef,
                const float b0, const float max_out, const float dt) {
+    // 绑定接口函数
+    adrc->Set_Target = ADRC_Set_Target;
+    adrc->Calculate = ADRC_Calculate;
+    adrc->Get_Output = ADRC_Get_Output;
+    
     // 初始化跟踪微分器
     adrc->td.r = r;
     adrc->td.h = h;
-    adrc->td.x1 = 0.0f;
-    adrc->td.x2 = 0.0f;
-    
+
     // 初始化扩张状态观测器
     adrc->eso.beta1 = beta1_eso;
     adrc->eso.beta2 = beta2_eso;
     adrc->eso.beta3 = beta3_eso;
     adrc->eso.delta = delta_eso;
-    adrc->eso.z1 = 0.0f;
-    adrc->eso.z2 = 0.0f;
-    adrc->eso.z3 = 0.0f;
     
     // 初始化非线性状态误差反馈控制律
     adrc->nlsef.beta1 = beta1_nlsef;
@@ -60,40 +60,40 @@ void ADRC_Init(ADRC_Controller *adrc,
     adrc->b0 = b0;
     adrc->max_out = max_out;
     adrc->dt = dt;
-    
-    adrc->set = 0.0f;
-    adrc->fdb = 0.0f;
-    adrc->out = 0.0f;
-    adrc->u0 = 0.0f;
 }
+
+/* 接口函数实现 --------------------------------------------------------------*/
 
 /**
  * @brief 设定 ADRC 目标值
- * @param adrc      ADRC 控制器结构体指针
- * @param target    目标值
+ * @param controller 控制器结构体指针
+ * @param target     目标值
  */
-void ADRC_SetTarget(ADRC_Controller *adrc, const float target) {
+void ADRC_Set_Target(void* controller, const float target) {
+    ADRC_Controller* adrc = (ADRC_Controller*)controller;
     adrc->set = target;
 }
 
 /**
  * @brief 计算 ADRC 控制输出
- * @param adrc      ADRC 控制器结构体指针
- * @param feedback  反馈值
+ * @param controller     控制器结构体指针
+ * @param main_feedback  反馈值
+ * @param sub_feedback   接口定义参数，在该模块中无实际意义
  * @return ADRC 控制输出值
  */
-float ADRC_Calculate(ADRC_Controller *adrc, const float feedback) {
-    adrc->fdb = feedback;
+float ADRC_Calculate(void* controller, const float main_feedback, const float sub_feedback) {
+    ADRC_Controller* adrc = (ADRC_Controller*)controller;
+    adrc->fdb = main_feedback;
     
     // 跟踪微分器
     TD_Calculate(&adrc->td, adrc->set, adrc->dt);
     
     // 扩张状态观测器
-    ESO_Calculate(&adrc->eso, feedback, adrc->out, adrc->b0, adrc->dt);
+    ESO_Calculate(&adrc->eso, main_feedback, adrc->out, adrc->b0, adrc->dt);
     
     // 非线性状态误差反馈控制律
-    float e1 = adrc->td.x1 - adrc->eso.z1;
-    float e2 = adrc->td.x2 - adrc->eso.z2;
+    const float e1 = adrc->td.x1 - adrc->eso.z1;
+    const float e2 = adrc->td.x2 - adrc->eso.z2;
     adrc->u0 = NLSEF_Calculate(&adrc->nlsef, e1, e2);
     
     // 扰动补偿
@@ -108,6 +108,18 @@ float ADRC_Calculate(ADRC_Controller *adrc, const float feedback) {
     
     return adrc->out;
 }
+
+/**
+ * @brief 获取 ADRC 控制输出
+ * @param controller 控制器结构体指针
+ * @return ADRC 控制输出值
+ */
+float ADRC_Get_Output(void* controller) {
+    const ADRC_Controller* adrc = (ADRC_Controller*)controller;
+    return adrc->out;
+}
+
+/* 私有函数实现 --------------------------------------------------------------*/
 
 /**
  * @brief 跟踪微分器计算

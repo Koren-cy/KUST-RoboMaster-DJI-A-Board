@@ -3,8 +3,9 @@
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
+#include "user_motor.h"
 #include "../../Core/Inc/bsp_config.h"
-#include "../../User_Algorithm/user_pid.h"
+#include "../../User_Algorithm/User_Controller/user_pid.h"
 #include "../../User_Drives/user_can.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
@@ -54,6 +55,7 @@ typedef enum {
 * @brief 大疆电机驱动结构体
 */
 typedef struct {
+    MOTOR_DRIVES_INTERFACE_FUNC
     CAN_DRIVES *can;                      /* CAN 总线驱动结构体指针 */
     Dji_Motor_Type motor_type;            /* 电机型号 */
     Dji_Controller_Type controller_type;  /* 电调型号 */
@@ -63,19 +65,26 @@ typedef struct {
     uint16_t ctrl_id;                     /* 控制帧 ID */
     uint16_t fdb_id;                      /* 反馈帧 ID */
     uint16_t rotor_angle;                 /* 转子角度 (0 ~ 8191) */
+    uint16_t rotor_angle_offset;          /* 转子角度零点偏移量 */
+    int32_t total_angle;                  /* 多圈角度 单位是编码器的脉冲数 */
     int16_t rotor_speed;                  /* 转子速度 单位: rpm */
     int16_t torque_current;               /* 转矩电流 */
     uint8_t temperate;                    /* 温度 单位: 摄氏度 */
-    PID_Controller pid_controller;        /* PID 控制器 */
+    CONTROLLER_INTERFACE* controller;     /* PID 控制器 */
 } DJI_MOTOR_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id,
-                    Dji_Motor_Type motor_type, Dji_Control_Mode mode,
-                    float kp, float ki, float kd, float max_out, float max_iout);
+                    Dji_Motor_Type motor_type, Dji_Control_Mode mode, CONTROLLER_INTERFACE controller);
 
 void DJI_Motor_Set_Target(DJI_MOTOR_DRIVES *user_motor, float target);
 void DJI_Motor_Handle(const CAN_DRIVES* user_can);
 void DJI_Motor_Execute(const CAN_DRIVES* user_can);
+
+/* 接口函数声明 --------------------------------------------------------------*/
+void DJI_Motor_Set_State(void* motor, float value);
+float DJI_Motor_Get_Speed(void* motor);
+float DJI_Motor_Get_Angle(void* motor);
+float DJI_Motor_Get_Current(void* motor);
 
 #endif //__USER_DJI_MOTOR_H__

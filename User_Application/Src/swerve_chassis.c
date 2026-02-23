@@ -28,9 +28,8 @@
 * @param rr_steer_offset 左后轮转向角度零点偏移 (deg)
 */
 void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radius, const float wheel_radius, const float ratio,
-    DJI_MOTOR_DRIVES* fl_wheel,  DJI_MOTOR_DRIVES* fr_wheel,  DJI_MOTOR_DRIVES* rl_wheel,  DJI_MOTOR_DRIVES* rr_wheel,
-    DJI_MOTOR_DRIVES* fl_steer,  DJI_MOTOR_DRIVES* fr_steer,  DJI_MOTOR_DRIVES* rl_steer,  DJI_MOTOR_DRIVES* rr_steer,
-    const float fl_steer_offset, const float fr_steer_offset, const float rl_steer_offset, const float rr_steer_offset,
+    MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
+    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer,
     const int8_t fl_reverse,     const int8_t fr_reverse,     const int8_t rl_reverse,     const int8_t rr_reverse) {
 
     chassis->vx_target = 0.0f;
@@ -49,11 +48,6 @@ void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radiu
     chassis->wheel_fr.steer_motor = fr_steer;
     chassis->wheel_rl.steer_motor = rl_steer;
     chassis->wheel_rr.steer_motor = rr_steer;
-
-    chassis->wheel_fl.steer_angle_offset = fl_steer_offset;
-    chassis->wheel_fr.steer_angle_offset = fr_steer_offset;
-    chassis->wheel_rl.steer_angle_offset = rl_steer_offset;
-    chassis->wheel_rr.steer_angle_offset = rr_steer_offset;
 
     chassis->wheel_fl.reverse = fl_reverse;
     chassis->wheel_fr.reverse = fr_reverse;
@@ -150,13 +144,6 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
     // 对每个轮子进行处理
     for (int i = 0; i < 4; i++) {
         SwerveWheel* wheel = wheels[i];
-        
-        // 读取当前转向角度（从电机反馈获取，需要减去零点偏移）
-        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8192.0f - wheel->steer_angle_offset;
-        wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
-
-        // 计算加零点偏移后转向电机的目标角度
-        wheel->steer_angle_target = wheel->steer_angle_target + wheel->steer_angle_offset;
 
         // 劣弧优化
         OptimizeSteerAngle(wheel);
@@ -164,17 +151,18 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         // 设置转向电机目标
         // 角度控制模式：将角度转换为编码器值 [0, 8192)
         const float target_encoder = (wheel->steer_angle_target + 180.0f) * 8192.0f / 360.0f;
-        DJI_Motor_Set_Target(wheel->steer_motor, target_encoder);
+        wheel->steer_motor->Set_Motor_State(wheel->steer_motor, target_encoder);
 
         // 计算驱动轮的目标转速
         const float wheel_angular_velocity = wheel->drive_speed_target / chassis->wheel_radius;
         const float motor_rpm = RAD_TO_RPM(wheel_angular_velocity);
         
         // 读取当前驱动速度
-        wheel->drive_speed_current = RPM_TO_RAD(wheel->wheel_motor->rotor_speed) * chassis->wheel_radius / chassis->ratio;
+        const float motor_speed_rpm = wheel->wheel_motor->Get_Motor_Speed(wheel->wheel_motor);
+        wheel->drive_speed_current = RPM_TO_RAD(motor_speed_rpm) * chassis->wheel_radius / chassis->ratio;
         
         // 设置驱动电机目标
-        DJI_Motor_Set_Target(wheel->wheel_motor, motor_rpm * (float)wheel->reverse * chassis->ratio);
+        wheel->wheel_motor->Set_Motor_State(wheel->wheel_motor, motor_rpm * (float)wheel->reverse * chassis->ratio);
     }
 }
 

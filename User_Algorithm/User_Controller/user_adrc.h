@@ -3,6 +3,7 @@
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
+#include "user_controller.h"
 
 /* 类型定义 ------------------------------------------------------------------*/
 
@@ -44,18 +45,19 @@ typedef struct {
  * @brief ADRC 控制器结构体
  */
 typedef struct {
-    TD_Controller td;          /* 跟踪微分器 */
-    ESO_Controller eso;        /* 扩张状态观测器 */
-    NLSEF_Controller nlsef;    /* 非线性状态误差反馈控制律 */
+    CONTROLLER_INTERFACE_FUNC      /* 控制器接口函数 */
+    TD_Controller td;              /* 跟踪微分器 */
+    ESO_Controller eso;            /* 扩张状态观测器 */
+    NLSEF_Controller nlsef;        /* 非线性状态误差反馈控制律 */
     
-    float b0;                  /* 控制增益补偿 */
-    float max_out;             /* 输出限幅 */
-    float dt;                  /* 采样时间 */
+    float b0;                      /* 控制增益补偿 */
+    float max_out;                 /* 输出限幅 */
+    float dt;                      /* 采样时间 */
     
-    float set;                 /* 目标值 */
-    float fdb;                 /* 反馈值 */
-    float out;                 /* 控制输出 */
-    float u0;                  /* 非线性组合输出 */
+    float set;                     /* 目标值 */
+    float fdb;                     /* 反馈值 */
+    float out;                     /* 控制输出 */
+    float u0;                      /* 非线性组合输出 */
 } ADRC_Controller;
 
 /* 函数声明 ------------------------------------------------------------------*/
@@ -65,8 +67,10 @@ void ADRC_Init(ADRC_Controller *adrc,
                float beta1_nlsef, float beta2_nlsef, float alpha1, float alpha2, float delta_nlsef,
                float b0, float max_out, float dt);
 
-void ADRC_SetTarget(ADRC_Controller *adrc, float target);
+/* 接口函数声明 --------------------------------------------------------------*/
+void ADRC_Set_Target(void* controller, float target);
+float ADRC_Calculate(void* controller, float main_feedback, float sub_feedback);
+float ADRC_Get_Output(void* controller);
 
-float ADRC_Calculate(ADRC_Controller *adrc, float feedback);
 
 #endif //__USER_ADRC_H__

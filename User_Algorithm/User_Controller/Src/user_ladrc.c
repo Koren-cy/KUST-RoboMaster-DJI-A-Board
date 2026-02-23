@@ -20,11 +20,13 @@ static float LSEF_Calculate(const LSEF_Controller *lsef, float e1, float e2);
 void LADRC_Init(LADRC_Controller *ladrc,
                 const float wc, const float kp, const float kd,
                 const float b0, const float max_out, const float dt) {
+    // 绑定接口函数
+    ladrc->Set_Target = LADRC_Set_Target;
+    ladrc->Calculate = LADRC_Calculate;
+    ladrc->Get_Output = LADRC_Get_Output;
+    
     // 初始化线性扩张状态观测器
     ladrc->leso.wc = wc;
-    ladrc->leso.z1 = 0.0f;
-    ladrc->leso.z2 = 0.0f;
-    ladrc->leso.z3 = 0.0f;
     
     // 初始化线性状态误差反馈控制律
     ladrc->lsef.kp = kp;
@@ -34,33 +36,33 @@ void LADRC_Init(LADRC_Controller *ladrc,
     ladrc->b0 = b0;
     ladrc->max_out = max_out;
     ladrc->dt = dt;
-    
-    ladrc->set = 0.0f;
-    ladrc->fdb = 0.0f;
-    ladrc->out = 0.0f;
-    ladrc->u0 = 0.0f;
 }
+
+/* 接口函数实现 --------------------------------------------------------------*/
 
 /**
  * @brief 设定 LADRC 目标值
- * @param ladrc     LADRC 控制器结构体指针
- * @param target    目标值
+ * @param controller 控制器结构体指针
+ * @param target     目标值
  */
-void LADRC_SetTarget(LADRC_Controller *ladrc, const float target) {
+void LADRC_Set_Target(void* controller, const float target) {
+    LADRC_Controller* ladrc = (LADRC_Controller*)controller;
     ladrc->set = target;
 }
 
 /**
  * @brief 计算 LADRC 控制输出
- * @param ladrc     LADRC 控制器结构体指针
- * @param feedback  反馈值
+ * @param controller 控制器结构体指针
+ * @param main_feedback   反馈值
+ * @param sub_feedback   接口定义参数，在该模块中无实际意义
  * @return LADRC 控制输出值
  */
-float LADRC_Calculate(LADRC_Controller *ladrc, const float feedback) {
-    ladrc->fdb = feedback;
+float LADRC_Calculate(void* controller, const float main_feedback, const float sub_feedback) {
+    LADRC_Controller* ladrc = (LADRC_Controller*)controller;
+    ladrc->fdb = main_feedback;
     
     // 线性扩张状态观测器
-    LESO_Calculate(&ladrc->leso, feedback, ladrc->out, ladrc->b0, ladrc->dt);
+    LESO_Calculate(&ladrc->leso, main_feedback, ladrc->out, ladrc->b0, ladrc->dt);
     
     // 线性状态误差反馈控制律
     const float e1 = ladrc->set - ladrc->leso.z1;
@@ -79,6 +81,18 @@ float LADRC_Calculate(LADRC_Controller *ladrc, const float feedback) {
     
     return ladrc->out;
 }
+
+/**
+ * @brief 获取 LADRC 控制输出
+ * @param controller 控制器结构体指针
+ * @return LADRC 控制输出值
+ */
+float LADRC_Get_Output(void* controller) {
+    const LADRC_Controller* ladrc = (LADRC_Controller*)controller;
+    return ladrc->out;
+}
+
+/* 私有函数实现 --------------------------------------------------------------*/
 
 /**
  * @brief 线性扩张状态观测器计算
