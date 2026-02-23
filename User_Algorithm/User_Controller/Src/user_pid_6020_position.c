@@ -1,6 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../user_pid.h"
-#include "../../Core/Inc/bsp.h"
+#include "../user_pid_6020_position.h"
+#include "../../../Core/Inc/bsp.h"
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -77,10 +77,6 @@ float PID_Calculate(PID_Controller *pid, const float feedback) {
 
     pid->out = FIR_Update(&user_fir_3, pid->out);
     pid->out = FIR_Update(&user_fir_3, pid->out);
-
-    jscope_transmit.val_1 = pid->Pout;
-    jscope_transmit.val_2 = pid->Iout;
-    jscope_transmit.val_3 = pid->Dout;
 
     return pid->out;
 }
