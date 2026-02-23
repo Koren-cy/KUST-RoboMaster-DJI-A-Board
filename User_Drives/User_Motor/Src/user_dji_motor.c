@@ -11,15 +11,16 @@ static uint8_t motor_num = 0;
 
 /**
 * @brief 初始化大疆电机
-* @param user_motor  大疆电机驱动结构体指针
-* @param user_can    CAN 总线结构体指针
-* @param id          电机 ID (1 ~ 7)
-* @param motor_type  电机型号
-* @param mode        控制模式
-* @param controller  PID 或 ADRC 等控制器
+* @param user_motor          大疆电机驱动结构体指针
+* @param user_can            CAN 总线结构体指针
+* @param id                  电机 ID (1 ~ 7)
+* @param rotor_angle_offset  电机零点偏移量 (0 ~ 8191)
+* @param motor_type          电机型号
+* @param mode                控制模式
+* @param controller          PID 或 ADRC 等控制器
 */
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const uint16_t rotor_angle_offset,
-                    const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE controller) {
+                    const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller) {
     // 绑定接口
     user_motor->Set_Motor_State = DJI_Motor_Set_State;
     user_motor->Get_Motor_Speed = DJI_Motor_Get_Speed;
@@ -31,6 +32,7 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const ui
     user_motor->motor_type = motor_type;
     user_motor->control_mode = mode;
     user_motor->rotor_angle_offset = rotor_angle_offset;
+    user_motor->controller = controller;
 
     switch (motor_type) {
         case GM6020:
@@ -100,13 +102,13 @@ void DJI_Motor_Handle(const CAN_DRIVES* user_can) {
 
         switch (motor->control_mode) {
             case Rotor_speed:
-                motor->controller->Calculate(&motor->controller, DJI_Motor_Get_Speed(&motor),0.0f);
+                motor->controller->Calculate(motor->controller, DJI_Motor_Get_Speed(motor),0.0f);
                 break;
             case Rotor_angle:
-                motor->controller->Calculate(&motor->controller, DJI_Motor_Get_Angle(&motor),DJI_Motor_Get_Speed(&motor));
+                motor->controller->Calculate(motor->controller, DJI_Motor_Get_Angle(motor),DJI_Motor_Get_Speed(motor));
                 break;
             case Torque_current:
-                motor->controller->Calculate(&motor->controller, DJI_Motor_Get_Current(&motor),0.0f);
+                motor->controller->Calculate(motor->controller, DJI_Motor_Get_Current(motor),0.0f);
                 break;
             default:
                 break;
@@ -204,7 +206,7 @@ void DJI_Motor_Set_State(void* motor, const float value) {
     if (dji_motor->control_mode == OpenLoop_current) {
         dji_motor->target = value;
     } else {
-        dji_motor->controller->Set_Target(&dji_motor->controller, value);
+        dji_motor->controller->Set_Target(dji_motor->controller, value);
     }
 }
 
@@ -225,7 +227,7 @@ float DJI_Motor_Get_Speed(void* motor) {
 */
 float DJI_Motor_Get_Angle(void* motor) {
     const DJI_MOTOR_DRIVES* dji_motor = (DJI_MOTOR_DRIVES*)motor;
-    return (float) dji_motor->total_angle / 8191.0f * 360.0f;
+    return (float)dji_motor->total_angle / 8191.0f * 360.0f;
 }
 
 /**

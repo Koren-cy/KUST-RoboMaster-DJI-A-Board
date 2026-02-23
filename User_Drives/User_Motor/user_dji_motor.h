@@ -45,10 +45,10 @@ typedef enum {
 * @brief 控制模式
 */
 typedef enum {
-    Rotor_angle,      /* 转子角度控制 */
-    Rotor_speed,      /* 转子速度控制 */
-    Torque_current,   /* 转矩电流控制 */
-    OpenLoop_current, /* 开环电流控制 */
+    Rotor_angle,      /* 多圈角度控制模式 单位：度 */
+    Rotor_speed,      /* 转子速度控制模式 单位：RPM */
+    Torque_current,   /* 转矩电流控制模式 目标值范围 (-3000 ~ 3000) 单位：mA */
+    OpenLoop_current, /* 开环电流控制模式 目标值范围 (-16384 ~ 16384) */
 } Dji_Control_Mode;
 
 /**
@@ -75,9 +75,8 @@ typedef struct {
 
 /* 函数声明 ------------------------------------------------------------------*/
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id, uint16_t rotor_angle_offset,
-                    Dji_Motor_Type motor_type, Dji_Control_Mode mode, CONTROLLER_INTERFACE controller);
+                    Dji_Motor_Type motor_type, Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller);
 
-void DJI_Motor_Set_Target(DJI_MOTOR_DRIVES *user_motor, float target);
 void DJI_Motor_Handle(const CAN_DRIVES* user_can);
 void DJI_Motor_Execute(const CAN_DRIVES* user_can);
 

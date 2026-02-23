@@ -129,12 +129,12 @@ int main(void)
   CAN_Init(&user_can_1, &hcan1, user_can_1_callback);
   CAN_Init(&user_can_2, &hcan2, user_can_2_callback);
 
-  ADC_Init(&user_adc_1, &hadc1, 2, 2, 12, NULL);
-
   // 初始化蜂鸣器 （用于播放启动音）
   PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
   PWM_Set_Duty(&user_buzzer, 0.5f);
 
+  LADRC_Init(&user_ladrc_1, 80.0f, 4300.0f, 230.0f,1.8f, 16380.0f, 0.001f);
+  DJI_Motor_Init(&test_GM6020, &user_can_1, 1,0, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&user_ladrc_1);
 
   /* USER CODE END 2 */
 

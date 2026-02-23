@@ -199,6 +199,7 @@ void SysTick_Handler(void)
     static const uint16_t note_num = sizeof(*music) / sizeof((*music)[0]);
     static uint16_t note_index = 0;
     static uint16_t time = 0;
+    static uint8_t start_sign = 0;
     if (note_index < note_num || time > 0) {
       if (time == 0) {
         PWM_Set_Frequency(&user_buzzer, (*music)[note_index%note_num][0]);
@@ -209,13 +210,16 @@ void SysTick_Handler(void)
         time--;
       }
     } else {
-      PWM_Set_Duty(&user_buzzer, 0);
+      if (start_sign == 0) {
+        PWM_Set_Duty(&user_buzzer, 0);
+        start_sign = 1;
+      }
     }
   }
 
   const uint8_t key = SEGGER_RTT_GetKey();
   if (48 <= key && key <= 57) {
-    DJI_Motor_Set_Target(&test_GM6020,(float)(key - 48) / 2.0f);
+    DJI_Motor_Set_State(&test_GM6020,(float)(key - 48) * 30.0f);
   }
 
   DJI_Motor_Execute(&user_can_1);

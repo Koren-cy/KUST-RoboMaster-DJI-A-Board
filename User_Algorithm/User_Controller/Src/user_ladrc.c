@@ -1,6 +1,9 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_ladrc.h"
 
+#include "bsp.h"
+#include "../../user_fir.h"
+
 /* 私有函数声明 --------------------------------------------------------------*/
 static void LESO_Calculate(LESO_Controller *leso, float feedback, float u, float b0, float dt);
 static float LSEF_Calculate(const LSEF_Controller *lsef, float e1, float e2);
@@ -11,8 +14,8 @@ static float LSEF_Calculate(const LSEF_Controller *lsef, float e1, float e2);
  * @brief 初始化 LADRC 控制器
  * @param ladrc     LADRC 控制器结构体指针
  * @param wc        观测器带宽
- * @param kp        比例增益
- * @param kd        微分增益
+ * @param kp        比例增益 典型值为 wc * wc
+ * @param kd        微分增益 典型值为 2 * wc
  * @param b0        控制增益补偿
  * @param max_out   输出限幅
  * @param dt        采样时间

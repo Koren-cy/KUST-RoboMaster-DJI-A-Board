@@ -44,19 +44,8 @@ void user_can_2_callback(void * user_can) {
 // 蜂鸣器
 PWM_DRIVES user_buzzer = {0};
 
-// ADC
-ADC_DRIVES user_adc_1 = {0};
-
-// FIR 滤波器
-FIR_Filter user_fir_1 = {0};
-FIR_Filter user_fir_2 = {0};
-FIR_Filter user_fir_3 = {0};
-FIR_Filter user_fir_4 = {0};
-FIR_Filter user_fir_5 = {0};
-float fir_coeffs[6] = {
-    0.04502611607f,   0.1661649346f,   0.2888089418f,   0.2888089418f,   0.1661649346f,
-    0.04502611607f
-};
-
 // 大疆电机
 DJI_MOTOR_DRIVES test_GM6020 = {0};
+
+// ADRC 控制器
+LADRC_Controller user_ladrc_1 = {0};

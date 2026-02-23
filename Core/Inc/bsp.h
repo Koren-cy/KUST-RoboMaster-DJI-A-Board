@@ -40,21 +40,12 @@ void user_can_2_callback(void * user_can);
 #include "../../User_Drives/user_pwm.h"
 extern PWM_DRIVES user_buzzer;
 
-// ADC
-#include "../../User_Drives/user_adc.h"
-extern ADC_DRIVES user_adc_1;
-
-// FIR 滤波器
-#include "../../User_Algorithm/user_fir.h"
-extern FIR_Filter user_fir_1;
-extern FIR_Filter user_fir_2;
-extern FIR_Filter user_fir_3;
-extern FIR_Filter user_fir_4;
-extern FIR_Filter user_fir_5;
-extern float fir_coeffs[6];
-
 // 大疆电机
 #include "../../User_Drives/User_Motor/user_dji_motor.h"
 extern DJI_MOTOR_DRIVES test_GM6020;
+
+// ADRC 控制器
+#include "../../User_Algorithm/User_Controller/user_ladrc.h"
+extern LADRC_Controller user_ladrc_1;
 
 #endif //__USER_BSP_H__
