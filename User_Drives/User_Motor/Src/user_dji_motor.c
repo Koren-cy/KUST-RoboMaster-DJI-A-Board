@@ -18,7 +18,7 @@ static uint8_t motor_num = 0;
 * @param mode        控制模式
 * @param controller  PID 或 ADRC 等控制器
 */
-void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id,
+void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const uint16_t rotor_angle_offset,
                     const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE controller) {
     // 绑定接口
     user_motor->Set_Motor_State = DJI_Motor_Set_State;
@@ -30,7 +30,7 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const ui
     user_motor->id = id;
     user_motor->motor_type = motor_type;
     user_motor->control_mode = mode;
-    user_motor->target = 0.0f;
+    user_motor->rotor_angle_offset = rotor_angle_offset;
 
     switch (motor_type) {
         case GM6020:
@@ -92,6 +92,8 @@ void DJI_Motor_Handle(const CAN_DRIVES* user_can) {
         }
         
         motor->total_angle += delta_angle;
+        motor->total_angle += motor->rotor_angle_offset;
+        motor->rotor_angle_offset = 0;
 
         if (motor->control_mode == OpenLoop_current)
             continue;

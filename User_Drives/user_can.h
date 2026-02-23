@@ -16,8 +16,8 @@ typedef void (*CAN_Callback)(void* user_can);
 * @brief 发送配置
 */
 typedef struct {
-    uint8_t IDE;  /* IDE 扩展标志 */
-    uint8_t RTR;  /* RTR 远程帧标志 */
+    volatile uint8_t IDE;  /* IDE 扩展标志 */
+    volatile uint8_t RTR;  /* RTR 远程帧标志 */
 } CanTxConfig_t;
 
 /**
@@ -36,10 +36,10 @@ typedef struct {
 * @brief can 总线驱动结构体
 */
 typedef struct  {
-    CAN_HandleTypeDef* hcan;  /* can 总线硬件句柄 */
-    CAN_Callback callback;    /* 接收回调函数 */
-    CanTxConfig_t tx_conf;    /* 发送配置 */
-    CanRxMsg_t rx_msg;        /* 接收的消息 */
+    CAN_HandleTypeDef* hcan;           /* can 总线硬件句柄 */
+    CAN_Callback callback;             /* 接收回调函数 */
+    volatile CanTxConfig_t tx_conf;    /* 发送配置 */
+    CanRxMsg_t rx_msg;                 /* 接收的消息 */
 } CAN_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
