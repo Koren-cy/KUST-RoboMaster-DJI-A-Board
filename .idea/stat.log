@@ -17606,3 +17606,6 @@
 {"ts":1771948684570,"action":"FILE_CLOSED","file":"/User_Algorithm/User_Controller/user_cascade.h","tags":{"FILE_LINE_OF_CODE":"34"}}
 {"ts":1771948684570,"action":"FILE_OPENED","file":"/README.md","tags":{"FILE_LINE_OF_CODE":"58"}}
 {"ts":1771948805722,"action":"FILE_CLOSED","file":"/README.md","tags":{"FILE_LINE_OF_CODE":"58"}}
+{"ts":1771948826896,"action":"IDE_DEACTIVATED"}
+{"ts":1771948862684,"action":"IDE_ACTIVATED"}
+{"ts":1771948867094,"action":"FILE_OPENED","file":"/README.md","tags":{"FILE_LINE_OF_CODE":"58"}}

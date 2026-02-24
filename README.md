@@ -47,9 +47,8 @@
 │   ├── user_uart.c/h               # UART 通信
 │   └── User_Motor/                 # 电机驱动模块
 │       └── user_dji_motor.c/h      # 大疆电机驱动
-├── User_Lib/
-│   └── user_music.h                # 音乐播放
-└── User_Status/                    # 状态管理模块
+└── User_Lib/
+    └── user_music.h                # 启动音乐
 ```
 
 ## 许可证
