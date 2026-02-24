@@ -62,18 +62,19 @@ float PID_Calculate(void* controller, const float main_feedback, const float sub
         pid->Iout = -pid->max_iout;
     }
 
-    pid->out = pid->Pout + pid->Iout + pid->Dout;
+    float out = pid->Pout + pid->Iout + pid->Dout;
 
     // 输出限幅
-    if (pid->out > pid->max_out) {
-        pid->out = pid->max_out;
-    } else if (pid->out < -pid->max_out) {
-        pid->out = -pid->max_out;
+    if (out > pid->max_out) {
+        out = pid->max_out;
+    } else if (out < -pid->max_out) {
+        out = -pid->max_out;
     }
 
+    pid->out = out;
     pid->err[1] = pid->err[0];
 
-    return pid->out;
+    return out;
 }
 
 /**

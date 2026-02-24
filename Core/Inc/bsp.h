@@ -47,5 +47,19 @@ extern DJI_MOTOR_DRIVES test_GM6020;
 // ADRC 控制器
 #include "../../User_Algorithm/User_Controller/user_ladrc.h"
 extern LADRC_Controller user_ladrc_1;
+extern LADRC_Controller user_ladrc_2;
+#include "../../User_Algorithm/User_Controller/user_adrc.h"
+extern ADRC_Controller user_adrc_1;
+
+// 串级 PID 控制器
+#include "../../User_Algorithm/User_Controller/user_pid.h"
+extern PID_Controller user_pid_1;
+extern PID_Controller user_pid_2;
+#include "../../User_Algorithm/User_Controller/user_inc_pid.h"
+extern Incremental_PID_Controller user_inc_pid_1;
+extern Incremental_PID_Controller user_inc_pid_2;
+#include "../../User_Algorithm/User_Controller/user_cascade_controller.h"
+extern Cascade_Controller user_cascade_controller_1;
+
 
 #endif //__USER_BSP_H__

@@ -17,7 +17,7 @@ static uint8_t motor_num = 0;
 * @param rotor_angle_offset  电机零点偏移量 (0 ~ 8191)
 * @param motor_type          电机型号
 * @param mode                控制模式
-* @param controller          PID 或 ADRC 等控制器
+* @param controller          PID 或 ADRC 等控制器，开环模式下可以设置为 NULL
 */
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const uint16_t rotor_angle_offset,
                     const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller) {

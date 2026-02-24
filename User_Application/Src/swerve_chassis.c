@@ -22,15 +22,10 @@
 * @param fr_steer 前右轮转向电机
 * @param rl_steer 前左轮转向电机
 * @param rr_steer 后右轮转向电机
-* @param fl_steer_offset 左前轮转向角度零点偏移 (deg)
-* @param fr_steer_offset 右前轮转向角度零点偏移 (deg)
-* @param rl_steer_offset 左前轮转向角度零点偏移 (deg)
-* @param rr_steer_offset 左后轮转向角度零点偏移 (deg)
 */
 void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radius, const float wheel_radius, const float ratio,
     MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
-    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer,
-    const int8_t fl_reverse,     const int8_t fr_reverse,     const int8_t rl_reverse,     const int8_t rr_reverse) {
+    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer) {
 
     chassis->vx_target = 0.0f;
     chassis->vy_target = 0.0f;
@@ -48,11 +43,6 @@ void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radiu
     chassis->wheel_fr.steer_motor = fr_steer;
     chassis->wheel_rl.steer_motor = rl_steer;
     chassis->wheel_rr.steer_motor = rr_steer;
-
-    chassis->wheel_fl.reverse = fl_reverse;
-    chassis->wheel_fr.reverse = fr_reverse;
-    chassis->wheel_rl.reverse = rl_reverse;
-    chassis->wheel_rr.reverse = rr_reverse;
 }
 
 
@@ -81,7 +71,7 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx, const
     // 各轮子在底盘坐标系中的位置
     const CartesianCoord_Point positions[4] = {
         {-r * 0.707107f, r  * 0.707107f, 0.0f},
-        {-r * 0.707107f, -r * 0.707107f, 0.0f},
+        {r  * 0.707107f, r  * 0.707107f, 0.0f},
         {-r * 0.707107f, -r * 0.707107f, 0.0f},
         {r  * 0.707107f, -r * 0.707107f, 0.0f}
     };
@@ -149,9 +139,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         OptimizeSteerAngle(wheel);
 
         // 设置转向电机目标
-        // 角度控制模式：将角度转换为编码器值 [0, 8192)
-        const float target_encoder = (wheel->steer_angle_target + 180.0f) * 8192.0f / 360.0f;
-        wheel->steer_motor->Set_Motor_State(wheel->steer_motor, target_encoder);
+        wheel->steer_motor->Set_Motor_State(wheel->steer_motor, wheel->steer_angle_target);
 
         // 计算驱动轮的目标转速
         const float wheel_angular_velocity = wheel->drive_speed_target / chassis->wheel_radius;
@@ -162,7 +150,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         wheel->drive_speed_current = RPM_TO_RAD(motor_speed_rpm) * chassis->wheel_radius / chassis->ratio;
         
         // 设置驱动电机目标
-        wheel->wheel_motor->Set_Motor_State(wheel->wheel_motor, motor_rpm * (float)wheel->reverse * chassis->ratio);
+        wheel->wheel_motor->Set_Motor_State(wheel->wheel_motor, motor_rpm * chassis->ratio);
     }
 }
 
@@ -179,10 +167,10 @@ void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
     CartesianCoord_Point v_fl, v_fr, v_rl, v_rr;
     
     // 将极坐标速度转换为笛卡尔坐标
-    const PolarCoord_Point polar_fl = {chassis->wheel_fl.drive_speed_current * (float)chassis->wheel_fl.reverse, chassis->wheel_fl.steer_angle_current, 0.0f};
-    const PolarCoord_Point polar_fr = {chassis->wheel_fr.drive_speed_current * (float)chassis->wheel_fr.reverse, chassis->wheel_fr.steer_angle_current, 0.0f};
-    const PolarCoord_Point polar_rl = {chassis->wheel_rl.drive_speed_current * (float)chassis->wheel_rl.reverse, chassis->wheel_rl.steer_angle_current, 0.0f};
-    const PolarCoord_Point polar_rr = {chassis->wheel_rr.drive_speed_current * (float)chassis->wheel_rr.reverse, chassis->wheel_rr.steer_angle_current, 0.0f};
+    const PolarCoord_Point polar_fl = {chassis->wheel_fl.drive_speed_current, chassis->wheel_fl.steer_angle_current, 0.0f};
+    const PolarCoord_Point polar_fr = {chassis->wheel_fr.drive_speed_current, chassis->wheel_fr.steer_angle_current, 0.0f};
+    const PolarCoord_Point polar_rl = {chassis->wheel_rl.drive_speed_current, chassis->wheel_rl.steer_angle_current, 0.0f};
+    const PolarCoord_Point polar_rr = {chassis->wheel_rr.drive_speed_current, chassis->wheel_rr.steer_angle_current, 0.0f};
     
     PolarToCartesian(&polar_fl, &v_fl);
     PolarToCartesian(&polar_fr, &v_fr);
@@ -190,8 +178,8 @@ void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
     PolarToCartesian(&polar_rr, &v_rr);
     
     // 计算各轮子在底盘坐标系中的位置
-    const CartesianCoord_Point pos_fl = {-r * 0.707107f, r  * 0.707107f, 0.0f};
-    const CartesianCoord_Point pos_fr = {-r * 0.707107f, -r * 0.707107f, 0.0f};
+    const CartesianCoord_Point pos_fl = {-r * 0.707107f,  r * 0.707107f, 0.0f};
+    const CartesianCoord_Point pos_fr = {r  * 0.707107f,  r * 0.707107f, 0.0f};
     const CartesianCoord_Point pos_rl = {-r * 0.707107f, -r * 0.707107f, 0.0f};
     const CartesianCoord_Point pos_rr = {r  * 0.707107f, -r * 0.707107f, 0.0f};
 

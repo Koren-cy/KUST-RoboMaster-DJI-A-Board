@@ -133,8 +133,20 @@ int main(void)
   PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
   PWM_Set_Duty(&user_buzzer, 0.5f);
 
-  LADRC_Init(&user_ladrc_1, 80.0f, 4300.0f, 230.0f,1.8f, 16380.0f, 0.001f);
-  DJI_Motor_Init(&test_GM6020, &user_can_1, 1,0, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&user_ladrc_1);
+  // LADRC_Init(&user_ladrc_1, 80.0f, 4300.0f, 230.0f,1.8f, 16380.0f, 0.001f);
+  // LADRC_Init(&user_ladrc_1, 30.0f, 600.0f, 60.0f,70.0f, 60.0f, 0.001f);
+  // PID_Init(&user_pid_2, 200.0f, 1.0f, 30.0f, 5000.0f, 1000.0f);
+  // PID_Init(&user_pid_2, 300.0f, 0.0f, 00.0f, 5000.0f, 0.0f);
+  Inc_PID_Init(&user_inc_pid_1, 120.0f, 5.0f, 100.0f, 5000.0f, 16000.0f);
+  Inc_PID_Init(&user_inc_pid_2, 12.0f, 0.09f, 50.0f, 7.0f, 230.0f);
+  // ADRC_Init(&user_adrc_1, 200.0f, 0.05f, 45.0f, 675.0f, 3375.0f, 0.1f, 15.0f, 12.0f, 1.0f, 1.0f, 0.1f, 0.12f, 7000.0f,0.001f);
+  // LADRC_Init(&user_ladrc_1, 40.0f, 1000.0f, 90.0f,50.0f, 100.0f, 0.001f);
+  // LADRC_Init(&user_ladrc_2, 10.0f, 130.0f, 7.0f,0.18f, 8000.0f, 0.001f);
+  // LADRC_Init(&user_ladrc_2, 30.0f, 100.0f, 20.0f,45.0f, 120.0f, 0.001f);
+  Cascade_Controller_Init(&user_cascade_controller_1, (CONTROLLER_INTERFACE*)&user_inc_pid_2, (CONTROLLER_INTERFACE*)&user_inc_pid_1);
+  DJI_Motor_Init(&test_GM6020, &user_can_1, 1,0, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&user_cascade_controller_1);
+  // DJI_Motor_Init(&test_GM6020, &user_can_1, 1,0, GM6020, OpenLoop_current, NULL);
+
 
   /* USER CODE END 2 */
 

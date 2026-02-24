@@ -41,8 +41,7 @@ typedef struct {
 /* 函数声明 ------------------------------------------------------------------*/
 void SwerveChassis_Init(SwerveChassisState* chassis, float wheelbase_radius, float wheel_radius, float ratio,
     MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
-    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer,
-    int8_t fl_reverse,       int8_t fr_reverse,       int8_t rl_reverse,       int8_t rr_reverse);
+    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer);
 
 void SwerveChassis_Kinematics(SwerveChassisState* chassis, float vx, float vy, float omega);
 void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis);

@@ -49,3 +49,13 @@ DJI_MOTOR_DRIVES test_GM6020 = {0};
 
 // ADRC 控制器
 LADRC_Controller user_ladrc_1 = {0};
+LADRC_Controller user_ladrc_2 = {0};
+ADRC_Controller user_adrc_1 = {0};
+
+// 串级 PID 控制器
+PID_Controller user_pid_1 = {0};
+PID_Controller user_pid_2 = {0};
+Incremental_PID_Controller user_inc_pid_1 = {0};
+Incremental_PID_Controller user_inc_pid_2 = {0};
+Cascade_Controller user_cascade_controller_1 = {0};
+
