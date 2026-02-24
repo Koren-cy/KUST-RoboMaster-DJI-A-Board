@@ -17575,3 +17575,15 @@
 {"ts":1771945836893,"action":"FILE_OPENED","file":"/Core/Src/bsp.c","tags":{"FILE_LINE_OF_CODE":"46"}}
 {"ts":1771945874604,"action":"FILE_CLOSED","file":"/Core/Src/bsp.c","tags":{"FILE_LINE_OF_CODE":"45"}}
 {"ts":1771945874605,"action":"FILE_OPENED","file":"/User_Algorithm/Src/user_coord.c","tags":{"FILE_LINE_OF_CODE":"783"}}
+{"ts":1771945877559,"action":"FILE_CLOSED","file":"/User_Algorithm/Src/user_coord.c","tags":{"FILE_LINE_OF_CODE":"783"}}
+{"ts":1771945877559,"action":"FILE_OPENED","file":"/User_Algorithm/Src/user_fir.c","tags":{"FILE_LINE_OF_CODE":"43"}}
+{"ts":1771945881611,"action":"FILE_CLOSED","file":"/User_Algorithm/Src/user_fir.c","tags":{"FILE_LINE_OF_CODE":"43"}}
+{"ts":1771945881611,"action":"FILE_OPENED","file":"/User_Algorithm/Src/user_coord.c","tags":{"FILE_LINE_OF_CODE":"783"}}
+{"ts":1771945882285,"action":"FILE_CLOSED","file":"/User_Algorithm/Src/user_coord.c","tags":{"FILE_LINE_OF_CODE":"783"}}
+{"ts":1771945882285,"action":"FILE_OPENED","file":"/Core/Src/bsp.c","tags":{"FILE_LINE_OF_CODE":"45"}}
+{"ts":1771945882916,"action":"FILE_CLOSED","file":"/Core/Src/bsp.c","tags":{"FILE_LINE_OF_CODE":"45"}}
+{"ts":1771945882916,"action":"FILE_OPENED","file":"/Core/Inc/bsp.h","tags":{"FILE_LINE_OF_CODE":"45"}}
+{"ts":1771945883516,"action":"FILE_CLOSED","file":"/Core/Inc/bsp.h","tags":{"FILE_LINE_OF_CODE":"45"}}
+{"ts":1771945966004,"action":"IDE_DEACTIVATED"}
+{"ts":1771945986037,"action":"IDE_ACTIVATED"}
+{"ts":1771946001690,"action":"IDE_DEACTIVATED"}
