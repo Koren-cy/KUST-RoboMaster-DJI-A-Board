@@ -1,5 +1,5 @@
-#ifndef __USER_BSP_H__
-#define __USER_BSP_H__
+#ifndef USER_BSP_H
+#define USER_BSP_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -41,4 +41,4 @@ void user_can_2_callback(void * user_can);
 extern PWM_DRIVES user_buzzer;
 
 
-#endif //__USER_BSP_H__
+#endif // USER_BSP_H

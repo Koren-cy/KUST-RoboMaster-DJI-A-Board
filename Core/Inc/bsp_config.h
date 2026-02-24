@@ -1,5 +1,5 @@
-#ifndef __USER_BSP_CONFIG_H__
-#define __USER_BSP_CONFIG_H__
+#ifndef USER_BSP_CONFIG_H
+#define USER_BSP_CONFIG_H
 
 /* 全局配置 ------------------------------------------------------------------*/
 
@@ -18,4 +18,4 @@
 /* 全局结构体 ----------------------------------------------------------------*/
 
 
-#endif //__USER_BSP_CONFIG_H__
+#endif // USER_BSP_CONFIG_H
