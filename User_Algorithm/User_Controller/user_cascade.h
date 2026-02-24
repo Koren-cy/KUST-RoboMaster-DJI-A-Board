@@ -1,5 +1,5 @@
-#ifndef USER_CASCADE_CONTROLLER_H
-#define USER_CASCADE_CONTROLLER_H
+#ifndef USER_CASCADE_H
+#define USER_CASCADE_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -30,4 +30,4 @@ void Cascade_Controller_Set_Target(void* controller, float target);
 float Cascade_Controller_Calculate(void* controller, float outer_feedback, float inner_feedback);
 float Cascade_Controller_Get_Output(void* controller);
 
-#endif // USER_CASCADE_CONTROLLER_H
+#endif // USER_CASCADE_H
