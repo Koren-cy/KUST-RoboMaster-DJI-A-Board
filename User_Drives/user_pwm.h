@@ -1,9 +1,9 @@
-#ifndef __USER_PWM_H__
-#define __USER_PWM_H__
+#ifndef USER_PWM_H
+#define USER_PWM_H
+#include "main.h"
+#ifdef HAL_TIM_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
-#include "../../Core/Inc/bsp_config.h"
 
 /* 类型定义 ------------------------------------------------------------------*/
 /**
@@ -22,5 +22,5 @@ void PWM_Init(PWM_DRIVES *user_pwm, TIM_HandleTypeDef *htim, uint32_t channel, u
 uint32_t PWM_Set_Duty(PWM_DRIVES *user_pwm, float duty);
 uint32_t PWM_Set_Frequency(PWM_DRIVES *user_pwm, uint32_t freq);
 
-
-#endif  // __USER_PWM_H__
+#endif /* HAL_TIM_MODULE_ENABLED */
+#endif  // USER_PWM_H

@@ -1,5 +1,5 @@
-#ifndef __USER_MOTOR_H__
-#define __USER_MOTOR_H__
+#ifndef USER_MOTOR_H
+#define USER_MOTOR_H
 
 #define MOTOR_DRIVES_INTERFACE_FUNC \
     void  (*Set_Motor_State)(void* motor, float value);   /* 设置电机的运动状态 */ \
@@ -12,4 +12,4 @@ typedef struct {
     MOTOR_DRIVES_INTERFACE_FUNC
 } MOTOR_INTERFACE;
 
-#endif //__USER_MOTOR_H__
+#endif // USER_MOTOR_H

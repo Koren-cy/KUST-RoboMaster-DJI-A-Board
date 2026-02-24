@@ -1,8 +1,7 @@
+#ifndef USER_MUSIC_H
+#define USER_MUSIC_H
 #include "main.h"
 
-
-#ifndef __USER_MUSIC_H__
-#define __USER_MUSIC_H__
 
 const uint16_t bad_apple[885][2] = {
     {311, 190}, {0, 21}, {349, 190}, {0, 22}, {370, 190}, {0, 21}, {415, 190}, {0, 21},
@@ -123,4 +122,4 @@ const uint16_t dji_starting_music[3][2] = {
 };
 
 
-#endif //__USER_MUSIC_H__
+#endif // USER_MUSIC_H

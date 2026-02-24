@@ -1,5 +1,5 @@
-#ifndef __USER_INC_PID_H__
-#define __USER_INC_PID_H__
+#ifndef USER_INC_PID_H
+#define USER_INC_PID_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -32,4 +32,4 @@ float Inc_PID_Calculate(void* controller, float main_feedback, float sub_feedbac
 float Inc_PID_Get_Output(void* controller);
 
 
-#endif //__USER_INC_PID_H__
+#endif // USER_INC_PID_H

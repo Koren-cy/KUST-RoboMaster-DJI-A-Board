@@ -1,7 +1,8 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_CAN_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include <math.h>
 #include "../user_dji_motor.h"
-#include "../../Core/Inc/bsp.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
 static DJI_MOTOR_DRIVES *motor_drives[DJI_MOTOR_NUM];
@@ -239,3 +240,5 @@ float DJI_Motor_Get_Current(void* motor) {
     const DJI_MOTOR_DRIVES* dji_motor = (DJI_MOTOR_DRIVES*)motor;
     return (float)dji_motor->torque_current / 16384.0f * 3000.0f;
 }
+
+#endif /* HAL_CAN_MODULE_ENABLED */

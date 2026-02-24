@@ -1,8 +1,9 @@
-#ifndef __USER_ADC_H__
-#define __USER_ADC_H__
+#ifndef USER_ADC_H
+#define USER_ADC_H
+#include "main.h"
+#ifdef HAL_ADC_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
 #include "../../Core/Inc/bsp_config.h"
 
 /* 类型定义 ------------------------------------------------------------------*/
@@ -29,4 +30,5 @@ typedef struct {
 void ADC_Init(ADC_DRIVES* user_adc, ADC_HandleTypeDef* hadc, uint8_t channel_num, uint8_t vref_rank, uint8_t resolution, ADC_Callback callback);
 float ADC_GetVoltage(const ADC_DRIVES* user_adc, uint8_t channel_rank);
 
-#endif //__USER_ADC_H__
+#endif /* HAL_ADC_MODULE_ENABLED */
+#endif // USER_ADC_H

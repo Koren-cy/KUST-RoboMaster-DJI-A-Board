@@ -1,6 +1,7 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_GPIO_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_led.h"
-#include "../../Core/Inc/bsp.h"
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -99,3 +100,5 @@ LED_State LED_Get_State(const LED_DRIVES* user_led){
 
     return LED_OFF;
 }
+
+#endif /* HAL_GPIO_MODULE_ENABLED */

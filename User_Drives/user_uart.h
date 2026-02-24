@@ -1,8 +1,9 @@
-#ifndef __USER_UART_H__
-#define __USER_UART_H__
+#ifndef USER_UART_H
+#define USER_UART_H
+#include "main.h"
+#ifdef HAL_UART_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
 #include "../../Core/Inc/bsp_config.h"
 #include "../../User_Architect/user_queue.h"
 #include "../../User_Architect/user_ring_buffe.h"
@@ -44,4 +45,5 @@ typedef struct {
 void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart, UART_Callback callback);
 void UART_Send(UART_DRIVES* user_uart, const char* str);
 
-#endif //__USER_UART_H__
+#endif /* HAL_UART_MODULE_ENABLED */
+#endif // USER_UART_H

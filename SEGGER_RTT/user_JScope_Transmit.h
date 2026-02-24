@@ -1,5 +1,5 @@
-#ifndef __USER_JSCOPE_TRANSMIT_H__
-#define __USER_JSCOPE_TRANSMIT_H__
+#ifndef USER_JSCOPE_TRANSMIT_H
+#define USER_JSCOPE_TRANSMIT_H
 
 #include "main.h"
 
@@ -20,4 +20,4 @@ typedef struct {
 void JScope_Init(TIM_HandleTypeDef *htim);
 void JScope_Transmit(uint32_t delta_time);
 
-#endif //__USER_JSCOPE_TRANSMIT_H__
+#endif // USER_JSCOPE_TRANSMIT_H

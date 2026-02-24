@@ -1,8 +1,9 @@
-#ifndef __USER_DJI_BUS_H__
-#define __USER_DJI_BUS_H__
+#ifndef USER_DJI_BUS_H
+#define USER_DJI_BUS_H
+#include "main.h"
+#ifdef HAL_UART_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
 #include "../../Core/Inc/bsp_config.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
@@ -29,4 +30,5 @@ typedef struct {
 void DBUS_Init(DBUS_DRIVES* user_dbus, UART_HandleTypeDef* huart);
 void DBUS_Handler(const UART_HandleTypeDef* huart);
 
-#endif //__USER_DJI_BUS_H__
+#endif /* HAL_UART_MODULE_ENABLED */
+#endif //USER_DJI_BUS_H

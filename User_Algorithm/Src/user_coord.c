@@ -2,7 +2,6 @@
 #include "../user_coord.h"
 #include <math.h>
 
-/* 函数体 --------------------------------------------------------------------*/
 /* 笛卡尔坐标运算函数 ----------------------------------------------------------*/
 /**
  * @brief  计算两点间欧氏距离
@@ -12,7 +11,7 @@
  */
 float Distance_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2) {
     float sum;
-    const float diff[3] = {p2->x - p1->x, p2->y - p1->y, p2->z - p1->z};
+    float diff[3] = {p2->x - p1->x, p2->y - p1->y, p2->z - p1->z};
     arm_dot_prod_f32(diff, diff, 3, &sum);
     return sqrtf(sum);
 }
@@ -24,7 +23,7 @@ float Distance_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Po
  */
 float Magnitude_Cartesian(const CartesianCoord_Point* point) {
     float sum;
-    const float vec[3] = {point->x, point->y, point->z};
+    float vec[3] = {point->x, point->y, point->z};
     arm_dot_prod_f32(vec, vec, 3, &sum);
     return sqrtf(sum);
 }
@@ -36,7 +35,7 @@ float Magnitude_Cartesian(const CartesianCoord_Point* point) {
  */
 void Normalize_Cartesian(const CartesianCoord_Point* point, CartesianCoord_Point* result) {
     float mag_sq;
-    const float vec[3] = {point->x, point->y, point->z};
+    float vec[3] = {point->x, point->y, point->z};
     arm_dot_prod_f32(vec, vec, 3, &mag_sq);
 
     if (mag_sq < PRECISION_SQ) {
@@ -58,8 +57,8 @@ void Normalize_Cartesian(const CartesianCoord_Point* point, CartesianCoord_Point
 float AngleDifference_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord_Point* p2) {
     float mag1_sq, mag2_sq, dot;
 
-    const float v1[3] = {p1->x, p1->y, p1->z};
-    const float v2[3] = {p2->x, p2->y, p2->z};
+    float v1[3] = {p1->x, p1->y, p1->z};
+    float v2[3] = {p2->x, p2->y, p2->z};
 
     arm_dot_prod_f32(v1, v1, 3, &mag1_sq);
     arm_dot_prod_f32(v2, v2, 3, &mag2_sq);
@@ -97,8 +96,8 @@ void CrossProduct_Cartesian(const CartesianCoord_Point* p1, const CartesianCoord
  * @param  result: 投影结果
  */
 void Project_Cartesian(const CartesianCoord_Point* point, const CartesianCoord_Point* onto, CartesianCoord_Point* result) {
-    const float v1[3] = {point->x, point->y, point->z};
-    const float v2[3] = {onto->x, onto->y, onto->z};
+    float v1[3] = {point->x, point->y, point->z};
+    float v2[3] = {onto->x, onto->y, onto->z};
     float dot, onto_mag_sq;
 
     arm_dot_prod_f32(v1, v2, 3, &dot);
@@ -535,8 +534,8 @@ void Quaternion_Slerp(const Quaternion* q1, const Quaternion* q2, float t, Quate
         return;
     }
     
-    const float q1_vec[4] = {q1->w, q1->x, q1->y, q1->z};
-    const float q2_vec[4] = {q2->w, q2->x, q2->y, q2->z};
+    float q1_vec[4] = {q1->w, q1->x, q1->y, q1->z};
+    float q2_vec[4] = {q2->w, q2->x, q2->y, q2->z};
     float dot;
     arm_dot_prod_f32(q1_vec, q2_vec, 4, &dot);
     

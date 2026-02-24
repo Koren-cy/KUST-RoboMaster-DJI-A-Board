@@ -1,8 +1,8 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_UART_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_uart.h"
-#include "../../Core/Inc/bsp.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 /* 私有变量 ------------------------------------------------------------------*/
@@ -110,4 +110,6 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
         }
     }
 }
+
+#endif /* HAL_UART_MODULE_ENABLED */
 

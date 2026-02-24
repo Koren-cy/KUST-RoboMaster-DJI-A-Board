@@ -1,8 +1,9 @@
-#ifndef __USER_CAN_H__
-#define __USER_CAN_H__
+#ifndef USER_CAN_H
+#define USER_CAN_H
+#include "main.h"
+#ifdef HAL_CAN_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
 #include "../../Core/Inc/bsp_config.h"
 
 /* 类型定义 ------------------------------------------------------------------*/
@@ -46,5 +47,5 @@ typedef struct  {
 void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan, CAN_Callback callback);
 void CAN_Send(const CAN_DRIVES* user_can, uint32_t id, const uint8_t *data, uint8_t len);
 
-
-#endif //__USER_CAN_H__
+#endif /* HAL_CAN_MODULE_ENABLED */
+#endif // USER_CAN_H

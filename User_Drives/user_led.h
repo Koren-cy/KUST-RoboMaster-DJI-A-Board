@@ -1,9 +1,9 @@
-#ifndef __USER_LED_H__
-#define __USER_LED_H__
+#ifndef USER_LED_H
+#define USER_LED_H
+#include "main.h"
+#ifdef HAL_GPIO_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
-#include "../../Core/Inc/bsp_config.h"
 
 /* 类型定义 ------------------------------------------------------------------*/
 /**
@@ -31,4 +31,5 @@ void LED_Off(const LED_DRIVES* user_led);
 void LED_Toggle(const LED_DRIVES* user_led);
 LED_State LED_Get_State(const LED_DRIVES* user_led);
 
-#endif //__USER_LED_H__
+#endif /* HAL_GPIO_MODULE_ENABLED */
+#endif // USER_LED_H

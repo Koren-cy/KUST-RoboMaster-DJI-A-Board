@@ -1,6 +1,7 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_TIM_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_pwm.h"
-#include "../../Core/Inc/bsp.h"
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -49,4 +50,6 @@ uint32_t PWM_Set_Frequency(PWM_DRIVES *user_pwm, const uint32_t freq){
 
     return reload_reg;
 }
+
+#endif /* HAL_TIM_MODULE_ENABLED */
 

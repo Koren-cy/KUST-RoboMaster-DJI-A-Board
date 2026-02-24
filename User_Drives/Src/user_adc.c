@@ -1,6 +1,7 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_ADC_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_adc.h"
-#include "../../Core/Inc/bsp.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
 static ADC_DRIVES *adc_drives[ADC_NUM];
@@ -62,3 +63,6 @@ float ADC_GetVoltage(const ADC_DRIVES* user_adc, const uint8_t channel_rank) {
 //         }
 //     }
 // }
+
+
+#endif /* HAL_ADC_MODULE_ENABLED */

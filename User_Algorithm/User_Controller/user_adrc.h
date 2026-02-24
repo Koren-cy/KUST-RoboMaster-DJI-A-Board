@@ -1,5 +1,5 @@
-#ifndef __USER_ADRC_H__
-#define __USER_ADRC_H__
+#ifndef USER_ADRC_H
+#define USER_ADRC_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -73,4 +73,4 @@ float ADRC_Calculate(void* controller, float main_feedback, float sub_feedback);
 float ADRC_Get_Output(void* controller);
 
 
-#endif //__USER_ADRC_H__
+#endif // USER_ADRC_H

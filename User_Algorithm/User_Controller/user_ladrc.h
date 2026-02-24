@@ -1,5 +1,5 @@
-#ifndef __USER_LADRC_H__
-#define __USER_LADRC_H__
+#ifndef USER_LADRC_H
+#define USER_LADRC_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -54,4 +54,4 @@ float LADRC_Calculate(void* controller, float main_feedback, float sub_feedback)
 float LADRC_Get_Output(void* controller);
 
 
-#endif //__USER_LADRC_H__
+#endif // USER_LADRC_H

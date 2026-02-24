@@ -1,5 +1,5 @@
-#ifndef __USER_CONTROLLER_H__
-#define __USER_CONTROLLER_H__
+#ifndef USER_CONTROLLER_H
+#define USER_CONTROLLER_H
 
 #define CONTROLLER_INTERFACE_FUNC \
     void  (*Set_Target)(void* controller, float target);                              /* 设置控制器目标值 */ \
@@ -11,4 +11,4 @@ typedef struct {
     CONTROLLER_INTERFACE_FUNC
 } CONTROLLER_INTERFACE;
 
-#endif //__USER_CONTROLLER_H__
+#endif // USER_CONTROLLER_H

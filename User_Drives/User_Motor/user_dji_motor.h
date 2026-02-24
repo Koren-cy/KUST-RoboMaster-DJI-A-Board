@@ -1,12 +1,12 @@
-#ifndef __USER_DJI_MOTOR_H__
-#define __USER_DJI_MOTOR_H__
+#ifndef USER_DJI_MOTOR_H
+#define USER_DJI_MOTOR_H
+#include "main.h"
+#ifdef HAL_CAN_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "main.h"
 #include "user_motor.h"
 #include "../../Core/Inc/bsp_config.h"
-#include "../../User_Algorithm/User_Controller/user_pid.h"
-#include "../../User_Drives/user_can.h"
+#include "../../User_Algorithm/User_Controller/user_controller.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
 #define GM6020_CURRENT_CONTROL_ID_1   (0x1FE)
@@ -86,4 +86,5 @@ float DJI_Motor_Get_Speed(void* motor);
 float DJI_Motor_Get_Angle(void* motor);
 float DJI_Motor_Get_Current(void* motor);
 
-#endif //__USER_DJI_MOTOR_H__
+#endif /* HAL_CAN_MODULE_ENABLED */
+#endif // USER_DJI_MOTOR_H

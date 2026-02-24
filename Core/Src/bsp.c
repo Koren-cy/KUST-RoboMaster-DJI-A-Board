@@ -33,7 +33,6 @@ LED_DRIVES user_green_led = {0};
 CAN_DRIVES user_can_1 = {0};
 void user_can_1_callback(void * user_can) {
     const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
-    DJI_Motor_Handle(can);
 }
 
 CAN_DRIVES user_can_2 = {0};
@@ -43,19 +42,4 @@ void user_can_2_callback(void * user_can) {
 
 // 蜂鸣器
 PWM_DRIVES user_buzzer = {0};
-
-// 大疆电机
-DJI_MOTOR_DRIVES test_GM6020 = {0};
-
-// ADRC 控制器
-LADRC_Controller user_ladrc_1 = {0};
-LADRC_Controller user_ladrc_2 = {0};
-ADRC_Controller user_adrc_1 = {0};
-
-// 串级 PID 控制器
-PID_Controller user_pid_1 = {0};
-PID_Controller user_pid_2 = {0};
-Incremental_PID_Controller user_inc_pid_1 = {0};
-Incremental_PID_Controller user_inc_pid_2 = {0};
-Cascade_Controller user_cascade_controller_1 = {0};
 

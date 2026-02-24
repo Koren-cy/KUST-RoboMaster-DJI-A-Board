@@ -1,5 +1,5 @@
-#ifndef __USER_FIR_H__
-#define __USER_FIR_H__
+#ifndef USER_FIR_H
+#define USER_FIR_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../../Drivers/CMSIS/DSP/Include/arm_math.h"
@@ -22,4 +22,4 @@ typedef struct {
 void FIR_Init(FIR_Filter *fir, const float *coeffs, uint16_t order);
 float FIR_Update(FIR_Filter *fir, float input);
 
-#endif //__USER_FIR_H__
+#endif // USER_FIR_H

@@ -58,7 +58,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern DMA_HandleTypeDef hdma_adc1;
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 extern TIM_HandleTypeDef htim2;
@@ -217,12 +216,7 @@ void SysTick_Handler(void)
     }
   }
 
-  const uint8_t key = SEGGER_RTT_GetKey();
-  if (48 <= key && key <= 57) {
-    DJI_Motor_Set_State(&test_GM6020,(float)(key - 48) * 30.0f);
-  }
 
-  DJI_Motor_Execute(&user_can_1);
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
@@ -308,20 +302,6 @@ void DMA2_Stream2_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream2_IRQn 1 */
 
   /* USER CODE END DMA2_Stream2_IRQn 1 */
-}
-
-/**
-  * @brief This function handles DMA2 stream4 global interrupt.
-  */
-void DMA2_Stream4_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA2_Stream4_IRQn 0 */
-
-  /* USER CODE END DMA2_Stream4_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA2_Stream4_IRQn 1 */
-
-  /* USER CODE END DMA2_Stream4_IRQn 1 */
 }
 
 /**

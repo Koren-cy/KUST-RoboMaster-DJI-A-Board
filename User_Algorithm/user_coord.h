@@ -1,5 +1,5 @@
-#ifndef __USER_COORD_H__
-#define __USER_COORD_H__
+#ifndef USER_COORD_H
+#define USER_COORD_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "arm_math.h"
@@ -168,5 +168,5 @@ void EulerAngles_Normalize(const EulerAngles* euler, EulerAngles* result);
 void TransformPoint_Cartesian(const CartesianCoord_Point* point, const CartesianCoord_Point* origin, const RotationMatrix* rotation, CartesianCoord_Point* result);
 void InverseTransformPoint_Cartesian(const CartesianCoord_Point* point, const CartesianCoord_Point* origin, const RotationMatrix* rotation, CartesianCoord_Point* result);
 
-#endif //__USER_COORD_H__
+#endif // USER_COORD_H
 

@@ -1,6 +1,7 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_CAN_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_can.h"
-#include "../../Core/Inc/bsp.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
 static CAN_DRIVES *can_drives[CAN_NUM];
@@ -89,3 +90,5 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
         }
     }
 }
+
+#endif /* HAL_CAN_MODULE_ENABLED */

@@ -1,6 +1,7 @@
+#include "../../Core/Inc/bsp.h"
+#ifdef HAL_UART_MODULE_ENABLED
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_dji_bus.h"
-#include "../../Core/Inc/bsp.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
 static DBUS_DRIVES *dbus_drive = NULL;
@@ -88,5 +89,7 @@ void DBUS_Handler(const UART_HandleTypeDef* huart) {
         dbus_rx_idle_callback(huart);
     }
 }
+
+#endif /* HAL_UART_MODULE_ENABLED */
 
 

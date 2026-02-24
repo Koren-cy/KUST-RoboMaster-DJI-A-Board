@@ -1,5 +1,5 @@
-#ifndef __SWERVE_CHASSIS_H__
-#define __SWERVE_CHASSIS_H__
+#ifndef SWERVE_CHASSIS_H
+#define SWERVE_CHASSIS_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -47,4 +47,4 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, float vx, float vy, f
 void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis);
 void SwerveChassis_InverseKinematics(SwerveChassisState* chassis);
 
-#endif //__SWERVE_CHASSIS_H__
+#endif //SWERVE_CHASSIS_H
