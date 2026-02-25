@@ -77,7 +77,6 @@ typedef struct {
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id, uint16_t rotor_angle_offset,
                     Dji_Motor_Type motor_type, Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller);
 
-void DJI_Motor_Handle(const CAN_DRIVES* user_can);
 void DJI_Motor_Execute(const CAN_DRIVES* user_can);
 
 /* 接口函数声明 --------------------------------------------------------------*/

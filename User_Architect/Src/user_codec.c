@@ -1,5 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_codec.h"
+#include <string.h>
 
 /* 私有宏定义 ----------------------------------------------------------------*/
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
@@ -26,15 +27,33 @@ static uint32_t get_mask(const uint8_t bitwidth) {
 * @param codec      编解码器结构体指针
 * @param ptr        数据缓冲区指针
 * @param byte_order 字节序
-* @note 如果用于编码，请确保缓冲区中全 0
 */
 void Codec_Init(CODEC *codec, uint8_t *ptr, const Byte_Order byte_order) {
+    memset(codec, 0, sizeof(CODEC));
+
     codec->ptr = ptr;
     codec->byte_order = byte_order;
     codec->byte_index = 0;
     codec->bit_index = 7;
 }
 
+/**
+* @brief 跳过缓冲区中的位
+* @param codec      编解码器结构体指针
+* @param bitwidth   跳过的位宽
+*/
+void Codec_Decode_Skip(CODEC *codec, const uint8_t bitwidth) {
+    uint8_t bits_remaining = bitwidth;
+    while (bits_remaining > 0) {
+        bits_remaining--;
+        if (codec->bit_index == 0) {
+            codec->bit_index = 7;
+            codec->byte_index++;
+        }else {
+            codec->bit_index--;
+        }
+    }
+}
 
 /**
 * @brief 从缓冲区解码无符号数据

@@ -85,7 +85,7 @@ uint16_t RingBuffer_Put(RING_BUFFER *buffer, const uint8_t *data, const uint16_t
 * @return 获取的数据帧长度
 * @retval 0 没有获取到数据帧
 */
-uint16_t RingBuffer_GetWithHT(RING_BUFFER *buffer, uint8_t *data, const char *head, const char *tail) {
+uint16_t RingBuffer_GetWith_H_T(RING_BUFFER *buffer, uint8_t *data, const char *head, const char *tail) {
     const uint16_t buff_len = RingBuffer_GetLength(buffer);
     const uint16_t head_len = (uint16_t)strlen(head);
     const uint16_t tail_len = (uint16_t)strlen(tail);
@@ -143,7 +143,7 @@ uint16_t RingBuffer_GetWithHT(RING_BUFFER *buffer, uint8_t *data, const char *he
 * @retval 0 没有获取到数据帧
 * @retval len 成功获取到数据帧
 */
-uint16_t RingBuffer_GetWithHLen(RING_BUFFER *buffer, uint8_t *data, const char *head, const uint16_t len) {
+uint16_t RingBuffer_GetWith_H_Len(RING_BUFFER *buffer, uint8_t *data, const char *head, const uint16_t len) {
     const uint16_t buff_len = RingBuffer_GetLength(buffer);
     const uint16_t head_len = (uint16_t)strlen(head);
     
@@ -187,7 +187,7 @@ uint16_t RingBuffer_GetWithHLen(RING_BUFFER *buffer, uint8_t *data, const char *
 * @retval 0 缓冲区数据长度不足
 * @retval len 成功获取到数据帧
 */
-uint16_t RingBuffer_GetWithLen(RING_BUFFER *buffer, uint8_t *data, const uint16_t len) {
+uint16_t RingBuffer_GetWith_Len(RING_BUFFER *buffer, uint8_t *data, const uint16_t len) {
     const uint16_t buff_len = RingBuffer_GetLength(buffer);
     
     if (buff_len >= len) {
@@ -214,7 +214,7 @@ uint16_t RingBuffer_GetWithLen(RING_BUFFER *buffer, uint8_t *data, const uint16_
 * @return 获取的数据帧长度
 * @retval 0 没有获取到数据帧
 */
-uint16_t RingBuffer_GetWithH(RING_BUFFER *buffer, uint8_t *data, const char *head) {
+uint16_t RingBuffer_GetWith_H_H(RING_BUFFER *buffer, uint8_t *data, const char *head) {
     const uint16_t buff_len = RingBuffer_GetLength(buffer);
     const uint16_t head_len = (uint16_t)strlen(head);
     

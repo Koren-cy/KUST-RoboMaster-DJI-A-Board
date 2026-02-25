@@ -13,11 +13,11 @@ static uint8_t can_num = 0;
 * @brief 初始化 CAN 总线
 * @param user_can CAN 总线驱动结构体指针
 * @param hcan     硬件句柄
-* @param callback 用户自定义的 can 总线消息接收回调函数
 */
-void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan, const CAN_Callback callback){
+void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan){
+    memset(user_can, 0, sizeof(CAN_DRIVES));
+    
     user_can->hcan = hcan;
-    user_can->callback = callback;
 
     user_can->tx_conf.IDE = CAN_ID_STD;
     user_can->tx_conf.RTR = CAN_RTR_DATA;
@@ -40,6 +40,16 @@ void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan, const CAN_Callback 
 
     can_drives[can_num] = user_can;
     can_num ++;
+}
+
+/**
+* @brief 注册 CAN 接收回调函数
+* @param user_can CAN 总线驱动结构体指针
+* @param callback 用户自定义的 can 总线消息接收回调函数
+*/
+void CAN_RegisterCallback(CAN_DRIVES* user_can, const CAN_Callback callback){
+    user_can->callbacks[user_can->callback_num] = callback;
+    user_can->callback_num++;
 }
 
 /**
@@ -85,8 +95,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
             can_drive->rx_msg.RTR = RxHeader.RTR;
             can_drive->rx_msg.DLC = RxHeader.DLC;
 
-            if (can_drive->callback != NULL)
-                can_drive->callback(can_drive);
+            for (uint8_t i = 0; i < can_drive->callback_num; i++) {
+                can_drive->callbacks[i](can_drive);
+            }
         }
     }
 }

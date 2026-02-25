@@ -10,8 +10,8 @@
 * @note 在帧结构中，偏移量小的靠近帧头的字节是高位则为大端序。
 */
 typedef enum {
-    Little_Endian,  /* 小端序 */
-    Big_Endian,     /* 大端序 */
+    Little_Endian,  /* 小端序 靠近帧头的字节是低位*/
+    Big_Endian,     /* 大端序 靠近帧头的字节是高位*/
 } Byte_Order;
 
 /**
@@ -27,6 +27,7 @@ typedef struct {
 /* 函数声明 ------------------------------------------------------------------*/
 void Codec_Init(CODEC *codec, uint8_t *ptr, Byte_Order byte_order);
 
+void Codec_Decode_Skip(CODEC *codec, uint8_t bitwidth);
 uint32_t Codec_Decode_Unsigned(CODEC *codec, uint8_t bitwidth);
 int32_t Codec_Decode_Signed(CODEC *codec, uint8_t bitwidth);
 

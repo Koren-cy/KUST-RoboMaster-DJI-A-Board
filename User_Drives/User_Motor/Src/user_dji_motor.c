@@ -5,8 +5,12 @@
 #include "../user_dji_motor.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
-static DJI_MOTOR_DRIVES *motor_drives[DJI_MOTOR_NUM];
+static DJI_MOTOR_DRIVES* motor_drives[DJI_MOTOR_NUM];
 static uint8_t motor_num = 0;
+
+/* 私有函数声明 --------------------------------------------------------------*/
+
+static void DJI_Motor_Handle(void* user_can);
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -22,6 +26,8 @@ static uint8_t motor_num = 0;
 */
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const uint16_t rotor_angle_offset,
                     const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller) {
+    memset(user_motor, 0, sizeof(DJI_MOTOR_DRIVES));
+    
     // 绑定接口
     user_motor->Set_Motor_State = DJI_Motor_Set_State;
     user_motor->Get_Motor_Speed = DJI_Motor_Get_Speed;
@@ -62,25 +68,37 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const ui
             break;
     }
 
+    uint8_t is_callback_register = 0;
+    for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
+        const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
+        if (motor->can->hcan == user_can->hcan)
+            is_callback_register = 1;
+    }
+
     motor_drives[motor_num] = user_motor;
     motor_num++;
+
+    if (is_callback_register == 0)
+        CAN_RegisterCallback(user_can, DJI_Motor_Handle);
+
 }
 
 /**
 * @brief 处理电机反馈数据
 * @param user_can CAN 总线驱动结构体指针
-* @note  需要在相应的 CAN 总线接收回调函数中调用
+* @note  会在初始化时自动注册到 CAN 总线接收回调函数表
 */
-void DJI_Motor_Handle(const CAN_DRIVES* user_can) {
+static void DJI_Motor_Handle(void* user_can) {
+    const CAN_DRIVES* can = (CAN_DRIVES*)user_can;
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
 
-        if (motor->can->hcan != user_can->hcan || motor->fdb_id != user_can->rx_msg.StdId)
+        if (motor->can->hcan != can->hcan || motor->fdb_id != can->rx_msg.StdId)
             continue;
 
         const uint16_t last_rotor_angle = motor->rotor_angle;
 
-        const uint8_t *data = user_can->rx_msg.Data;
+        const uint8_t *data = can->rx_msg.Data;
         motor->rotor_angle    = (uint16_t)(data[0] << 8 | data[1]);
         motor->rotor_speed    = (int16_t) (data[2] << 8 | data[3]);
         motor->torque_current = (int16_t) (data[4] << 8 | data[5]);

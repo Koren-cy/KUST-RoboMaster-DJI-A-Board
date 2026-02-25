@@ -1,8 +1,7 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_ladrc.h"
+#include <string.h>
 
-#include "bsp.h"
-#include "../../user_fir.h"
 
 /* 私有函数声明 --------------------------------------------------------------*/
 static void LESO_Calculate(LESO_Controller *leso, float feedback, float u, float b0, float dt);
@@ -23,6 +22,8 @@ static float LSEF_Calculate(const LSEF_Controller *lsef, float e1, float e2);
 void LADRC_Init(LADRC_Controller *ladrc,
                 const float wc, const float kp, const float kd,
                 const float b0, const float max_out, const float dt) {
+    memset(ladrc, 0, sizeof(LADRC_Controller));
+    
     // 绑定接口函数
     ladrc->Set_Target = LADRC_Set_Target;
     ladrc->Calculate = LADRC_Calculate;

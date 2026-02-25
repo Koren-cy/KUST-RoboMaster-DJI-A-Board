@@ -1,6 +1,7 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_adrc.h"
 #include <math.h>
+#include <string.h>
 
 /* 私有函数声明 --------------------------------------------------------------*/
 static void TD_Calculate(TD_Controller *td, float target, float dt);
@@ -34,6 +35,8 @@ void ADRC_Init(ADRC_Controller *adrc,
                const float beta1_eso, const float beta2_eso, const float beta3_eso, const float delta_eso,
                const float beta1_nlsef, const float beta2_nlsef, const float alpha1, const float alpha2, const float delta_nlsef,
                const float b0, const float max_out, const float dt) {
+    memset(adrc, 0, sizeof(ADRC_Controller));
+    
     // 绑定接口函数
     adrc->Set_Target = ADRC_Set_Target;
     adrc->Calculate = ADRC_Calculate;

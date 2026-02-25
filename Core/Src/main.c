@@ -116,13 +116,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   JScope_Init(&htim2);
 
-  UART_Init(&user_debug_uart, &huart6, user_debug_uart_callback);
+  UART_Init(&user_debug_uart, &huart6);
 
   LED_Init(&user_red_led, LED_RED_GPIO_Port, LED_RED_Pin, 1);
   LED_Init(&user_green_led, LED_GREEN_GPIO_Port, LED_GREEN_Pin, 1);
 
-  CAN_Init(&user_can_1, &hcan1, user_can_1_callback);
-  CAN_Init(&user_can_2, &hcan2, user_can_2_callback);
+  CAN_Init(&user_can_1, &hcan1);
+  CAN_Init(&user_can_2, &hcan2);
 
   // 初始化蜂鸣器 （用于播放启动音）
   PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
@@ -416,7 +416,7 @@ static void MX_USART6_UART_Init(void)
 
   /* USER CODE END USART6_Init 1 */
   huart6.Instance = USART6;
-  huart6.Init.BaudRate = 115200;
+  huart6.Init.BaudRate = 921600;
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;

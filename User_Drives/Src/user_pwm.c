@@ -13,6 +13,8 @@
 * @param tim_clock 定时器时钟频率  (总线时钟频率)
 */
 void PWM_Init(PWM_DRIVES *user_pwm, TIM_HandleTypeDef *htim, const uint32_t channel, const uint32_t tim_clock){
+    memset(user_pwm, 0, sizeof(PWM_DRIVES));
+    
     user_pwm->htim = htim;
     user_pwm->channel = channel;
     user_pwm->clock = tim_clock / (htim->Init.Prescaler + 1);

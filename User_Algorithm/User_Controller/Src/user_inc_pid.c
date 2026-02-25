@@ -1,5 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_inc_pid.h"
+#include <string.h>
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -14,6 +15,8 @@
 */
 void Inc_PID_Init(Incremental_PID_Controller *pid, const float kp, const float ki,
                           const float kd, const float max_increase, const float max_out) {
+    memset(pid, 0, sizeof(Incremental_PID_Controller));
+    
     // 绑定接口函数
     pid->Set_Target = Inc_PID_Set_Target;
     pid->Calculate = Inc_PID_Calculate;

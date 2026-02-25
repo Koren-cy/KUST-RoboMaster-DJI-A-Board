@@ -37,14 +37,16 @@ typedef struct {
 * @brief can 总线驱动结构体
 */
 typedef struct  {
-    CAN_HandleTypeDef* hcan;           /* can 总线硬件句柄 */
-    CAN_Callback callback;             /* 接收回调函数 */
-    volatile CanTxConfig_t tx_conf;    /* 发送配置 */
-    CanRxMsg_t rx_msg;                 /* 接收的消息 */
+    CAN_HandleTypeDef* hcan;                       /* can 总线硬件句柄 */
+    CAN_Callback callbacks[CAN_CALLBACK_NUM];      /* 接收回调函数数组 */
+    uint8_t callback_num;                          /* 已注册的回调函数数量 */
+    volatile CanTxConfig_t tx_conf;                /* 发送配置 */
+    CanRxMsg_t rx_msg;                             /* 接收的消息 */
 } CAN_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan, CAN_Callback callback);
+void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan);
+void CAN_RegisterCallback(CAN_DRIVES* user_can, CAN_Callback callback);
 void CAN_Send(const CAN_DRIVES* user_can, uint32_t id, const uint8_t *data, uint8_t len);
 
 #endif /* HAL_CAN_MODULE_ENABLED */

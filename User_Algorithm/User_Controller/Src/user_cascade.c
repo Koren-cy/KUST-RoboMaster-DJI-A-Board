@@ -1,5 +1,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_cascade.h"
+#include <string.h>
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -12,6 +13,8 @@
 void Cascade_Controller_Init(Cascade_Controller *cascade,
                              CONTROLLER_INTERFACE* outer_controller,
                              CONTROLLER_INTERFACE* inner_controller) {
+    memset(cascade, 0, sizeof(Cascade_Controller));
+    
     // 绑定接口函数
     cascade->Set_Target = Cascade_Controller_Set_Target;
     cascade->Calculate = Cascade_Controller_Calculate;

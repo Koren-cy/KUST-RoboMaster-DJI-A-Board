@@ -26,6 +26,7 @@
 void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radius, const float wheel_radius, const float ratio,
     MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
     MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer) {
+    memset(chassis, 0, sizeof(SwerveChassisState));
 
     chassis->vx_target = 0.0f;
     chassis->vy_target = 0.0f;

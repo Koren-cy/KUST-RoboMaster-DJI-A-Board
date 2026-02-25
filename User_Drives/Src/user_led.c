@@ -13,6 +13,8 @@
 * @param is_reversal 是否反转逻辑, 1 为反转, 0 为正常
 */
 void LED_Init(LED_DRIVES* user_led, GPIO_TypeDef* GPIO, const uint16_t pin, const uint8_t is_reversal){
+    memset(user_led, 0, sizeof(LED_DRIVES));
+    
     user_led->GPIO = GPIO;
     user_led->pin = pin;
     user_led->is_reversal = is_reversal;

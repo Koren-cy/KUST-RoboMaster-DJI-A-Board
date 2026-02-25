@@ -1,6 +1,5 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_fir.h"
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,6 +12,8 @@
  * @param order   滤波器阶数
  */
 void FIR_Init(FIR_Filter *fir, const float *coeffs, const uint16_t order) {
+    memset(fir, 0, sizeof(FIR_Filter));
+    
     fir->order = order;
 
     fir->buffer = malloc((order + 1) * sizeof(float));

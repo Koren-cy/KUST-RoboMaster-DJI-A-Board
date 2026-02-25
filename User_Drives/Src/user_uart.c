@@ -22,8 +22,9 @@ static void UART_QueueHandle(void) {
 
         // 处理接收队列
         if (RingBuffer_GetLength(&uart->rx_ringBuffer)) {
-            if (uart->callback != NULL)
-                uart->callback(uart);
+            for (uint8_t i = 0; i < uart->callback_num; i++) {
+                uart->callbacks[i](uart);
+            }
         }
 
         // 处理发送队列
@@ -43,13 +44,13 @@ static void UART_QueueHandle(void) {
 * @brief 初始化 UART 驱动
 * @param user_uart  UART 驱动结构体指针
 * @param huart      UART 句柄
-* @param callback   接收回调函数
 */
-void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart, UART_Callback callback) {
+void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart) {
+    memset(user_uart, 0, sizeof(UART_DRIVES));
+    
     user_uart->huart = huart;
     user_uart->status = UART_IDLE;
     user_uart->is_buffer_a = 1;
-    user_uart->callback = callback;
 
     uart_drives[uart_num] = user_uart;
     uart_num++;
@@ -64,12 +65,69 @@ void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart, UART_Callback 
 }
 
 /**
+* @brief 注册 UART 接收回调函数
+* @param user_uart  UART 驱动结构体指针
+* @param callback   接收回调函数
+*/
+void UART_RegisterCallback(UART_DRIVES* user_uart, const UART_Callback callback) {
+    user_uart->callbacks[user_uart->callback_num] = callback;
+    user_uart->callback_num++;
+}
+
+/**
 * @brief 通过队列发送数据
 * @param user_uart UART 驱动结构体指针
 * @param str       要发送的字符串
 */
 void UART_Send(UART_DRIVES* user_uart, const char* str) {
     Queue_Push(&user_uart->tx_queue, (char*)str, strlen(str));
+}
+
+
+/**
+* @brief 根据帧头和帧尾获取数据
+* @param user_uart UART 驱动结构体指针
+* @param data      数据缓冲区
+* @param head      帧头字符串
+* @param tail      帧尾字符串
+* @return 获取的数据长度
+*/
+uint16_t UART_GetDataWithHT(UART_DRIVES* user_uart, uint8_t *data, const char *head, const char *tail) {
+    return RingBuffer_GetWith_H_T(&user_uart->rx_ringBuffer, data, head, tail);
+}
+
+/**
+* @brief 根据帧头和指定长度获取数据
+* @param user_uart UART 驱动结构体指针
+* @param data      数据缓冲区
+* @param head      帧头字符串
+* @param len       要获取的数据长度
+* @return 获取的数据长度
+*/
+uint16_t UART_GetDataWithHLen(UART_DRIVES* user_uart, uint8_t *data, const char *head, const uint16_t len) {
+    return RingBuffer_GetWith_H_Len(&user_uart->rx_ringBuffer, data, head, len);
+}
+
+/**
+* @brief 根据指定长度获取数据
+* @param user_uart UART 驱动结构体指针
+* @param data      数据缓冲区
+* @param len       要获取的数据长度
+* @return 获取的数据长度
+*/
+uint16_t UART_GetDataWithLen(UART_DRIVES* user_uart, uint8_t *data, uint16_t len) {
+    return RingBuffer_GetWith_Len(&user_uart->rx_ringBuffer, data, len);
+}
+
+/**
+* @brief 根据帧头获取数据（直到缓冲区末尾）
+* @param user_uart UART 驱动结构体指针
+* @param data      数据缓冲区
+* @param head      帧头字符串
+* @return 获取的数据长度
+*/
+uint16_t UART_GetDataWithH(UART_DRIVES* user_uart, uint8_t *data, const char *head) {
+    return RingBuffer_GetWith_H_H(&user_uart->rx_ringBuffer, data, head);
 }
 
 /* 覆写中断回调函数 -----------------------------------------------------------*/
