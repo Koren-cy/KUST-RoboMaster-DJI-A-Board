@@ -65,7 +65,7 @@ typedef struct {
     uint16_t ctrl_id;                     /* 控制帧 ID */
     uint16_t fdb_id;                      /* 反馈帧 ID */
     uint16_t rotor_angle;                 /* 转子原始角度 (0 ~ 8191) */
-    volatile uint16_t rotor_angle_offset; /* 转子角度零点偏移量 该数值在 DJI_Motor_Handle 调用后会被加到多圈角度中，然后该数值会被清 0 */
+    volatile int32_t rotor_angle_offset;  /* 角度零点偏移量 单位：角度 该数值在 DJI_Motor_Handle 调用后会被加到多圈角度中，然后该数值会被清 0 */
     int32_t total_angle;                  /* 多圈角度 单位是编码器的脉冲数 */
     int16_t rotor_speed;                  /* 转子速度 单位: rpm */
     int16_t torque_current;               /* 转矩电流 */
@@ -74,7 +74,7 @@ typedef struct {
 } DJI_MOTOR_DRIVES;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id, uint16_t rotor_angle_offset,
+void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id, float rotor_angle_offset,
                     Dji_Motor_Type motor_type, Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller);
 
 void DJI_Motor_Execute(const CAN_DRIVES* user_can);

@@ -19,12 +19,12 @@ static void DJI_Motor_Handle(void* user_can);
 * @param user_motor          大疆电机驱动结构体指针
 * @param user_can            CAN 总线结构体指针
 * @param id                  电机 ID (1 ~ 7)
-* @param rotor_angle_offset  电机零点偏移量 (0 ~ 8191)
+* @param rotor_angle_offset  电机零点偏移量 单位：角度
 * @param motor_type          电机型号
 * @param mode                控制模式
 * @param controller          PID 或 ADRC 等控制器，开环模式下可以设置为 NULL
 */
-void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const uint16_t rotor_angle_offset,
+void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const float rotor_angle_offset,
                     const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller) {
     memset(user_motor, 0, sizeof(DJI_MOTOR_DRIVES));
     
@@ -38,7 +38,7 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const ui
     user_motor->id = id;
     user_motor->motor_type = motor_type;
     user_motor->control_mode = mode;
-    user_motor->rotor_angle_offset = rotor_angle_offset;
+    user_motor->rotor_angle_offset = (int32_t)((float)rotor_angle_offset / 360.0f * 8191.0f);
     user_motor->controller = controller;
 
     switch (motor_type) {
