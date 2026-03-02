@@ -276,12 +276,9 @@ void CartesianToPolar(const CartesianCoord_Point* cartesian_point, PolarCoord_Po
  * @param  result: 笛卡尔坐标
  */
 void PolarToCartesian(const PolarCoord_Point* polar_point, CartesianCoord_Point* result) {
-    const float yaw_rad = Math_Deg2Rad(polar_point->yaw);
-    const float pitch_rad = Math_Deg2Rad(polar_point->pitch);
-    
     float cos_pitch, sin_pitch, cos_yaw, sin_yaw;
-    arm_sin_cos_f32(pitch_rad, &sin_pitch, &cos_pitch);
-    arm_sin_cos_f32(yaw_rad, &sin_yaw, &cos_yaw);
+    arm_sin_cos_f32(polar_point->pitch, &sin_pitch, &cos_pitch);
+    arm_sin_cos_f32(polar_point->yaw, &sin_yaw, &cos_yaw);
 
     const float r_cos_pitch = polar_point->radius * cos_pitch;
     result->x = r_cos_pitch * cos_yaw;
@@ -297,10 +294,9 @@ void PolarToCartesian(const PolarCoord_Point* polar_point, CartesianCoord_Point*
  * @param  angle_deg: 旋转角度(度)
  * @param  result: 旋转后坐标
  */
-void RotateX_Cartesian(const CartesianCoord_Point* point, float angle_deg, CartesianCoord_Point* result) {
-    const float angle_rad = Math_Deg2Rad(angle_deg);
+void RotateX_Cartesian(const CartesianCoord_Point* point, const float angle_deg, CartesianCoord_Point* result) {
     float cos_a, sin_a;
-    arm_sin_cos_f32(angle_rad, &sin_a, &cos_a);
+    arm_sin_cos_f32(angle_deg, &sin_a, &cos_a);
 
     const float y = point->y;
     const float z = point->z;
@@ -316,10 +312,9 @@ void RotateX_Cartesian(const CartesianCoord_Point* point, float angle_deg, Carte
  * @param  angle_deg: 旋转角度(度)
  * @param  result: 旋转后坐标
  */
-void RotateY_Cartesian(const CartesianCoord_Point* point, float angle_deg, CartesianCoord_Point* result) {
-    const float angle_rad = Math_Deg2Rad(angle_deg);
+void RotateY_Cartesian(const CartesianCoord_Point* point, const float angle_deg, CartesianCoord_Point* result) {
     float cos_a, sin_a;
-    arm_sin_cos_f32(angle_rad, &sin_a, &cos_a);
+    arm_sin_cos_f32(angle_deg, &sin_a, &cos_a);
 
     
     const float x = point->x;
@@ -336,10 +331,9 @@ void RotateY_Cartesian(const CartesianCoord_Point* point, float angle_deg, Carte
  * @param  angle_deg: 旋转角度(度)
  * @param  result: 旋转后坐标
  */
-void RotateZ_Cartesian(const CartesianCoord_Point* point, float angle_deg, CartesianCoord_Point* result) {
-    const float angle_rad = Math_Deg2Rad(angle_deg);
+void RotateZ_Cartesian(const CartesianCoord_Point* point, const float angle_deg, CartesianCoord_Point* result) {
     float cos_a, sin_a;
-    arm_sin_cos_f32(angle_rad, &sin_a, &cos_a);
+    arm_sin_cos_f32(angle_deg, &sin_a, &cos_a);
     
     const float x = point->x;
     const float y = point->y;
@@ -408,10 +402,8 @@ void Quaternion_Identity(Quaternion* quat) {
  * @param  quat: 结果四元数
  */
 void Quaternion_FromAxisAngle(const CartesianCoord_Point* axis, float angle_deg, Quaternion* quat) {
-    const float angle_rad = Math_Deg2Rad(angle_deg);
-    const float half_angle = angle_rad * 0.5f;
     float sin_half, cos_half;
-    arm_sin_cos_f32(half_angle, &sin_half, &cos_half);
+    arm_sin_cos_f32(angle_deg * 0.5f, &sin_half, &cos_half);
     
     CartesianCoord_Point normalized_axis;
     Normalize_Cartesian(axis, &normalized_axis);
@@ -428,14 +420,10 @@ void Quaternion_FromAxisAngle(const CartesianCoord_Point* axis, float angle_deg,
  * @param  quat: 结果四元数
  */
 void Quaternion_FromEuler(const EulerAngles* euler, Quaternion* quat) {
-    const float roll_rad = Math_Deg2Rad(euler->roll) * 0.5f;
-    const float pitch_rad = Math_Deg2Rad(euler->pitch) * 0.5f;
-    const float yaw_rad = Math_Deg2Rad(euler->yaw) * 0.5f;
-    
     float cr, sr, cp, sp, cy, sy;
-    arm_sin_cos_f32(roll_rad, &sr, &cr);
-    arm_sin_cos_f32(pitch_rad, &sp, &cp);
-    arm_sin_cos_f32(yaw_rad, &sy, &cy);
+    arm_sin_cos_f32(euler->roll  * 0.5f, &sr, &cr);
+    arm_sin_cos_f32(euler->pitch * 0.5f, &sp, &cp);
+    arm_sin_cos_f32(euler->yaw   * 0.5f, &sy, &cy);
     
     quat->w = cr * cp * cy + sr * sp * sy;
     quat->x = sr * cp * cy - cr * sp * sy;
@@ -591,14 +579,10 @@ void RotationMatrix_Identity(RotationMatrix* matrix) {
  * @param  matrix: 结果旋转矩阵
  */
 void RotationMatrix_FromEuler(const EulerAngles* euler, RotationMatrix* matrix) {
-    const float roll_rad = Math_Deg2Rad(euler->roll);
-    const float pitch_rad = Math_Deg2Rad(euler->pitch);
-    const float yaw_rad = Math_Deg2Rad(euler->yaw);
-    
     float cr, sr, cp, sp, cy, sy;
-    arm_sin_cos_f32(roll_rad, &sr, &cr);
-    arm_sin_cos_f32(pitch_rad, &sp, &cp);
-    arm_sin_cos_f32(yaw_rad, &sy, &cy);
+    arm_sin_cos_f32(euler->roll, &sr, &cr);
+    arm_sin_cos_f32(euler->pitch, &sp, &cp);
+    arm_sin_cos_f32(euler->yaw, &sy, &cy);
     
     matrix->m[0][0] = cy * cp;
     matrix->m[0][1] = cy * sp * sr - sy * cr;
