@@ -20,10 +20,10 @@ typedef struct {
     float fdb;                     /* 反馈值 */
     float out;                     /* PID 输出增量 */
     float err[3];                  /* 误差数组: [0]当前误差 [1]上次误差 [2]上上次误差 */
-} Incremental_PID_Controller;
+} Inc_PID_Controller;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void Inc_PID_Init(Incremental_PID_Controller *pid, float kp, float ki, float kd,
+void Inc_PID_Init(Inc_PID_Controller *pid, float kp, float ki, float kd,
                           float max_increase, float max_out);
 
 /* 接口函数声明 --------------------------------------------------------------*/

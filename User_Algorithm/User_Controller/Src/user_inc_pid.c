@@ -13,9 +13,9 @@
 * @param max_increase  PID 输出增量限幅
 * @param max_out       PID 输出限幅
 */
-void Inc_PID_Init(Incremental_PID_Controller *pid, const float kp, const float ki,
+void Inc_PID_Init(Inc_PID_Controller *pid, const float kp, const float ki,
                           const float kd, const float max_increase, const float max_out) {
-    memset(pid, 0, sizeof(Incremental_PID_Controller));
+    memset(pid, 0, sizeof(Inc_PID_Controller));
     
     // 绑定接口函数
     pid->Set_Target = Inc_PID_Set_Target;
@@ -37,7 +37,7 @@ void Inc_PID_Init(Incremental_PID_Controller *pid, const float kp, const float k
 * @param target     目标值
 */
 void Inc_PID_Set_Target(void* controller, const float target) {
-    Incremental_PID_Controller* pid = (Incremental_PID_Controller*)controller;
+    Inc_PID_Controller* pid = (Inc_PID_Controller*)controller;
     pid->set = target;
 }
 
@@ -50,7 +50,7 @@ void Inc_PID_Set_Target(void* controller, const float target) {
 */
 float Inc_PID_Calculate(void* controller, const float main_feedback,
                                  const float sub_feedback) {
-    Incremental_PID_Controller* pid = (Incremental_PID_Controller*)controller;
+    Inc_PID_Controller* pid = (Inc_PID_Controller*)controller;
     pid->fdb = main_feedback;
 
     // 更新误差
@@ -90,6 +90,6 @@ float Inc_PID_Calculate(void* controller, const float main_feedback,
 * @return 增量式 PID 控制输出增量值
 */
 float Inc_PID_Get_Output(void* controller) {
-    const Incremental_PID_Controller* pid = (Incremental_PID_Controller*)controller;
+    const Inc_PID_Controller* pid = (Inc_PID_Controller*)controller;
     return pid->out;
 }
