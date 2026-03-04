@@ -60,8 +60,8 @@ float Inc_PID_Calculate(void* controller, const float main_feedback,
 
     // 增量式PID计算
     float out = pid->kp * (pid->err[0] - pid->err[1]) +
-                pid->ki * (pid->err[0] + pid->err[1]) / 2.0f +  // 梯形法积分
-                pid->kd * (pid->err[0] - 2.0f * pid->err[1] + pid->err[2]);
+               pid->ki * pid->err[0] +
+               pid->kd * (pid->err[0] - 2.0f * pid->err[1] + pid->err[2]);
 
     // 输出增量限幅
     if (out > pid->max_increase) {
