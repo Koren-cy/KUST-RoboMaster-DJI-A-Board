@@ -54,9 +54,9 @@ float PID_Calculate(void* controller, const float main_feedback, const float sub
 
     pid->err[0] = pid->set - pid->fdb;
 
-    pid->Pout =  pid->kp *  pid->err[0];
-    pid->Iout += pid->ki * (pid->err[0] + pid->err[1]) / 2.0f;  // 梯形法积分
-    pid->Dout =  pid->kd * (pid->err[0] - pid->err[1]);
+    pid->Pout = pid->kp *  pid->err[0];
+    pid->Iout += pid->ki * pid->err[0];
+    pid->Dout = pid->kd * (pid->err[0] - pid->err[1]);
 
     // 积分限幅
     if (pid->Iout > pid->max_iout) {
