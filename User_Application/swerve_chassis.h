@@ -13,12 +13,12 @@
 // 单个舵轮状态
 typedef struct {
     MOTOR_INTERFACE* wheel_motor;     // 驱动轮电机
-    float drive_speed_current;     // 驱动轮速度 (m/s)
-    float drive_speed_target;      // 驱动轮目标速度 (m/s)
-    int8_t reverse;                // 正转为1，反转为-1
+    float drive_speed_current;        // 驱动轮速度 (m/s)
+    float drive_speed_target;         // 驱动轮目标速度 (m/s)
+    int8_t reverse;                   // 正转为1，反转为-1
     MOTOR_INTERFACE* steer_motor;     // 转向轮电机
-    float steer_angle_current;     // 当前转向角度 (deg)
-    float steer_angle_target;      // 目标转向角度 (deg)
+    float steer_angle_current;        // 当前转向角度 (deg)
+    float steer_angle_target;         // 目标转向角度 (deg)
 } SwerveWheel;
 
 // 舵轮底盘状态

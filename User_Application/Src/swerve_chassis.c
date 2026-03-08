@@ -72,8 +72,8 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx, const
     // 各轮子在底盘坐标系中的位置
     const CartesianCoord_Point positions[4] = {
         {-r * 0.707107f, r  * 0.707107f, 0.0f},
-        {r  * 0.707107f, r  * 0.707107f, 0.0f},
         {-r * 0.707107f, -r * 0.707107f, 0.0f},
+        {r  * 0.707107f, r  * 0.707107f, 0.0f},
         {r  * 0.707107f, -r * 0.707107f, 0.0f}
     };
     
@@ -180,8 +180,8 @@ void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
     
     // 计算各轮子在底盘坐标系中的位置
     const CartesianCoord_Point pos_fl = {-r * 0.707107f,  r * 0.707107f, 0.0f};
-    const CartesianCoord_Point pos_fr = {r  * 0.707107f,  r * 0.707107f, 0.0f};
-    const CartesianCoord_Point pos_rl = {-r * 0.707107f, -r * 0.707107f, 0.0f};
+    const CartesianCoord_Point pos_fr = {-r * 0.707107f, -r * 0.707107f, 0.0f};
+    const CartesianCoord_Point pos_rl = {r  * 0.707107f,  r * 0.707107f, 0.0f};
     const CartesianCoord_Point pos_rr = {r  * 0.707107f, -r * 0.707107f, 0.0f};
 
     // 计算平移速度
