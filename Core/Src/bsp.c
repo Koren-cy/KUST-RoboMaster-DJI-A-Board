@@ -29,7 +29,52 @@ LED_DRIVES user_green_led = {0};
 // can 总线
 CAN_DRIVES user_can_1 = {0};
 CAN_DRIVES user_can_2 = {0};
+CAN_CONNECTION can_connection = {0};
+void user_can_2_callback(void * user_can) {
+    const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
+    if (can->rx_msg.StdId == CAN_CONNET_ID) {
+        const uint8_t *receive_data = can->rx_msg.Data;
+        can_connection.v_y       = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
+        can_connection.v_x       = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
+        can_connection.ω_chassis = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
+        can_connection.dω_turret = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
+    }
+}
 
 // 蜂鸣器
-PWM_DRIVES user_buzzer = {0};
+BUZZER_DRIVES user_buzzer_1 = {0};
 
+// 启动音乐
+STARTUP_MUSIC_DRIVES user_startup_music = {0};
+
+// PID 控制器
+PID_Controller FR_GM6020_PID = {0};
+PID_Controller FL_GM6020_PID = {0};
+PID_Controller RR_GM6020_PID = {0};
+PID_Controller RL_GM6020_PID = {0};
+PID_Controller FR_M3508_PID = {0};
+PID_Controller FL_M3508_PID = {0};
+PID_Controller RR_M3508_PID = {0};
+PID_Controller RL_M3508_PID = {0};
+
+// LADRC 控制器
+LADRC_Controller YAW_GM6020_LADRC = {0};
+
+// 大疆电机
+DJI_MOTOR_DRIVES FR_GM6020 = {0};
+DJI_MOTOR_DRIVES FL_GM6020 = {0};
+DJI_MOTOR_DRIVES RR_GM6020 = {0};
+DJI_MOTOR_DRIVES RL_GM6020 = {0};
+
+DJI_MOTOR_DRIVES FR_M3508 = {0};
+DJI_MOTOR_DRIVES FL_M3508 = {0};
+DJI_MOTOR_DRIVES RR_M3508 = {0};
+DJI_MOTOR_DRIVES RL_M3508 = {0};
+
+DJI_MOTOR_DRIVES YAW_GM6020 = {0};
+
+// 舵轮底盘
+SwerveChassisState user_swerve_chassis = {0};
+
+// 云台指向
+float orientation_angle = 0.0f;

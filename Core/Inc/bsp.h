@@ -12,6 +12,9 @@ typedef void (*LOOP_Event)(void);
 extern LOOP_Event loop_event[MAX_LOOP_EVENT];
 extern uint8_t loop_event_num;
 
+/* SysTick 系统滴答定时器回调函数表 ------------------------------------------------------------*/
+#include "../../User_Architect/user_systick.h"
+
 /* JScope ------------------------------------------------------------------*/
 #include "../../SEGGER_RTT/user_JScope_Transmit.h"
 extern CCMRAM JScope_Transmit_t jscope_transmit;
@@ -33,9 +36,59 @@ extern LED_DRIVES user_green_led;
 extern CAN_DRIVES user_can_1;
 extern CAN_DRIVES user_can_2;
 
-// 蜂鸣器
-#include "../../User_Drives/user_pwm.h"
-extern PWM_DRIVES user_buzzer;
+void user_can_2_callback(void * user_can);
+#define CAN_CONNET_ID 0x200
+typedef struct {
+    int16_t ω_chassis;
+    int16_t dω_turret;
+    int16_t v_y;
+    int16_t v_x;
+} CAN_CONNECTION;
+extern CAN_CONNECTION can_connection;
 
+// 蜂鸣器
+#include "../../User_Drives/user_buzzer.h"
+extern BUZZER_DRIVES user_buzzer_1;
+
+// 启动音乐
+#include "../../User_Application/user_startup_music.h"
+extern STARTUP_MUSIC_DRIVES user_startup_music;
+
+
+// PID 控制器
+#include "../../User_Algorithm/User_Controller/user_pid.h"
+extern PID_Controller FR_GM6020_PID;
+extern PID_Controller FL_GM6020_PID;
+extern PID_Controller RR_GM6020_PID;
+extern PID_Controller RL_GM6020_PID;
+extern PID_Controller FR_M3508_PID;
+extern PID_Controller FL_M3508_PID;
+extern PID_Controller RR_M3508_PID;
+extern PID_Controller RL_M3508_PID;
+
+// LADRC 控制器
+#include "../../User_Algorithm/User_Controller/user_ladrc.h"
+extern LADRC_Controller YAW_GM6020_LADRC;
+
+// 大疆电机
+#include "../../User_Drives/User_Motor/user_dji_motor.h"
+extern DJI_MOTOR_DRIVES FR_GM6020;
+extern DJI_MOTOR_DRIVES FL_GM6020;
+extern DJI_MOTOR_DRIVES RR_GM6020;
+extern DJI_MOTOR_DRIVES RL_GM6020;
+
+extern DJI_MOTOR_DRIVES FR_M3508;
+extern DJI_MOTOR_DRIVES FL_M3508;
+extern DJI_MOTOR_DRIVES RR_M3508;
+extern DJI_MOTOR_DRIVES RL_M3508;
+
+extern DJI_MOTOR_DRIVES YAW_GM6020;
+
+// 舵轮底盘
+#include "../../User_Application/swerve_chassis.h"
+extern SwerveChassisState user_swerve_chassis;
+
+// 云台指向
+extern float orientation_angle;
 
 #endif // USER_BSP_H

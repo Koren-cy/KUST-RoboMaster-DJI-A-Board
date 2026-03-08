@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include  "bsp.h"
 #include <stdio.h>
+#include "../../User_Lib/user_music.h"
 
 /* USER CODE END Includes */
 
@@ -123,10 +124,43 @@ int main(void)
 
   CAN_Init(&user_can_1, &hcan1);
   CAN_Init(&user_can_2, &hcan2);
+  CAN_RegisterCallback(&user_can_2, user_can_2_callback);
 
-  // 初始化蜂鸣器 （用于播放启动音）
-  PWM_Init(&user_buzzer, &htim12, TIM_CHANNEL_1, 90000000);
-  PWM_Set_Duty(&user_buzzer, 0.5f);
+  // 初始化蜂鸣器
+  Buzzer_Init(&user_buzzer_1, &htim12, TIM_CHANNEL_1, 90000000);
+  
+  // 初始化启动音乐
+  StartupMusic_Init(&user_startup_music, &user_buzzer_1, bad_apple, sizeof(bad_apple) / sizeof(bad_apple[0]));
+  StartupMusic_Start(&user_startup_music);
+
+  PID_Init(&FR_GM6020_PID, 600.0f, 0.0f, 3000.0f, 12380.0f, 0.0f);
+  PID_Init(&FL_GM6020_PID, 600.0f, 0.0f, 3000.0f, 12380.0f, 0.0f);
+  PID_Init(&RR_GM6020_PID, 600.0f, 0.0f, 3000.0f, 12380.0f, 0.0f);
+  PID_Init(&RL_GM6020_PID, 600.0f, 0.0f, 3000.0f, 12380.0f, 0.0f);
+
+  PID_Init(&FR_M3508_PID, 2.5f, 0.0f, 3.0f, 16380.0f, 0.0f);
+  PID_Init(&FL_M3508_PID, 2.5f, 0.0f, 3.0f, 16380.0f, 0.0f);
+  PID_Init(&RR_M3508_PID, 2.5f, 0.0f, 3.0f, 16380.0f, 0.0f);
+  PID_Init(&RL_M3508_PID, 2.5f, 0.0f, 3.0f, 16380.0f, 0.0f);
+
+  DJI_Motor_Init(&FR_GM6020, &user_can_1, 5, 180, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&FR_GM6020_PID);
+  DJI_Motor_Init(&FL_GM6020, &user_can_1, 3, 120, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&FL_GM6020_PID);
+  DJI_Motor_Init(&RR_GM6020, &user_can_1, 2, 120, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&RR_GM6020_PID);
+  DJI_Motor_Init(&RL_GM6020, &user_can_1, 4, 30 , GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&RL_GM6020_PID);
+
+  DJI_Motor_Init(&FR_M3508, &user_can_1, 1, 0, M3508_gear, Rotor_speed, (CONTROLLER_INTERFACE*)&FR_M3508_PID);
+  DJI_Motor_Init(&FL_M3508, &user_can_1, 3, 0, M3508_gear, Rotor_speed, (CONTROLLER_INTERFACE*)&FL_M3508_PID);
+  DJI_Motor_Init(&RR_M3508, &user_can_1, 2, 0, M3508_gear, Rotor_speed, (CONTROLLER_INTERFACE*)&RR_M3508_PID);
+  DJI_Motor_Init(&RL_M3508, &user_can_1, 4, 0, M3508_gear, Rotor_speed, (CONTROLLER_INTERFACE*)&RL_M3508_PID);
+
+  LADRC_Init(&YAW_GM6020_LADRC, 70.0f, 4900.0f, 450.0f,1.0f, 16380.0f, 0.001f);
+  DJI_Motor_Init(&YAW_GM6020, &user_can_1, 1, -50, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&YAW_GM6020_LADRC);
+
+  SwerveChassis_Init(&user_swerve_chassis, 0.430835f, 0.114f / 2, 15.764706f,
+    (MOTOR_INTERFACE*)&FL_M3508,  (MOTOR_INTERFACE*)&FR_M3508,
+    (MOTOR_INTERFACE*)&RL_M3508,  (MOTOR_INTERFACE*)&RR_M3508,
+     (MOTOR_INTERFACE*)&FL_GM6020, (MOTOR_INTERFACE*)&FR_GM6020,
+    (MOTOR_INTERFACE*)&RL_GM6020, (MOTOR_INTERFACE*)&RR_GM6020);
 
 
   /* USER CODE END 2 */
