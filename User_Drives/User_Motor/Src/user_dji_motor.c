@@ -140,7 +140,7 @@ static void DJI_Motor_Handle(void* user_can) {
 * @param user_can CAN 总线驱动结构体指针
 * @note  将所有电机控制指令一并打包发送
 */
-void DJI_Motor_Execute(const CAN_DRIVES* user_can) {
+void DJI_Motor_Execute(CAN_DRIVES* user_can) {
     uint8_t GM6020_control_id_1_frame[8] = {0};
     uint8_t GM6020_control_id_2_frame[8] = {0};
     uint8_t C6x0_control_id_1_frame[8] = {0};

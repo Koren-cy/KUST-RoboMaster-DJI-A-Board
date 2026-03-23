@@ -1,46 +1,101 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_systick.h"
 
-/* 私有变量定义 --------------------------------------------------------------*/
-SysTick_Callback systick_callback[MAX_SYSTICK_CALLBACK] = {0};
-uint8_t systick_callback_num = 0;
+/* 私有变量 ------------------------------------------------------------------*/
+static SysTick_Task systick_tasks[MAX_SYSTICK_TASK] = {0};
+static uint8_t task_count = 0;
 
-/* 函数体 --------------------------------------------------------------------*/
+
+/* 函数实现 ------------------------------------------------------------------*/
 
 /**
-* @brief 注册 SysTick 回调函数
-* @param callback 回调函数指针
-* @note  回调函数会在每次 SysTick 中断时被调用
-*/
-void SysTick_RegisterCallback(const SysTick_Callback callback) {
-    systick_callback[systick_callback_num] = callback;
-    systick_callback_num++;
+ * @brief  初始化并执行 SysTick 任务
+ * @param  Task:   任务结构体指针
+ * @param  arg:    回调函数参数
+ * @param  delay:  延迟时间 单位：ms
+ * @param  period: 周期时间，仅对重复任务有效 单位：ms
+ * @param  mode:   任务模式
+ * @param callback 回调函数
+ */
+void SysTick_InitTask(SysTick_Task *Task, void *arg, const uint32_t delay, const uint32_t period, const TaskMode mode, const SysTick_Callback callback) {
+    Task->arg = arg;
+    Task->delay = delay;
+    Task->period = period;
+    Task->counter = 0;
+    Task->mode = mode;
+    Task->state = Task_RUNNING;
+    Task->callback = callback;
 }
 
 /**
-* @brief 注销 SysTick 回调函数
-* @param callback 要注销的回调函数指针
-* @note  从回调列表中移除指定的回调函数
-*/
-void SysTick_UnregisterCallback(const SysTick_Callback callback) {
-    for (uint8_t i = 0; i < systick_callback_num; i++) {
-        if (systick_callback[i] == callback) {
-            systick_callback[i] = systick_callback[systick_callback_num - 1];
-            systick_callback[systick_callback_num - 1] = NULL;
-            systick_callback_num--;
-            return;
-        }
-    }
+ * @brief  开始 SysTick 任务
+ * @param  Task: 任务结构体指针
+ */
+void SysTick_StartTask(SysTick_Task *Task) {
+    Task->state = Task_RUNNING;
 }
 
 /**
-* @brief 处理所有已注册的 SysTick 回调函数
-* @note  应在 SysTick_Handler 中断中调用
-*/
+ * @brief  停止 SysTick 任务
+ * @param  Task: 任务结构体指针
+ */
+void SysTick_StopTask(SysTick_Task *Task) {
+    Task->state = Task_STOPPED;
+}
+
+/**
+ * @brief  重置 SysTick 任务
+ * @param  Task: 任务结构体指针
+ */
+void SysTick_ResetTask(SysTick_Task *Task) {
+    Task->counter = 0;
+    Task->state = Task_RUNNING;
+}
+
+/**
+ * @brief  删除 SysTick 任务
+ * @param  Task: 任务结构体指针
+ */
+void SysTick_DeleteTask(SysTick_Task *Task) {
+    Task->callback = NULL;
+    Task->arg = NULL;
+    Task->delay = 0;
+    Task->period = 0;
+    Task->counter = 0;
+    Task->mode = Task_ONCE;
+    Task->state = Task_IDLE;
+}
+
+/**
+ * @brief  SysTick 任务处理函数
+ * @note   该函数需要在 SysTick_Handler 中调用
+ */
 void SysTick_Handle(void) {
-    for (uint8_t i = 0; i < systick_callback_num; i++) {
-        if (systick_callback[i] != NULL) {
-            systick_callback[i]();
+    for (uint8_t i = 0; i < task_count; i++) {
+        SysTick_Task *task = &systick_tasks[i];
+        
+        if (task->callback == NULL) {
+            continue;
+        }
+        
+        if (task->state != Task_RUNNING) {
+            continue;
+        }
+
+        task->counter++;
+
+        if (task->counter >= task->delay) {
+            task->callback((void *)task->arg);
+
+            switch (task->mode) {
+                case Task_ONCE:
+                    task->state = Task_STOPPED;
+                    break;
+                case Task_REPEAT:
+                    task->counter = 0;
+                    task->delay = task->period;
+                    break;
+            }
         }
     }
 }

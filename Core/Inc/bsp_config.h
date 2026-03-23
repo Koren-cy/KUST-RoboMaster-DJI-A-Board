@@ -5,7 +5,7 @@
 
 
 /* 接口定义 ------------------------------------------------------------------*/
-#define MAX_SYSTICK_CALLBACK  (32)        /* 滴答定时器最大回调函数数量 */
+#define MAX_SYSTICK_TASK      (32)        /* 滴答定时器最大任务数量 */
 
 #define UART_NUM              (5)         /* 开发板的 UART 总数 */
 #define UART_CALLBACK_NUM     (8)         /* 最大回调函数数量 */
