@@ -127,6 +127,7 @@ void  Subtract_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2, Pol
 void  Scale_Polar(const PolarCoord_Point* point, float scale, PolarCoord_Point* result);
 void  Normalize_Polar(const PolarCoord_Point* point, PolarCoord_Point* result);
 void  Lerp_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2, float t, PolarCoord_Point* result);
+float DotProduct_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2);
 
 /* 坐标系转换 */
 void CartesianToPolar(const CartesianCoord_Point* cartesian_point, PolarCoord_Point* result);

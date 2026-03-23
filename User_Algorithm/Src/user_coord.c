@@ -247,6 +247,28 @@ void Lerp_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2, float t,
     result->pitch = Math_WrapAngleDeg(p1->pitch + t * pitch_diff);
 }
 
+/**
+ * @brief  极坐标点乘
+ * @param  p1: 极坐标1
+ * @param  p2: 极坐标2
+ * @retval 点乘结果
+ */
+float DotProduct_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2) {
+    const float pitch_diff_rad = Math_Deg2Rad(p2->pitch - p1->pitch);
+    const float yaw_diff_rad   = Math_Deg2Rad(Math_WrapAngleDeg(p2->yaw - p1->yaw));
+
+    float sin_pitch_diff, cos_pitch_diff;
+    float sin_yaw_diff,   cos_yaw_diff;
+    arm_sin_cos_f32(pitch_diff_rad, &sin_pitch_diff, &cos_pitch_diff);
+    arm_sin_cos_f32(yaw_diff_rad,   &sin_yaw_diff,   &cos_yaw_diff);
+
+    float sin_p1, cos_p1, sin_p2, cos_p2;
+    arm_sin_cos_f32(Math_Deg2Rad(p1->pitch), &sin_p1, &cos_p1);
+    arm_sin_cos_f32(Math_Deg2Rad(p2->pitch), &sin_p2, &cos_p2);
+
+    return p1->radius * p2->radius * (cos_pitch_diff * cos_yaw_diff + sin_p1 * sin_p2);
+}
+
 /* 坐标系转换函数 ------------------------------------------------------------*/
 
 /**
