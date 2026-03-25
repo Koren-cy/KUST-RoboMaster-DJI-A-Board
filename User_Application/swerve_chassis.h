@@ -29,9 +29,14 @@ typedef struct {
     float vx_current;
     float vy_current;
     float omega_current;
-    float wheelbase_radius;    // 轮子到底盘中心的距离 (m)
-    float wheel_radius;        // 轮子的半径 (m)
-    float ratio;               // 轮电机减速比
+    float vx_smoothed;           // 平滑后的x方向速度
+    float vy_smoothed;           // 平滑后的y方向速度
+    float omega_smoothed;        // 平滑后的角速度
+    float linear_smooth_factor;  // 线速度平滑系数 0 ~ 1
+    float angular_smooth_factor; // 角速度平滑系数 0 ~ 1
+    float wheelbase_radius;      // 轮子到底盘中心的距离 (m)
+    float wheel_radius;          // 轮子的半径 (m)
+    float ratio;                 // 轮电机减速比
     SwerveWheel wheel_fl;
     SwerveWheel wheel_fr;
     SwerveWheel wheel_rl;
@@ -41,9 +46,10 @@ typedef struct {
 /* 函数声明 ------------------------------------------------------------------*/
 void SwerveChassis_Init(SwerveChassisState* chassis, float wheelbase_radius, float wheel_radius, float ratio,
     MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
-    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer);
+    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer,
+    float linear_smooth_factor, float angular_smooth_factor);
 
-void SwerveChassis_Kinematics(SwerveChassisState* chassis, float vx, float vy, float omega);
+void SwerveChassis_Kinematics(SwerveChassisState* chassis, float vx_target, float vy_target, float omega_target);
 void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis);
 void SwerveChassis_InverseKinematics(SwerveChassisState* chassis);
 

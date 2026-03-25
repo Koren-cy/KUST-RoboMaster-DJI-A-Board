@@ -10,10 +10,10 @@
 
 /**
 * @brief 初始化舵轮底盘
-* @param chassis 底盘状态结构体指针
+* @param chassis          底盘状态结构体指针
 * @param wheelbase_radius 轮子到底盘中心的距离 (m)
-* @param wheel_radius 轮子的半径 (m)
-* @param ratio 减速比
+* @param wheel_radius     轮子的半径 (m)
+* @param ratio    减速比
 * @param fl_wheel 左前轮
 * @param fr_wheel 右前轮
 * @param rl_wheel 左后轮
@@ -22,15 +22,17 @@
 * @param fr_steer 前右轮转向电机
 * @param rl_steer 前左轮转向电机
 * @param rr_steer 后右轮转向电机
+* @param linear_smooth_factor  线速度平滑系数，仅在加速时平滑
+* @param angular_smooth_factor 角速度平滑系数，仅在加速时平滑
 */
 void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radius, const float wheel_radius, const float ratio,
     MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
-    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer) {
+    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer,
+    const float linear_smooth_factor, const float angular_smooth_factor) {
     memset(chassis, 0, sizeof(SwerveChassisState));
 
-    chassis->vx_target = 0.0f;
-    chassis->vy_target = 0.0f;
-    chassis->omega_target = 0.0f;
+    chassis->linear_smooth_factor = linear_smooth_factor;
+    chassis->angular_smooth_factor = angular_smooth_factor;
     chassis->wheelbase_radius = wheelbase_radius;
     chassis->wheel_radius = wheel_radius;
     chassis->ratio = ratio;
@@ -49,18 +51,45 @@ void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radiu
 
 /**
 * @brief 舵轮底盘运动学正解
-* @note 根据底盘速度指令计算各轮子的速度和转向角度
+* @note 根据底盘速度指令计算各轮子的速度和转向角度，应用平滑处理
 * @param chassis 底盘状态结构体指针
-* @param vx 速度 (m/s)
-* @param vy 速度 (m/s)
-* @param omega 角速度 (rad/s)
+* @param vx_target 速度 (m/s)
+* @param vy_target 速度 (m/s)
+* @param omega_target 角速度 (rad/s)
 */
-void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx, const float vy, const float omega) {
+void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx_target, const float vy_target, const float omega_target) {
     const float r = chassis->wheelbase_radius;
-    chassis->vx_target = vx;
-    chassis->vy_target = vy;
-    chassis->omega_target = omega;
+    chassis->vx_target = vx_target;
+    chassis->vy_target = vy_target;
+    chassis->omega_target = omega_target;
     
+    // 线速度向量平滑处理
+    const float v_target_norm  = sqrtf(vx_target * vx_target + vy_target * vy_target);
+    const float v_current_norm = sqrtf(chassis->vx_current * chassis->vx_current +
+                                       chassis->vy_current * chassis->vy_current);
+    
+    if (v_target_norm > v_current_norm) {
+        const float v_diff_norm = v_target_norm - v_current_norm;
+        const float v_smoothed_norm = v_current_norm + v_diff_norm * chassis->linear_smooth_factor;
+        
+        if (v_target_norm > 1e-6f) {
+            const float scale = v_smoothed_norm / v_target_norm;
+            chassis->vx_smoothed = vx_target * scale;
+            chassis->vy_smoothed = vy_target * scale;
+        } else {
+            chassis->vx_smoothed = 0.0f;
+            chassis->vy_smoothed = 0.0f;
+        }
+    } else {
+        // 减速时立即响应
+        chassis->vx_smoothed = vx_target;
+        chassis->vy_smoothed = vy_target;
+    }
+    
+    // 角速度平滑处理
+    const float omega_diff = omega_target - chassis->omega_current;
+    chassis->omega_smoothed += omega_diff * chassis->angular_smooth_factor;
+
     // 轮子数组
     SwerveWheel* wheels[4] = {
         &chassis->wheel_fl,
@@ -78,9 +107,9 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx, const
     };
     
     // 平移速度向量
-    const CartesianCoord_Point v_trans = {vx, vy, 0.0f};
+    const CartesianCoord_Point v_trans = {chassis->vx_smoothed, chassis->vy_smoothed, 0.0f};
     // 角速度向量
-    const CartesianCoord_Point omega_vec = {0.0f, 0.0f, omega};
+    const CartesianCoord_Point omega_vec = {0.0f, 0.0f, chassis->omega_smoothed};
     
     // 对每个轮子进行运动学计算
     for (int i = 0; i < 4; i++) {
