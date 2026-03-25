@@ -23,7 +23,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "bsp.h"
-#include "../../User_Algorithm/user_coord.h"
 
 /* USER CODE END Includes */
 
@@ -192,18 +191,6 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  SwerveChassis_InverseKinematics(&user_swerve_chassis);
-  orientation_angle = orientation_angle - user_swerve_chassis.omega_current * 0.12975f - (float) can_connection.dω_turret * 0.0002f;
-
-  const CartesianCoord_Point input_vector = {0.006f * (float)can_connection.v_x, 0.006f * (float) can_connection.v_y, 0};
-  CartesianCoord_Point move_vector = {0};
-  RotateZ_Cartesian(&input_vector, -orientation_angle, &move_vector);
-  SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_connection.ω_chassis / 150.0f);
-  SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
-
-  DJI_Motor_Set_State(&YAW_GM6020, orientation_angle);
-  DJI_Motor_Execute(&user_can_1);
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();

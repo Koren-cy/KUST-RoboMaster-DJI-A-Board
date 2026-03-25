@@ -39,8 +39,8 @@ extern CAN_DRIVES user_can_2;
 void user_can_2_callback(void * user_can);
 #define CAN_CONNET_ID 0x200
 typedef struct {
-    int16_t ω_chassis;
-    int16_t dω_turret;
+    int16_t ω_theta_chassis;
+    int16_t d_theta_turret;
     int16_t v_y;
     int16_t v_x;
 } CAN_CONNECTION;

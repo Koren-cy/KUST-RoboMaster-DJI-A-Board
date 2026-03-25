@@ -2,6 +2,8 @@
 #include "bsp.h"
 #include <string.h>
 #include <stdio.h>
+#include "../../User_Algorithm/user_coord.h"
+
 
 /* 主循环注册表 --------------------------------------------------------------*/
 void (*loop_event[MAX_LOOP_EVENT])(void) = {0};
@@ -34,11 +36,24 @@ void user_can_2_callback(void * user_can) {
     const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
     if (can->rx_msg.StdId == CAN_CONNET_ID) {
         const uint8_t *receive_data = can->rx_msg.Data;
-        can_connection.v_y       = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
-        can_connection.v_x       = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
-        can_connection.ω_chassis = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
-        can_connection.dω_turret = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
+        can_connection.v_y             = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
+        can_connection.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
+        can_connection.ω_theta_chassis = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
+        can_connection.d_theta_turret  = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
+
+        SwerveChassis_InverseKinematics(&user_swerve_chassis);
+        orientation_angle = orientation_angle - user_swerve_chassis.omega_current * 0.12975f - (float) can_connection.d_theta_turret;
+
+        const CartesianCoord_Point input_vector = {can_connection.v_x, can_connection.v_y, 0};
+        CartesianCoord_Point move_vector = {0};
+        RotateZ_Cartesian(&input_vector, -orientation_angle, &move_vector);
+        SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, can_connection.ω_theta_chassis);
+        SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
+
+        DJI_Motor_Set_State(&YAW_GM6020, orientation_angle);
+        DJI_Motor_Execute(&user_can_1);
     }
+
 }
 
 // 蜂鸣器
