@@ -15,8 +15,7 @@ static uint8_t can_num = 0;
 * @param hcan     硬件句柄
 */
 void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan){
-    memset(user_can, 0, sizeof(CAN_DRIVES));
-    
+
     user_can->hcan = hcan;
 
     user_can->tx_conf.IDE = CAN_ID_STD;

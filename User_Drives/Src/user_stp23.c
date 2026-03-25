@@ -20,8 +20,7 @@ static void STP23_Handle(void* user_uart);
 * @param user_uart   UART 驱动结构体指针
 */
 void STP23_Init(STP23_DRIVES *user_stp23, UART_DRIVES* user_uart) {
-    memset(user_stp23, 0, sizeof(STP23_DRIVES));
-    
+
     user_stp23->uart = user_uart;
     UART_RegisterCallback(user_uart, STP23_Handle);
 

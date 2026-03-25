@@ -59,8 +59,7 @@ static void dbus_rx_idle_callback(const UART_HandleTypeDef* huart) {
 * @param huart UART 句柄指针
 */
 void DBUS_Init(DBUS_DRIVES* user_dbus, UART_HandleTypeDef* huart) {
-    memset(user_dbus, 0, sizeof(DBUS_DRIVES));
-    
+
     user_dbus->is_update = 0;
     user_dbus->huart = huart;
     dbus_drive = user_dbus;

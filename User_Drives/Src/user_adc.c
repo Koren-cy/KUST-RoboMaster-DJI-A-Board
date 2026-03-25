@@ -19,8 +19,7 @@ static uint8_t adc_num = 0;
 * @note ADC 使能扫描模式，使能连续转换模式，使能连续请求，配置规则组，开启 DMA 并开启循环模式
 */
 void ADC_Init(ADC_DRIVES* user_adc, ADC_HandleTypeDef* hadc, const uint8_t channel_num, const uint8_t vref_rank, const uint8_t resolution) {
-    memset(user_adc, 0, sizeof(ADC_DRIVES));
-    
+
     user_adc->hadc = hadc;
     user_adc->channel_num = channel_num;
     user_adc->vref_rank = vref_rank;

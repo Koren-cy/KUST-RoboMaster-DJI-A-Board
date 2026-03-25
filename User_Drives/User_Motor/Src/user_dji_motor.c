@@ -26,8 +26,7 @@ static void DJI_Motor_Handle(void* user_can);
 */
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const uint8_t id, const float rotor_angle_offset,
                     const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller) {
-    memset(user_motor, 0, sizeof(DJI_MOTOR_DRIVES));
-    
+
     // 绑定接口
     user_motor->Set_Motor_State = DJI_Motor_Set_State;
     user_motor->Get_Motor_Speed = DJI_Motor_Get_Speed;

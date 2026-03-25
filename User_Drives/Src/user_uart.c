@@ -46,8 +46,7 @@ static void UART_QueueHandle(void) {
 * @param huart      UART 句柄
 */
 void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart) {
-    memset(user_uart, 0, sizeof(UART_DRIVES));
-    
+
     user_uart->huart = huart;
     user_uart->status = UART_IDLE;
     user_uart->is_buffer_a = 1;
