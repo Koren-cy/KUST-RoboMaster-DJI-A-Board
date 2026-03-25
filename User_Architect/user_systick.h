@@ -14,9 +14,8 @@ typedef enum {
 } TaskMode;
 
 typedef enum {
-    Task_IDLE,      // 空闲
-    Task_RUNNING,   // 运行中
-    Task_STOPPED    // 已停止
+    Task_STOPPED,   // 已停止
+    Task_RUNNING    // 运行中
 } TaskState;
 
 typedef struct {

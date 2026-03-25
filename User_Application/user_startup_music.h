@@ -12,9 +12,9 @@
 * @brief 启动音乐播放状态
 */
 typedef enum {
-    MUSIC_IDLE = 0,      /* 空闲状态 */
-    MUSIC_PLAYING = 1,   /* 正在播放 */
-    MUSIC_FINISHED = 2,  /* 播放完成 */
+    MUSIC_IDLE,      /* 空闲状态 */
+    MUSIC_PLAYING,   /* 正在播放 */
+    MUSIC_FINISHED,  /* 播放完成 */
 } MUSIC_State;
 
 /**
