@@ -41,9 +41,11 @@ void user_can_2_callback(void * user_can) {
     CartesianCoord_Point move_vector = {0};
     CartesianCoord_Point input_vector = {0, 0, 0};
 
+    static float old_angle_z = 0.0f;
+
     switch (can->rx_msg.StdId) {
         case CAN_REMOTE_CONTROL_ID:
-            if (0) break;
+            if (1) break;
             // 兼容无避障模式
             can_remote_control_command.v_y             = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
             can_remote_control_command.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
@@ -64,13 +66,13 @@ void user_can_2_callback(void * user_can) {
             DJI_Motor_Execute(&user_can_1);
             break;
         case CAN_CHASSIS_MOTION_ID:
-            can_chassis_motion_command.v_y             = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
-            can_chassis_motion_command.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
-            can_chassis_motion_command.ω_theta_chassis = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
-            can_chassis_motion_command.d_theta_turret  = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
+            can_chassis_motion_command.ω_theta_chassis = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
+            can_chassis_motion_command.d_theta_turret  = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
+            can_chassis_motion_command.v_y             = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
+            can_chassis_motion_command.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[7] << 8);
 
             SwerveChassis_InverseKinematics(&user_swerve_chassis);
-            orientation_angle = orientation_angle - user_swerve_chassis.omega_current * 0.12975f - (float) can_chassis_motion_command.d_theta_turret;
+            orientation_angle -= (float) can_chassis_motion_command.d_theta_turret;
 
             input_vector.x = (float) can_chassis_motion_command.v_x / 1000.0f;
             input_vector.y = (float) can_chassis_motion_command.v_y / 1000.0f;
@@ -83,7 +85,16 @@ void user_can_2_callback(void * user_can) {
             DJI_Motor_Execute(&user_can_1);
             break;
         case CAN_GYROSCOPE_ID:
+            can_gyroscope_data.angle_z        = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
+            can_gyroscope_data.undefinition_1 = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
+            can_gyroscope_data.undefinition_2 = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
+            can_gyroscope_data.undefinition_3 = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
 
+            const float angle_z = (float) can_gyroscope_data.angle_z / 100.0f;
+            const float angle_z_diff = angle_z - old_angle_z;
+
+            orientation_angle -= angle_z_diff;
+            old_angle_z = angle_z;
             break;
         default: ;
     }
@@ -126,5 +137,5 @@ DJI_MOTOR_DRIVES YAW_GM6020 = {0};
 // 舵轮底盘
 SwerveChassisState user_swerve_chassis = {0};
 
-// 云台指向
+// 云台指向 单位：度
 float orientation_angle = 0.0f;
