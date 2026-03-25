@@ -53,6 +53,7 @@ extern BUZZER_DRIVES user_buzzer_1;
 // 启动音乐
 #include "../../User_Application/user_startup_music.h"
 extern STARTUP_MUSIC_DRIVES user_startup_music;
+extern SysTick_Task user_startup_music_task;
 
 
 // PID 控制器

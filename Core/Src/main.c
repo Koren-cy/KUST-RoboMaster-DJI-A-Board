@@ -130,7 +130,7 @@ int main(void)
   Buzzer_Init(&user_buzzer_1, &htim12, TIM_CHANNEL_1, 90000000);
   
   // 初始化启动音乐
-  StartupMusic_Init(&user_startup_music, &user_buzzer_1, bad_apple, sizeof(bad_apple) / sizeof(bad_apple[0]));
+  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, bad_apple, sizeof(bad_apple) / sizeof(bad_apple[0]));
   StartupMusic_Start(&user_startup_music);
 
   PID_Init(&FR_GM6020_PID, 600.0f, 0.0f, 3000.0f, 12380.0f, 0.0f);

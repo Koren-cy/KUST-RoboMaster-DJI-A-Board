@@ -46,6 +46,7 @@ BUZZER_DRIVES user_buzzer_1 = {0};
 
 // 启动音乐
 STARTUP_MUSIC_DRIVES user_startup_music = {0};
+SysTick_Task user_startup_music_task = {0};
 
 // PID 控制器
 PID_Controller FR_GM6020_PID = {0};
