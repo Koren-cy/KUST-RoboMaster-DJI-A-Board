@@ -81,6 +81,7 @@ extern PID_Controller FR_M3508_PID;
 extern PID_Controller FL_M3508_PID;
 extern PID_Controller RR_M3508_PID;
 extern PID_Controller RL_M3508_PID;
+extern PID_Controller Gimbal_Respect_World_Angle_PID;
 
 // LADRC 控制器
 #include "../../User_Algorithm/User_Controller/user_ladrc.h"
@@ -104,7 +105,11 @@ extern DJI_MOTOR_DRIVES YAW_GM6020;
 #include "../../User_Application/swerve_chassis.h"
 extern SwerveChassisState user_swerve_chassis;
 
-// 云台指向
-extern float orientation_angle;
+// 云台相对于底盘的多圈角度 单位：度
+extern float gimbal_respect_chassis_angle;
+
+// 云台相对于世界的多圈角度 单位：度
+extern float gimbal_respect_world_angle_current;
+extern float gimbal_respect_world_angle_target;
 
 #endif // USER_BSP_H

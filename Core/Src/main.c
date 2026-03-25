@@ -143,6 +143,8 @@ int main(void)
   PID_Init(&RR_M3508_PID, 2.5f, 0.0f, 3.0f, 16380.0f, 0.0f);
   PID_Init(&RL_M3508_PID, 2.5f, 0.0f, 3.0f, 16380.0f, 0.0f);
 
+  PID_Init(&Gimbal_Respect_World_Angle_PID, 0.01f, 0.0f, 0.01f, 10.0f, 0.0f);
+
   DJI_Motor_Init(&FR_GM6020, &user_can_1, 5, 180, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&FR_GM6020_PID);
   DJI_Motor_Init(&FL_GM6020, &user_can_1, 3, 120, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&FL_GM6020_PID);
   DJI_Motor_Init(&RR_GM6020, &user_can_1, 2, 120, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&RR_GM6020_PID);
