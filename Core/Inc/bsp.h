@@ -35,16 +35,31 @@ extern LED_DRIVES user_green_led;
 #include "../../User_Drives/user_can.h"
 extern CAN_DRIVES user_can_1;
 extern CAN_DRIVES user_can_2;
-
 void user_can_2_callback(void * user_can);
-#define CAN_CONNET_ID 0x200
+#define CAN_REMOTE_CONTROL_ID 0x200
+#define CAN_CHASSIS_MOTION_ID 0x201
+#define CAN_GYROSCOPE_ID      0x202
 typedef struct {
-    int16_t ω_theta_chassis;
-    int16_t d_theta_turret;
-    int16_t v_y;
-    int16_t v_x;
-} CAN_CONNECTION;
-extern CAN_CONNECTION can_connection;
+    int16_t ω_theta_chassis;  /* 底盘小陀螺转速 -660 ~ 660 无纲量 */
+    int16_t d_theta_turret;   /* 云台相对偏转角度 -32768 ~ 32767 对应 -327.68 ~ 327.67 度 */
+    int16_t v_y;              /* 云台坐标系下底盘的前进线速度 -660 ~ 660 无纲量 */
+    int16_t v_x;              /* 云台坐标系下底盘的横移线速度 -660 ~ 660 无纲量 */
+} CAN_REMOTE_CONTROL_COMMAND;
+typedef struct {
+    int16_t ω_theta_chassis;  /* 底盘小陀螺转速 -660 ~ 660 无纲量 */
+    int16_t d_theta_turret;   /* 云台相对偏转角度 -32768 ~ 32767 对应 -327.68 ~ 327.67 度 */
+    int16_t v_y;              /* 云台坐标系下底盘的受限前进线速度 单位：mm/s */
+    int16_t v_x;              /* 云台坐标系下底盘的受限横移线速度 单位：mm/s */
+} CAN_CHASSIS_MOTION_PROTOCOL;
+typedef struct {
+    int16_t angle_z;          /* 陀螺仪Z轴角度 0 ~ 36000 对应 0 ~ 360 度*/
+    int16_t undefinition_1;   /* 未定义 */
+    int16_t undefinition_2;   /* 未定义 */
+    int16_t undefinition_3;   /* 未定义 */
+} CAN_GYROSCOPE_PROTOCOL;
+extern CAN_REMOTE_CONTROL_COMMAND can_remote_control_command;
+extern CAN_CHASSIS_MOTION_PROTOCOL can_chassis_motion_command;
+extern CAN_GYROSCOPE_PROTOCOL can_gyroscope_data;
 
 // 蜂鸣器
 #include "../../User_Drives/user_buzzer.h"
