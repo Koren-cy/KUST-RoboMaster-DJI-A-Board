@@ -11,7 +11,6 @@
 typedef struct Node {
     void *data;         /* 数据指针 */
     uint16_t len;       /* 数据长度 */
-    uint16_t address;   /* 传输目的地址 */
     struct Node *next;  /* 下一个节点指针 */
 } Node;
 
@@ -27,7 +26,6 @@ typedef struct {
 
 /* 函数声明 ------------------------------------------------------------------*/
 void Queue_Push(Queue *queue, const void *data, uint16_t len);
-void Queue_PushWA(Queue *queue, const void *data, uint16_t len, uint16_t address);
 Node* Queue_Pop(Queue *queue);
 uint8_t Queue_IsEmpty(const Queue *queue);
 uint16_t Queue_GetSize(const Queue *queue);

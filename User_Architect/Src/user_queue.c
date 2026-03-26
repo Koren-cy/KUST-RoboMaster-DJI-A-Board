@@ -19,7 +19,6 @@ void Queue_Push(Queue *queue, const void *data, uint16_t len) {
 
     newNode->data = mem;
     newNode->len = len;
-    newNode->address = 0;
     newNode->next = NULL;
     
     if (queue->rear == NULL) {
@@ -29,34 +28,6 @@ void Queue_Push(Queue *queue, const void *data, uint16_t len) {
         queue->rear = newNode;
     }
     
-    queue->size++;
-}
-
-/**
-* @brief 入队操作 (带地址)
-* @param queue   队列指针
-* @param data    数据指针
-* @param len     数据长度
-* @param address 传输目的地址
-*/
-void Queue_PushWA(Queue *queue, const void *data, uint16_t len, uint16_t address) {
-    Node *newNode = (Node*)malloc(sizeof(Node));
-
-    void *mem = malloc(len);
-    memcpy(mem, data, len);
-
-    newNode->data = mem;
-    newNode->len = len;
-    newNode->address = address;
-    newNode->next = NULL;
-
-    if (queue->rear == NULL) {
-        queue->front = queue->rear = newNode;
-    } else {
-        queue->rear->next = newNode;
-        queue->rear = newNode;
-    }
-
     queue->size++;
 }
 
