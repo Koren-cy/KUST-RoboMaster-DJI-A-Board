@@ -60,6 +60,7 @@ typedef struct {
 extern CAN_REMOTE_CONTROL_COMMAND can_remote_control_command;
 extern CAN_CHASSIS_MOTION_PROTOCOL can_chassis_motion_command;
 extern CAN_GYROSCOPE_PROTOCOL can_gyroscope_data;
+#define USE_RAW_PROTOCOL
 
 // 蜂鸣器
 #include "../../User_Drives/user_buzzer.h"

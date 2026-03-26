@@ -44,8 +44,8 @@ void user_can_2_callback(void * user_can) {
     static float old_angle_z = 0.0f;
 
     switch (can->rx_msg.StdId) {
+        #ifdef USE_RAW_PROTOCOL
         case CAN_REMOTE_CONTROL_ID:
-            if (1) break;
             // 兼容无避障模式
             can_remote_control_command.v_y             = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
             can_remote_control_command.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
@@ -65,7 +65,7 @@ void user_can_2_callback(void * user_can) {
             DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle);
             DJI_Motor_Execute(&user_can_1);
             break;
-
+        #elif
         case CAN_CHASSIS_MOTION_ID:
             can_chassis_motion_command.ω_theta_chassis = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
             can_chassis_motion_command.d_theta_turret  = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
@@ -114,7 +114,7 @@ void user_can_2_callback(void * user_can) {
 
             old_angle_z = angle_z;
             break;
-
+        #endif
         default: ;
     }
 
@@ -136,7 +136,7 @@ PID_Controller FR_M3508_PID = {0};
 PID_Controller FL_M3508_PID = {0};
 PID_Controller RR_M3508_PID = {0};
 PID_Controller RL_M3508_PID = {0};
-PID_Controller YAW_Gyroscope_GM6020_PID = {0};
+PID_Controller Gimbal_Respect_World_Angle_PID = {0};
 
 // LADRC 控制器
 LADRC_Controller YAW_GM6020_LADRC = {0};
