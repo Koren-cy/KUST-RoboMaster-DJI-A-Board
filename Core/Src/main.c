@@ -121,6 +121,7 @@ int main(void)
 
   LED_Init(&user_red_led, LED_RED_GPIO_Port, LED_RED_Pin, 1);
   LED_Init(&user_green_led, LED_GREEN_GPIO_Port, LED_GREEN_Pin, 1);
+  LED_On(&user_green_led);
 
   CAN_Init(&user_can_1, &hcan1);
   CAN_Init(&user_can_2, &hcan2);
