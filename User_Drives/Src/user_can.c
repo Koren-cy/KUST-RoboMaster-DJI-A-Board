@@ -6,6 +6,36 @@
 /* 私有变量 ------------------------------------------------------------------*/
 static CAN_DRIVES *can_drives[CAN_NUM];
 static uint8_t can_num = 0;
+static uint8_t is_init_loop_event_sign = 0;
+
+/* 私有函数 ------------------------------------------------------------------*/
+
+/**
+* @brief 处理 CAN 发送队列
+* @note  该函数会自动注册在全局注册表
+*/
+static void CAN_QueueHandle(void) {
+    for (uint8_t can_index = 0; can_index < can_num; can_index++) {
+        CAN_DRIVES *can = can_drives[can_index];
+
+        // 处理发送队列
+        CAN_Tx_Msg tx_msg;
+        if (Circular_Queue_Peek(&can->tx_queue, (uint8_t*)&tx_msg)) {
+            CAN_TxHeaderTypeDef tx_header;
+            tx_header.StdId = tx_msg.id;
+            tx_header.ExtId = tx_msg.id;
+            tx_header.IDE = can->tx_conf.IDE;
+            tx_header.RTR = can->tx_conf.RTR;
+            tx_header.DLC = tx_msg.len;
+            tx_header.TransmitGlobalTime = DISABLE;
+
+            uint32_t tx_mailbox;
+            if (HAL_CAN_AddTxMessage(can->hcan, &tx_header, tx_msg.data, &tx_mailbox) == HAL_OK) {
+                Circular_Queue_Discard(&can->tx_queue);
+            }
+        }
+    }
+}
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -20,6 +50,8 @@ void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan){
 
     user_can->tx_conf.IDE = CAN_ID_STD;
     user_can->tx_conf.RTR = CAN_RTR_DATA;
+
+    Circular_Queue_Init(&user_can->tx_queue, sizeof(CAN_Tx_Msg), 6);
 
     CAN_FilterTypeDef can_filter;
     can_filter.FilterActivation = ENABLE;
@@ -39,6 +71,13 @@ void CAN_Init(CAN_DRIVES* user_can, CAN_HandleTypeDef* hcan){
 
     can_drives[can_num] = user_can;
     can_num ++;
+
+    // 注册到全局事件循环
+    if (is_init_loop_event_sign == 0) {
+        loop_event[loop_event_num] = &CAN_QueueHandle;
+        loop_event_num++;
+        is_init_loop_event_sign = 1;
+    }
 }
 
 /**
@@ -58,26 +97,18 @@ void CAN_RegisterCallback(CAN_DRIVES* user_can, const CAN_Callback callback){
 * @param data     报文数据
 * @param len      报文数据长度
 */
-void CAN_Send(const CAN_DRIVES* user_can, const uint32_t id, const uint8_t *data, const uint8_t len){
-    CAN_TxHeaderTypeDef tx_msg;
-
-    tx_msg.StdId = id;
-    tx_msg.ExtId = id;
-    tx_msg.IDE = user_can->tx_conf.IDE;
-    tx_msg.RTR = user_can->tx_conf.RTR;
-    tx_msg.DLC = len;
-    tx_msg.TransmitGlobalTime = DISABLE;
-
-    if (HAL_CAN_AddTxMessage(user_can->hcan, &tx_msg, data, (uint32_t*)CAN_TX_MAILBOX0) == HAL_OK)
-        return;
-    if (HAL_CAN_AddTxMessage(user_can->hcan, &tx_msg, data, (uint32_t*)CAN_TX_MAILBOX1) == HAL_OK)
-        return;
-    if (HAL_CAN_AddTxMessage(user_can->hcan, &tx_msg, data, (uint32_t*)CAN_TX_MAILBOX2) == HAL_OK)
-        return;
+void CAN_Send(CAN_DRIVES* user_can, const uint32_t id, const uint8_t *data, const uint8_t len){
+    CAN_Tx_Msg tx_msg;
+    tx_msg.id = id;
+    tx_msg.len = len;
+    
+    memcpy(tx_msg.data, data, tx_msg.len);
+    Circular_Queue_Enqueue(&user_can->tx_queue, (uint8_t*)&tx_msg);
 }
 
 
 /* 覆写中断回调函数 -----------------------------------------------------------*/
+
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
     for (uint8_t can_index = 0 ; can_index < can_num ; can_index++) {
         CAN_DRIVES* can_drive = can_drives[can_index];

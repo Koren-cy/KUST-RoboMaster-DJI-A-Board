@@ -91,6 +91,21 @@ uint8_t Circular_Queue_Dequeue(CIRCULAR_QUEUE *queue, uint8_t *packet) {
 }
 
 /**
+* @brief 丢弃队头数据包但不读取
+* @param queue 循环队列结构体指针
+* @return 1: 丢弃成功, 0: 队列为空
+*/
+uint8_t Circular_Queue_Discard(CIRCULAR_QUEUE *queue) {
+    if (Circular_Queue_Is_Empty(queue))
+        return 0;
+
+    queue->head = (queue->head + 1) % queue->capacity;
+    queue->count--;
+
+    return 1;
+}
+
+/**
 * @brief 查看队头数据包但不出队
 * @param queue  循环队列结构体指针
 * @param packet 用于存储队头数据包的指针

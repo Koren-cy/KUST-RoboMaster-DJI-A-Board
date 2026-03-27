@@ -24,6 +24,7 @@ uint16_t Circular_Queue_Get_Count(const CIRCULAR_QUEUE *queue);
 uint16_t Circular_Queue_Get_Free_Space(const CIRCULAR_QUEUE *queue);
 void Circular_Queue_Enqueue(CIRCULAR_QUEUE *queue, const uint8_t *packet);
 uint8_t Circular_Queue_Dequeue(CIRCULAR_QUEUE *queue, uint8_t *packet);
+uint8_t Circular_Queue_Discard(CIRCULAR_QUEUE *queue);
 uint8_t Circular_Queue_Peek(const CIRCULAR_QUEUE *queue, uint8_t *packet);
 void Circular_Queue_Clear(CIRCULAR_QUEUE *queue);
 
