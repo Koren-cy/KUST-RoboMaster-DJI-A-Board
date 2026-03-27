@@ -65,12 +65,12 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx_target
     
     // 线速度向量平滑处理
     const float v_target_norm  = sqrtf(vx_target * vx_target + vy_target * vy_target);
-    const float v_current_norm = sqrtf(chassis->vx_current * chassis->vx_current +
-                                       chassis->vy_current * chassis->vy_current);
+    const float v_smooth_norm = sqrtf(chassis->vx_smoothed * chassis->vx_smoothed +
+                                       chassis->vy_smoothed * chassis->vy_smoothed);
     
-    if (v_target_norm > v_current_norm) {
-        const float v_diff_norm = v_target_norm - v_current_norm;
-        const float v_smoothed_norm = v_current_norm + v_diff_norm * chassis->linear_smooth_factor;
+    if (v_target_norm > v_smooth_norm) {
+        const float v_diff_norm = v_target_norm - v_smooth_norm;
+        const float v_smoothed_norm = v_smooth_norm + v_diff_norm * chassis->linear_smooth_factor;
         
         if (v_target_norm > 1e-6f) {
             const float scale = v_smoothed_norm / v_target_norm;
@@ -87,7 +87,7 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx_target
     }
     
     // 角速度平滑处理
-    const float omega_diff = omega_target - chassis->omega_current;
+    const float omega_diff = omega_target - chassis->omega_smoothed;
     chassis->omega_smoothed += omega_diff * chassis->angular_smooth_factor;
 
     // 轮子数组
@@ -133,20 +133,19 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx_target
 
 /**
 * @brief 劣弧优化 - 选择最短转向路径
-* @note 如果转向角度差大于90度，反转驱动方向并调整转向角度
+* @note 如果转向角度差大于 90 度，反转驱动方向并调整转向角度
 * @param wheel 舵轮状态结构体指针
 */
 static void OptimizeSteerAngle(SwerveWheel* wheel) {
     // 计算当前角度与目标角度的差值
     const float angle_diff = Math_WrapAngleDeg(wheel->steer_angle_target - wheel->steer_angle_current);
 
-    // 如果角度差的绝对值大于90度，使用劣弧优化
+    // 如果角度差的绝对值大于 90 度，使用劣弧优化
     if (fabsf(angle_diff) > 90.0f) {
         wheel->drive_speed_target = -wheel->drive_speed_target;
         wheel->steer_angle_target = Math_WrapAngleDeg(wheel->steer_angle_target + 180.0f);
     }
 }
-
 
 /**
 * @brief 设置底盘各电机目标值
@@ -175,10 +174,6 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         const float wheel_angular_velocity = wheel->drive_speed_target / chassis->wheel_radius;
         const float motor_rpm = RAD_TO_RPM(wheel_angular_velocity);
         
-        // 读取当前驱动速度
-        const float motor_speed_rpm = wheel->wheel_motor->Get_Motor_Speed(wheel->wheel_motor);
-        wheel->drive_speed_current = RPM_TO_RAD(motor_speed_rpm) * chassis->wheel_radius / chassis->ratio;
-        
         // 设置驱动电机目标
         wheel->wheel_motor->Set_Motor_State(wheel->wheel_motor, motor_rpm * chassis->ratio);
     }
@@ -192,6 +187,25 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
 */
 void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
     const float r = chassis->wheelbase_radius;
+    
+    // 更新各轮子的当前状态
+    SwerveWheel* wheels[4] = {
+        &chassis->wheel_fl,
+        &chassis->wheel_fr,
+        &chassis->wheel_rl,
+        &chassis->wheel_rr
+    };
+    
+    for (int i = 0; i < 4; i++) {
+        SwerveWheel* wheel = wheels[i];
+        
+        // 读取转向电机当前角度
+        wheel->steer_angle_current = wheel->steer_motor->Get_Motor_Speed(wheel->steer_motor);
+        
+        // 读取驱动电机当前速度并转换为线速度
+        const float motor_speed_rpm = wheel->wheel_motor->Get_Motor_Speed(wheel->wheel_motor);
+        wheel->drive_speed_current = RPM_TO_RAD(motor_speed_rpm) * chassis->wheel_radius / chassis->ratio;
+    }
     
     // 获取各轮子的实际速度向量
     CartesianCoord_Point v_fl, v_fr, v_rl, v_rr;
