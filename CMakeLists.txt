@@ -49,7 +49,7 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Drivers/CMSIS/DSP/Include Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include User_Algorithm/Inc User_Architect/Inc User_Drives/Inc User_Lib/Inc User_Status/Inc User_Application/Inc)
+include_directories(Core/Inc Drivers/STM32F4xx_HAL_Driver/Inc Drivers/STM32F4xx_HAL_Driver/Inc/Legacy Drivers/CMSIS/Device/ST/STM32F4xx/Include Drivers/CMSIS/Include Drivers/CMSIS/DSP/Include Drivers/CMSIS/DSP/PrivateInclude)
 
 add_definitions(-DDEBUG -DUSE_HAL_DRIVER -DSTM32F427xx -DARM_MATH_CM4 -D__FPU_PRESENT=1U)
 
