@@ -47,10 +47,10 @@ void user_can_2_callback(void * user_can) {
         #ifdef USE_RAW_PROTOCOL
         case CAN_REMOTE_CONTROL_ID:
             // 兼容无避障模式
-            can_remote_control_command.v_y             = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
-            can_remote_control_command.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
-            can_remote_control_command.ω_theta_chassis = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
-            can_remote_control_command.d_theta_turret  = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
+            can_remote_control_command.ω_theta_chassis = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
+            can_remote_control_command.d_theta_turret  = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
+            can_remote_control_command.v_y             = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
+            can_remote_control_command.v_x             = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
 
             SwerveChassis_InverseKinematics(&user_swerve_chassis);
             gimbal_respect_chassis_angle = gimbal_respect_chassis_angle - user_swerve_chassis.omega_current * 0.12975f - (float) can_remote_control_command.d_theta_turret * 0.0001f;
@@ -70,7 +70,7 @@ void user_can_2_callback(void * user_can) {
             can_chassis_motion_command.ω_theta_chassis = (int16_t) (receive_data[0] << 0 | receive_data[1] << 8);
             can_chassis_motion_command.d_theta_turret  = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
             can_chassis_motion_command.v_y             = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
-            can_chassis_motion_command.v_x             = (int16_t) (receive_data[2] << 0 | receive_data[7] << 8);
+            can_chassis_motion_command.v_x             = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
 
             const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 100.0f;
 
