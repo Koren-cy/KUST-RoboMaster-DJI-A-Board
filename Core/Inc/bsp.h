@@ -52,7 +52,7 @@ typedef struct {
     int16_t v_x;              /* 云台坐标系下底盘的受限横移线速度 单位：mm/s */
 } CAN_CHASSIS_MOTION_PROTOCOL;
 typedef struct {
-    int16_t angle_z;          /* 陀螺仪Z轴角度 0 ~ 36000 对应 0 ~ 360 度*/
+    uint16_t angle_z;         /* 陀螺仪Z轴角度 0 ~ 36000 对应 0 ~ 360 度*/
     int16_t undefinition_1;   /* 未定义 */
     int16_t undefinition_2;   /* 未定义 */
     int16_t undefinition_3;   /* 未定义 */
@@ -74,10 +74,6 @@ extern SysTick_Task user_startup_music_task;
 
 // PID 控制器
 #include "../../User_Algorithm/User_Controller/user_pid.h"
-extern PID_Controller FR_GM6020_PID;
-extern PID_Controller FL_GM6020_PID;
-extern PID_Controller RR_GM6020_PID;
-extern PID_Controller RL_GM6020_PID;
 extern PID_Controller FR_M3508_PID;
 extern PID_Controller FL_M3508_PID;
 extern PID_Controller RR_M3508_PID;
@@ -90,17 +86,19 @@ extern LADRC_Controller YAW_GM6020_LADRC;
 
 // 大疆电机
 #include "../../User_Drives/User_Motor/user_dji_motor.h"
-extern DJI_MOTOR_DRIVES FR_GM6020;
-extern DJI_MOTOR_DRIVES FL_GM6020;
-extern DJI_MOTOR_DRIVES RR_GM6020;
-extern DJI_MOTOR_DRIVES RL_GM6020;
-
 extern DJI_MOTOR_DRIVES FR_M3508;
 extern DJI_MOTOR_DRIVES FL_M3508;
 extern DJI_MOTOR_DRIVES RR_M3508;
 extern DJI_MOTOR_DRIVES RL_M3508;
 
 extern DJI_MOTOR_DRIVES YAW_GM6020;
+
+// 大疆电机
+#include "../../User_Drives/User_Motor/user_dji_motor_old.h"
+extern DJI_MOTOR_OLD_DRIVES FR_GM6020;
+extern DJI_MOTOR_OLD_DRIVES FL_GM6020;
+extern DJI_MOTOR_OLD_DRIVES RR_GM6020;
+extern DJI_MOTOR_OLD_DRIVES RL_GM6020;
 
 // 舵轮底盘
 #include "../../User_Application/swerve_chassis.h"

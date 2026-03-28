@@ -274,7 +274,7 @@ float DotProduct_Polar(const PolarCoord_Point* p1, const PolarCoord_Point* p2) {
 /**
  * @brief  笛卡尔坐标转极坐标
  * @param  cartesian_point: 笛卡尔坐标
- * @param  result: 极坐标(角度单位:度)
+ * @param  result: 极坐标 单位:度
  */
 void CartesianToPolar(const CartesianCoord_Point* cartesian_point, PolarCoord_Point* result) {
     const float x = cartesian_point->x;
