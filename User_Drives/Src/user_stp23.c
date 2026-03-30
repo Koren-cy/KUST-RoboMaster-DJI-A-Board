@@ -49,16 +49,19 @@ static void STP23_Handle(void* user_uart) {
             Codec_Decode_Skip(&codec, 16);
             stp23->temperature = Codec_Decode_Unsigned(&codec, 16);
             Codec_Decode_Skip(&codec, 16);
+
             float distance = 0.0f;
             for (uint8_t i = 0; i < 12; i++) {
-                distance += (float)Codec_Decode_Unsigned(&codec, 16) / 12.0f;
+                stp23->raw_distance[i] = Codec_Decode_Unsigned(&codec, 16);
+                distance += (float)stp23->raw_distance[i] / 12.0f;
                 Codec_Decode_Skip(&codec, 8);
             }
-            stp23->distance = distance;
-        }
 
-        for (uint8_t i = 0; i < stp23->callback_num; i++) {
-            stp23->callbacks[i](stp23);
+            stp23->distance = distance;
+
+            for (uint8_t i = 0; i < stp23->callback_num; i++) {
+                stp23->callbacks[i](stp23);
+            }
         }
     }
 }

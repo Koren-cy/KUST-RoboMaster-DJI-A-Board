@@ -9,6 +9,7 @@
 
 /* 宏定义 --------------------------------------------------------------------*/
 #define STP23_DATA_FRAME_LEN  (47)      /* STP23 数据帧长度 */
+#define STP23_SAMPLE_NUM      (12)      /* STP23 数据帧长度 */
 
 /* 类型定义 ------------------------------------------------------------------*/
 
@@ -26,6 +27,7 @@ typedef struct {
     uint8_t is_update;                                /* 数据更新标志 */
     uint16_t temperature;                             /* 模块温度 原始数据 无纲量 */
     float distance;                                   /* 测量距离 单位：mm */
+    uint16_t raw_distance[STP23_SAMPLE_NUM];          /* 测量距离 原始数据 无纲量 */
     uint8_t rx_buffer[STP23_DATA_FRAME_LEN];          /* 接收数据缓冲区 */
     STP23_Callback callbacks[STP23_CALLBACK_NUM];     /* 转换完成回调函数数组 */
     uint8_t callback_num;                             /* 已注册的回调函数数量 */
