@@ -27,13 +27,13 @@ typedef struct {
 } PID_Tolerance_Controller;
 
 /* 函数声明 ------------------------------------------------------------------*/
-void PID_Init(PID_Tolerance_Controller *pid, float kp, float ki, float kd,
+void PID_Tolerance_Init(PID_Tolerance_Controller *pid, float kp, float ki, float kd,
               float max_out, float max_iout);
 
 /* 接口函数声明 --------------------------------------------------------------*/
-void PID_Set_Target(void* controller, float target);
-float PID_Calculate(void* controller, float main_feedback, float sub_feedback);
-float PID_Get_Output(void* controller);
+void PID_Tolerance_Set_Target(void* controller, float target);
+float PID_Tolerance_Calculate(void* controller, float main_feedback, float sub_feedback);
+float PID_Tolerance_Get_Output(void* controller);
 
 
 #endif // USER_PID_H
