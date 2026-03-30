@@ -9,7 +9,7 @@
 #include "../../User_Architect/user_ring_buffe.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
-#define UART_BUFFER_SIZE  (256)
+#define UART_BUFFER_SIZE      (256)
 
 /* 类型定义 ------------------------------------------------------------------*/
 
@@ -54,6 +54,9 @@ uint16_t UART_GetDataWithHLen(UART_DRIVES* user_uart, uint8_t *data, const char 
 uint16_t UART_GetDataWithLen(UART_DRIVES* user_uart, uint8_t *data, uint16_t len);
 uint16_t UART_GetDataWithH(UART_DRIVES* user_uart, uint8_t *data, const char *head);
 uint16_t UART_GetAllDate(UART_DRIVES* user_uart, uint8_t *data);
+
+void UART_Printf(UART_DRIVES* user_uart, const char* format, ...);
+int32_t UART_Scanf(UART_DRIVES* user_uart, const char *format, ...);
 
 #endif /* HAL_UART_MODULE_ENABLED */
 #endif // USER_UART_H

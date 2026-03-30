@@ -4,6 +4,7 @@
 #include "../user_uart.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 
 /* 私有变量 ------------------------------------------------------------------*/
 static UART_DRIVES *uart_drives[UART_NUM];
@@ -94,7 +95,6 @@ void UART_Send_Data(UART_DRIVES* user_uart, const char* data, const uint16_t len
 }
 
 
-
 /**
 * @brief 根据帧头和帧尾获取数据
 * @param user_uart UART 驱动结构体指针
@@ -149,6 +149,49 @@ uint16_t UART_GetDataWithH(UART_DRIVES* user_uart, uint8_t *data, const char *he
 */
 uint16_t UART_GetAllDate(UART_DRIVES* user_uart, uint8_t *data) {
     return RingBuffer_GetWith_Len(&user_uart->rx_ringBuffer, data, RingBuffer_GetLength(&user_uart->rx_ringBuffer));
+}
+
+/**
+* @brief 格式化输出
+* @param user_uart UART 驱动结构体指针
+* @param format    格式化字符串
+* @param ...       可变参数
+*/
+void UART_Printf(UART_DRIVES* user_uart, const char* format, ...) {
+    static char buffer[UART_BUFFER_SIZE];
+    va_list args;
+
+    va_start(args, format);
+    const int len = vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    if (len > 0 && len < sizeof(buffer)) {
+        Queue_Push(&user_uart->tx_queue, buffer, len);
+    }
+}
+
+/**
+* @brief 从 UART 接收缓冲区解析数据
+* @param user_uart UART 驱动结构体指针
+* @param format    格式化字符串
+* @param ...       可变参数
+* @return 成功解析的参数数量，失败返回 -1
+*/
+int32_t UART_Scanf(UART_DRIVES* user_uart, const char *format, ...) {
+    static uint8_t buffer[UART_BUFFER_SIZE];
+    const uint16_t len = UART_GetAllDate(user_uart, buffer);
+    
+    if (len == 0)
+        return -1;
+
+    buffer[len] = '\0';  // 确保字符串结束
+    
+    va_list args;
+    va_start(args, format);
+    const int32_t result = vsscanf((const char*)buffer, format, args);
+    va_end(args);
+    
+    return result;
 }
 
 /* 覆写中断回调函数 -----------------------------------------------------------*/
