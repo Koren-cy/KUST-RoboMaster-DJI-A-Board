@@ -55,16 +55,16 @@ void user_can_2_callback(void * user_can) {
             can_remote_control_command.v_x             = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
 
             SwerveChassis_InverseKinematics(&user_swerve_chassis);
-            gimbal_respect_chassis_angle = gimbal_respect_chassis_angle - user_swerve_chassis.omega_current * 0.12975f - (float) can_remote_control_command.d_theta_turret * 0.0002f;
+            gimbal_respect_chassis_angle = gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 0.1925f - (float) can_remote_control_command.d_theta_turret * 0.00035f;
 
-            input_vector.x = (float) can_remote_control_command.v_x * 0.006f;
-            input_vector.y = (float) can_remote_control_command.v_y * 0.006f;
+            input_vector.x = (float) can_remote_control_command.v_x * -0.007f;
+            input_vector.y = (float) can_remote_control_command.v_y * -0.007f;
 
             RotateZ_Cartesian(&input_vector, -gimbal_respect_chassis_angle, &move_vector);
-            SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_remote_control_command.ω_theta_chassis * 0.005f);
+            SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_remote_control_command.ω_theta_chassis * 0.015f);
             SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
 
-            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle);
+            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 10.0f);
             DJI_Motor_Old_Execute(&user_can_1);
             DJI_Motor_Execute(&user_can_1);
             break;
@@ -75,25 +75,25 @@ void user_can_2_callback(void * user_can) {
             can_chassis_motion_command.v_y             = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
             can_chassis_motion_command.v_x             = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
 
-            const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 100.0f;
-
             SwerveChassis_InverseKinematics(&user_swerve_chassis);
+
+            const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 100.0f;
             gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.129f;
-
             gimbal_respect_chassis_angle -= d_theta_turret;
-            gimbal_respect_world_angle_target -= d_theta_turret;
 
-            PID_Set_Target(&Gimbal_Respect_World_Angle_PID, gimbal_respect_world_angle_target);
+            gimbal_turn_angle -= d_theta_turret;
 
             input_vector.x = (float) can_chassis_motion_command.v_x / 1000.0f;
             input_vector.y = (float) can_chassis_motion_command.v_y / 1000.0f;
 
             RotateZ_Cartesian(&input_vector, -gimbal_respect_chassis_angle, &move_vector);
-            SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_chassis_motion_command.ω_theta_chassis * 3.0f / 660.0f / TWO_PI);
-            SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
+            SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_chassis_motion_command.ω_theta_chassis * 2.0f / 660.0f / TWO_PI);
 
-            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle);
+            SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
+            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 10.0f);
+            DJI_Motor_Old_Execute(&user_can_1);
             DJI_Motor_Execute(&user_can_1);
+
             break;
 
         case CAN_GYROSCOPE_ID:
@@ -111,16 +111,14 @@ void user_can_2_callback(void * user_can) {
                 angle_z_diff += 360.0f;
             }
 
-            gimbal_respect_world_angle_current += angle_z_diff;
+            gimbal_respect_chassis_angle += gimbal_turn_angle - angle_z_diff;
 
-            gimbal_respect_chassis_angle += PID_Calculate(&Gimbal_Respect_World_Angle_PID, gimbal_respect_world_angle_current,0.0f);
-
+            gimbal_turn_angle = 0.0f;
             old_angle_z = angle_z;
             break;
         #endif
         default: ;
     }
-
 }
 
 // 蜂鸣器
@@ -135,7 +133,6 @@ PID_Controller FR_M3508_PID = {0};
 PID_Controller FL_M3508_PID = {0};
 PID_Controller RR_M3508_PID = {0};
 PID_Controller RL_M3508_PID = {0};
-PID_Controller Gimbal_Respect_World_Angle_PID = {0};
 
 // LADRC 控制器
 LADRC_Controller YAW_GM6020_LADRC = {0};
@@ -160,6 +157,5 @@ SwerveChassisState user_swerve_chassis = {0};
 // 云台相对于底盘的多圈角度 单位：度
 float gimbal_respect_chassis_angle = 0.0f;
 
-// 云台相对于世界的多圈角度 单位：度
-float gimbal_respect_world_angle_current = 0.0f;
-float gimbal_respect_world_angle_target = 0.0f;
+// 云台相对转动 单位：度
+float gimbal_turn_angle = 0.0f;

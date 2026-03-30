@@ -85,8 +85,32 @@ static float PID_Calculate_Old(PID_Controller_OLD *pid, const float target, cons
     pid->err[0] = pid->err_calculate(pid->fdb, pid->set);
 
     pid->Pout = pid->kp * pid->err[0];
+
+    const float p_range = 50.0f;
+    if (pid->err[0] > p_range) {
+        pid->Pout = pid->kp * ((pid->err[0] - p_range) * 0.05f + p_range);
+    }
+    if (pid->err[0] < -p_range) {
+        pid->Pout = pid->kp * ((pid->err[0] + p_range) * 0.05f - p_range);
+    }
+
     pid->Iout += pid->ki * pid->err[0];
+
     pid->Dout = pid->kd * (pid->err[0] - pid->err[1]);
+
+    if        (fabsf(pid->err[0] - pid->err[1]) < 2) {
+        pid->Dout = pid->Dout * 0.30f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 5) {
+        pid->Dout = pid->Dout * 0.40f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 10) {
+        pid->Dout = pid->Dout * 0.55f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 15) {
+        pid->Dout = pid->Dout * 0.75f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 30) {
+        pid->Dout = pid->Dout * 0.85f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 80) {
+        pid->Dout = pid->Dout * 0.90f;
+    }
 
     // 积分限幅
     if (pid->Iout > pid->max_iout) {

@@ -128,10 +128,16 @@ void SwerveChassis_Kinematics(SwerveChassisState* chassis, const float vx, const
 */
 static void OptimizeSteerAngle(SwerveWheel* wheel) {
     // 计算当前角度与目标角度的差值
-    const float angle_diff = Math_WrapAngleDeg(wheel->steer_angle_target - wheel->steer_angle_current);
+    float angle_diff = wheel->steer_angle_target - wheel->steer_angle_current;
+
+    if (angle_diff > 180.0f) {
+        angle_diff -= 360.0f;
+    } else if (angle_diff < -180.0f) {
+        angle_diff += 360.0f;
+    }
 
     // 如果角度差的绝对值大于90度，使用劣弧优化
-    if (fabsf(angle_diff) > 110.0f) {
+    if (fabsf(angle_diff) > 90.0f) {
         wheel->drive_speed_target = -wheel->drive_speed_target;
         wheel->steer_angle_target = Math_WrapAngleDeg(wheel->steer_angle_target + 180.0f);
     }
@@ -156,7 +162,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         SwerveWheel* wheel = wheels[i];
 
         // 读取当前转向角度
-        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset;
+        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset - 180.0f;
         wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
 
         // 计算加零点偏移后转向电机的目标角度
@@ -189,6 +195,27 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
 */
 void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
     const float r = chassis->wheelbase_radius;
+
+    SwerveWheel* wheels[4] = {
+        &chassis->wheel_fl,
+        &chassis->wheel_fr,
+        &chassis->wheel_rl,
+        &chassis->wheel_rr
+    };
+
+    // 对每个轮子进行处理
+    for (int i = 0; i < 4; i++) {
+        SwerveWheel* wheel = wheels[i];
+
+        // 读取当前转向角度
+        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset;
+        wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
+
+
+        // 读取当前驱动速度
+        const float wheel_rpm = (float) wheel->wheel_motor->rotor_speed / chassis->ratio;
+        wheel->drive_speed_current = RPM_TO_RAD(wheel_rpm) * chassis->wheel_radius;
+    }
 
     // 获取各轮子的实际速度向量
     CartesianCoord_Point v_fl, v_fr, v_rl, v_rr;

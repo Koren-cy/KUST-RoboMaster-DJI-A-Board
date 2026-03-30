@@ -60,7 +60,7 @@ typedef struct {
 extern CAN_REMOTE_CONTROL_COMMAND can_remote_control_command;
 extern CAN_CHASSIS_MOTION_PROTOCOL can_chassis_motion_command;
 extern CAN_GYROSCOPE_PROTOCOL can_gyroscope_data;
-#define USE_RAW_PROTOCOL
+// #define USE_RAW_PROTOCOL
 
 // 蜂鸣器
 #include "../../User_Drives/user_buzzer.h"
@@ -78,7 +78,6 @@ extern PID_Controller FR_M3508_PID;
 extern PID_Controller FL_M3508_PID;
 extern PID_Controller RR_M3508_PID;
 extern PID_Controller RL_M3508_PID;
-extern PID_Controller Gimbal_Respect_World_Angle_PID;
 
 // LADRC 控制器
 #include "../../User_Algorithm/User_Controller/user_ladrc.h"
@@ -107,8 +106,7 @@ extern SwerveChassisState user_swerve_chassis;
 // 云台相对于底盘的多圈角度 单位：度
 extern float gimbal_respect_chassis_angle;
 
-// 云台相对于世界的多圈角度 单位：度
-extern float gimbal_respect_world_angle_current;
-extern float gimbal_respect_world_angle_target;
+// 云台相对转动 单位：度
+extern float gimbal_turn_angle;
 
 #endif // USER_BSP_H
