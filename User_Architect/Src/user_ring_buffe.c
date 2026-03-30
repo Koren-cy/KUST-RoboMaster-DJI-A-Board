@@ -54,13 +54,12 @@ uint16_t RingBuffer_GetLength(const RING_BUFFER *buffer) {
 * @param data   要写入的数据指针
 * @param length 要写入的数据长度
 * @return 写入的数据长度
-* @retval 0 缓冲区空间不足，未写入
-* @retval length 成功写入的数据长度
 */
 uint16_t RingBuffer_Put(RING_BUFFER *buffer, const uint8_t *data, const uint16_t length) {
-    // 如果缓冲区空间不足，则不写入数据
-    if (RingBuffer_GetRemain(buffer) < length)
-        return 0;
+    if (RingBuffer_GetRemain(buffer) < length) {
+        const uint16_t overflow = length - RingBuffer_GetRemain(buffer);
+        RingBuffer_AddReadIndex(buffer, overflow);
+    }
     
     // 将数据写入缓冲区
     if (buffer->write_index + length < RING_BUFFER_SIZE) {
