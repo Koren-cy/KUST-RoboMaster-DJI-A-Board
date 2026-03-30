@@ -14,17 +14,18 @@ static uint8_t is_init_loop_event_sign = 0;
 
 /**
 * @brief 处理 UART 队列
-* @note  处理接收和发送队列，该函数会自动注册在全局注册表（全局事件循环）
+* @note  处理接收和发送队列，该函数会自动注册在全局注册表
 */
 static void UART_QueueHandle(void) {
     for (uint8_t uart_index = 0; uart_index < uart_num; uart_index++) {
         UART_DRIVES *uart = uart_drives[uart_index];
 
         // 处理接收队列
-        if (RingBuffer_GetLength(&uart->rx_ringBuffer)) {
+        if (RingBuffer_GetLength(&uart->rx_ringBuffer) && uart->receive_new_data == 1) {
             for (uint8_t i = 0; i < uart->callback_num; i++) {
                 uart->callbacks[i](uart);
             }
+            uart->receive_new_data = 0;
         }
 
         // 处理发送队列
@@ -74,13 +75,24 @@ void UART_RegisterCallback(UART_DRIVES* user_uart, const UART_Callback callback)
 }
 
 /**
-* @brief 通过队列发送数据
+* @brief 通过队列发送字符串
 * @param user_uart UART 驱动结构体指针
 * @param str       要发送的字符串
 */
-void UART_Send(UART_DRIVES* user_uart, const char* str) {
+void UART_Send_String(UART_DRIVES* user_uart, const char* str) {
     Queue_Push(&user_uart->tx_queue, (char*)str, strlen(str));
 }
+
+/**
+* @brief 通过队列发送数据
+* @param user_uart UART 驱动结构体指针
+* @param data      要发送的数据
+* @param len       发送数据的长度
+*/
+void UART_Send_Data(UART_DRIVES* user_uart, const char* data, const uint16_t len) {
+    Queue_Push(&user_uart->tx_queue, (char*)data, len);
+}
+
 
 
 /**
@@ -129,6 +141,16 @@ uint16_t UART_GetDataWithH(UART_DRIVES* user_uart, uint8_t *data, const char *he
     return RingBuffer_GetWith_H_H(&user_uart->rx_ringBuffer, data, head);
 }
 
+/**
+* @brief 获取所有数据
+* @param user_uart UART 驱动结构体指针
+* @param data      数据缓冲区
+* @return 获取的数据长度
+*/
+uint16_t UART_GetAllDate(UART_DRIVES* user_uart, uint8_t *data) {
+    return RingBuffer_GetWith_Len(&user_uart->rx_ringBuffer, data, RingBuffer_GetLength(&user_uart->rx_ringBuffer));
+}
+
 /* 覆写中断回调函数 -----------------------------------------------------------*/
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
@@ -159,11 +181,13 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
             __HAL_DMA_DISABLE_IT(uart->huart->hdmarx, DMA_IT_HT);
             RingBuffer_Put(&uart->rx_ringBuffer, uart->rx_buffer_a, Size);
             uart->is_buffer_a = 0;
+            uart->receive_new_data = 1;
         } else {
             HAL_UARTEx_ReceiveToIdle_DMA(uart->huart, uart->rx_buffer_a, UART_BUFFER_SIZE);
             __HAL_DMA_DISABLE_IT(uart->huart->hdmarx, DMA_IT_HT);
             RingBuffer_Put(&uart->rx_ringBuffer, uart->rx_buffer_b, Size);
             uart->is_buffer_a = 1;
+            uart->receive_new_data = 1;
         }
     }
 }
