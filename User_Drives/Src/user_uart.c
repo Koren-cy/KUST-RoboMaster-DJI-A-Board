@@ -108,11 +108,24 @@ uint16_t UART_GetDataWithHT(UART_DRIVES* user_uart, uint8_t *data, const char *h
 }
 
 /**
+* @brief 根据帧头、帧尾和总长度获取数据
+* @param user_uart UART 驱动结构体指针
+* @param data      数据缓冲区
+* @param head      帧头字符串
+* @param tail      帧尾字符串
+* @param len       期望的数据帧总长度
+* @return 获取的数据长度
+*/
+uint16_t UART_GetDataWithHTLen(UART_DRIVES* user_uart, uint8_t *data, const char *head, const char *tail, const uint16_t len) {
+    return RingBuffer_GetWith_HT_Len(&user_uart->rx_ringBuffer, data, head, tail, len);
+}
+
+/**
 * @brief 根据帧头和指定长度获取数据
 * @param user_uart UART 驱动结构体指针
 * @param data      数据缓冲区
 * @param head      帧头字符串
-* @param len       要获取的数据长度
+* @param len       期望的数据帧总长度
 * @return 获取的数据长度
 */
 uint16_t UART_GetDataWithHLen(UART_DRIVES* user_uart, uint8_t *data, const char *head, const uint16_t len) {
@@ -123,7 +136,7 @@ uint16_t UART_GetDataWithHLen(UART_DRIVES* user_uart, uint8_t *data, const char 
 * @brief 根据指定长度获取数据
 * @param user_uart UART 驱动结构体指针
 * @param data      数据缓冲区
-* @param len       要获取的数据长度
+* @param len       期望的数据帧总长度
 * @return 获取的数据长度
 */
 uint16_t UART_GetDataWithLen(UART_DRIVES* user_uart, uint8_t *data, uint16_t len) {

@@ -81,7 +81,7 @@ uint16_t RingBuffer_Put(RING_BUFFER *buffer, const uint8_t *data, const uint16_t
 * @param data    存储获取数据帧的缓冲区
 * @param head    帧头字符串
 * @param tail    帧尾字符串
-* @return 获取的数据帧长度
+* @return 成功获取到数据帧的长度
 * @retval 0 没有获取到数据帧
 */
 uint16_t RingBuffer_GetWith_H_T(RING_BUFFER *buffer, uint8_t *data, const char *head, const char *tail) {
@@ -133,6 +133,62 @@ uint16_t RingBuffer_GetWith_H_T(RING_BUFFER *buffer, uint8_t *data, const char *
 }
 
 /**
+* @brief 通过帧头、帧尾和总长度获取数据帧
+* @param buffer  环形缓冲区指针
+* @param data   存储获取数据帧的缓冲区
+* @param head   帧头字符串
+* @param tail   帧尾字符串
+* @param len    数据帧长度
+* @return 获取的数据帧长度
+* @retval 0 没有获取到数据帧
+* @retval len 成功获取到数据帧的长度
+*/
+uint16_t RingBuffer_GetWith_HT_Len(RING_BUFFER *buffer, uint8_t *data, const char *head, const char *tail, const uint16_t len) {
+    const uint16_t buff_len = RingBuffer_GetLength(buffer);
+    const uint16_t head_len = (uint16_t)strlen(head);
+    const uint16_t tail_len = (uint16_t)strlen(tail);
+
+    if (buff_len < len || len < head_len + tail_len)
+        return 0;
+
+    for (int32_t frame_start_index = buff_len - len; frame_start_index >= 0; frame_start_index--) {
+        uint16_t read_index = buffer->read_index + frame_start_index;
+
+        // 匹配帧头
+        uint8_t head_match = 1;
+        for (uint16_t i = 0; i < head_len; i++)
+            head_match &= RingBuffer_Read(buffer, read_index + i) == head[i];
+        if (!head_match)
+            continue;
+
+        // 匹配帧尾
+        const uint16_t tail_start_offset = len - tail_len;
+        uint8_t tail_match = 1;
+        for (uint16_t i = 0; i < tail_len; i++)
+            tail_match &= RingBuffer_Read(buffer, read_index + tail_start_offset + i) == tail[i];
+        if (!tail_match)
+            continue;
+
+        uint16_t real_read_index = read_index;
+        if (real_read_index >= RING_BUFFER_SIZE)
+            real_read_index = real_read_index - RING_BUFFER_SIZE;
+
+        if (real_read_index + len <= RING_BUFFER_SIZE)
+            memcpy(data, buffer->buffer + real_read_index, len);
+        else {
+            const uint16_t first_len = RING_BUFFER_SIZE - real_read_index;
+
+            memcpy(data, buffer->buffer + real_read_index, first_len);
+            memcpy(data + first_len, buffer->buffer, len - first_len);
+        }
+
+        RingBuffer_AddReadIndex(buffer, frame_start_index + len);
+        return len;
+    }
+    return 0;
+}
+
+/**
 * @brief 通过数据帧的长度和帧头获取数据帧
 * @param buffer  环形缓冲区指针
 * @param data 存储获取数据的缓冲区
@@ -140,7 +196,7 @@ uint16_t RingBuffer_GetWith_H_T(RING_BUFFER *buffer, uint8_t *data, const char *
 * @param len     数据帧长度
 * @return 获取的数据帧长度
 * @retval 0 没有获取到数据帧
-* @retval len 成功获取到数据帧
+* @retval len 成功获取到数据帧的长度
 */
 uint16_t RingBuffer_GetWith_H_Len(RING_BUFFER *buffer, uint8_t *data, const char *head, const uint16_t len) {
     const uint16_t buff_len = RingBuffer_GetLength(buffer);
@@ -184,7 +240,7 @@ uint16_t RingBuffer_GetWith_H_Len(RING_BUFFER *buffer, uint8_t *data, const char
 * @param len     数据帧长度
 * @return 获取的数据帧长度
 * @retval 0 缓冲区数据长度不足
-* @retval len 成功获取到数据帧
+* @retval len 成功获取到数据帧的长度
 */
 uint16_t RingBuffer_GetWith_Len(RING_BUFFER *buffer, uint8_t *data, const uint16_t len) {
     const uint16_t buff_len = RingBuffer_GetLength(buffer);

@@ -50,6 +50,7 @@ void UART_Send_String(UART_DRIVES* user_uart, const char* str);
 void UART_Send_Data(UART_DRIVES* user_uart, const char* data, uint16_t len);
 
 uint16_t UART_GetDataWithHT(UART_DRIVES* user_uart, uint8_t *data, const char *head, const char *tail);
+uint16_t UART_GetDataWithHTLen(UART_DRIVES* user_uart, uint8_t *data, const char *head, const char *tail, uint16_t len);
 uint16_t UART_GetDataWithHLen(UART_DRIVES* user_uart, uint8_t *data, const char *head, uint16_t len);
 uint16_t UART_GetDataWithLen(UART_DRIVES* user_uart, uint8_t *data, uint16_t len);
 uint16_t UART_GetDataWithH(UART_DRIVES* user_uart, uint8_t *data, const char *head);
