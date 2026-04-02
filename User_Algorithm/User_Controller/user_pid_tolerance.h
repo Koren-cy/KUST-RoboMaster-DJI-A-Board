@@ -1,5 +1,5 @@
-#ifndef USER_PID_H
-#define USER_PID_H
+#ifndef USER_PID_TOLERANCE_H
+#define USER_PID_TOLERANCE_H
 
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
@@ -28,7 +28,7 @@ typedef struct {
 
 /* 函数声明 ------------------------------------------------------------------*/
 void PID_Tolerance_Init(PID_Tolerance_Controller *pid, float kp, float ki, float kd,
-              float max_out, float max_iout);
+              float max_out, float max_iout, float tolerance);
 
 /* 接口函数声明 --------------------------------------------------------------*/
 void PID_Tolerance_Set_Target(void* controller, float target);
@@ -36,4 +36,4 @@ float PID_Tolerance_Calculate(void* controller, float main_feedback, float sub_f
 float PID_Tolerance_Get_Output(void* controller);
 
 
-#endif // USER_PID_H
+#endif // USER_PID_TOLERANCE_H

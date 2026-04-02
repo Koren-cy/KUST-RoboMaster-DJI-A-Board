@@ -48,10 +48,11 @@ static void UART_QueueHandle(void) {
 * @param huart      UART 句柄
 */
 void UART_Init(UART_DRIVES* user_uart, UART_HandleTypeDef* huart) {
-
     user_uart->huart = huart;
     user_uart->status = UART_IDLE;
     user_uart->is_buffer_a = 1;
+
+    Queue_Init(&user_uart->tx_queue, TX_QUEUE_LEN);
 
     uart_drives[uart_num] = user_uart;
     uart_num++;
@@ -245,6 +246,34 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
             uart->is_buffer_a = 1;
             uart->receive_new_data = 1;
         }
+    }
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
+    for (uint8_t uart_index = 0; uart_index < uart_num; uart_index++) {
+        UART_DRIVES *uart = uart_drives[uart_index];
+
+        if (uart->huart != huart)
+            continue;
+
+        HAL_UART_DMAStop(huart);
+        const DMA_HandleTypeDef *hdma = huart->hdmarx;
+        __HAL_DMA_DISABLE(hdma);
+        __HAL_UART_CLEAR_OREFLAG(huart);
+        __HAL_UART_CLEAR_NEFLAG(huart);
+        __HAL_UART_CLEAR_FEFLAG(huart);
+        __HAL_UART_CLEAR_IDLEFLAG(huart);
+
+        if (uart->is_buffer_a) {
+            HAL_UARTEx_ReceiveToIdle_DMA(uart->huart, uart->rx_buffer_b, UART_BUFFER_SIZE);
+            __HAL_DMA_DISABLE_IT(uart->huart->hdmarx, DMA_IT_HT);
+            uart->is_buffer_a = 0;
+        } else {
+            HAL_UARTEx_ReceiveToIdle_DMA(uart->huart, uart->rx_buffer_a, UART_BUFFER_SIZE);
+            __HAL_DMA_DISABLE_IT(uart->huart->hdmarx, DMA_IT_HT);
+            uart->is_buffer_a = 1;
+        }
+        break;
     }
 }
 

@@ -34,6 +34,8 @@ CAN_DRIVES user_can_2 = {0};
 CAN_REMOTE_CONTROL_COMMAND can_remote_control_command = {0};
 CAN_CHASSIS_MOTION_PROTOCOL can_chassis_motion_command = {0};
 CAN_GYROSCOPE_PROTOCOL can_gyroscope_data = {0};
+CAN_CHASSIS_CONDITION_PROTOCOL can_chassis_condition = {0};
+
 void user_can_2_callback(void * user_can) {
     const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
     uint8_t receive_data[8];
@@ -77,9 +79,15 @@ void user_can_2_callback(void * user_can) {
 
             SwerveChassis_InverseKinematics(&user_swerve_chassis);
 
-            const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 100.0f;
+            const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 600.0f;
             gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.129f;
             gimbal_respect_chassis_angle -= d_theta_turret;
+
+            can_chassis_condition.vx_current = (int16_t) (user_swerve_chassis.vx_current * 1000.0f);
+            can_chassis_condition.vx_current = (int16_t) (user_swerve_chassis.vy_current * 1000.0f);
+            can_chassis_condition.gimbal_respect_chassis_angle = gimbal_respect_chassis_angle;
+
+            CAN_Send(&user_can_1, CAN_CHASSIS_MOTION_ID, (uint8_t*)&can_chassis_condition, 8);
 
             gimbal_turn_angle -= d_theta_turret;
 
@@ -87,7 +95,7 @@ void user_can_2_callback(void * user_can) {
             input_vector.y = (float) can_chassis_motion_command.v_y / 1000.0f;
 
             RotateZ_Cartesian(&input_vector, -gimbal_respect_chassis_angle, &move_vector);
-            SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_chassis_motion_command.ω_theta_chassis * 2.0f / 660.0f / TWO_PI);
+            SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_chassis_motion_command.ω_theta_chassis * 2.0f * TWO_PI / 660.0f);
 
             SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
             DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 10.0f);
@@ -102,8 +110,12 @@ void user_can_2_callback(void * user_can) {
             can_gyroscope_data.undefinition_2 = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
             can_gyroscope_data.undefinition_3 = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
 
-            const float angle_z = (float) can_gyroscope_data.angle_z / 100.0f;
-            float angle_z_diff = angle_z - old_angle_z;
+            static float angle_z[2] = {0};
+
+            angle_z[1] = angle_z[0];
+            angle_z[0] = (float) can_gyroscope_data.angle_z / 100.0f;
+
+            float angle_z_diff = angle_z[0] - angle_z[1];
 
             if (angle_z_diff > 180.0f) {
                 angle_z_diff -= 360.0f;
@@ -111,10 +123,15 @@ void user_can_2_callback(void * user_can) {
                 angle_z_diff += 360.0f;
             }
 
-            gimbal_respect_chassis_angle += gimbal_turn_angle - angle_z_diff;
+            static uint8_t init_flag = 1;
+            if (init_flag) {
+                angle_z_diff = 0;
+                init_flag = 0;
+            }
+
+            gimbal_respect_chassis_angle += angle_z_diff - gimbal_turn_angle;
 
             gimbal_turn_angle = 0.0f;
-            old_angle_z = angle_z;
             break;
         #endif
         default: ;

@@ -18,15 +18,18 @@ typedef struct Node {
 * @brief 队列结构体
 */
 typedef struct {
-    Node *front;    /* 队首指针 */
-    Node *rear;     /* 队尾指针 */
-    Node *popped;   /* 最近出队的节点指针 */
-    uint16_t size;  /* 队列大小 */
+    Node *front;       /* 队首指针 */
+    Node *rear;        /* 队尾指针 */
+    Node *popped;      /* 最近出队的节点指针 */
+    uint16_t size;     /* 当前队列大小 */
+    uint16_t max_size; /* 队列最大长度上限 */
 } Queue;
 
 /* 函数声明 ------------------------------------------------------------------*/
+void Queue_Init(Queue *queue, uint16_t max_size);
 void Queue_Push(Queue *queue, const void *data, uint16_t len);
 Node* Queue_Pop(Queue *queue);
+uint8_t Queue_IsFull(const Queue *queue);
 uint8_t Queue_IsEmpty(const Queue *queue);
 uint16_t Queue_GetSize(const Queue *queue);
 void Queue_FreeNode(Node *node);

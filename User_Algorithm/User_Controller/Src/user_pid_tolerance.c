@@ -1,6 +1,5 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "../user_pid_tolerance.h"
-
 #include <math.h>
 #include <string.h>
 
@@ -14,21 +13,23 @@
 * @param kd            PID 微分系数
 * @param max_out       PID 输出限幅
 * @param max_iout      PID 积分限幅
+* @param tolerance     PID 反馈误差
 */
 void PID_Tolerance_Init(PID_Tolerance_Controller *pid, const float kp, const float ki, const float kd,
-              const float max_out, const float max_iout) {
+              const float max_out, const float max_iout, const float tolerance) {
     memset(pid, 0, sizeof(PID_Tolerance_Controller));
     
     // 绑定接口函数
     pid->Set_Target = PID_Tolerance_Set_Target;
     pid->Calculate = PID_Tolerance_Calculate;
     pid->Get_Output = PID_Tolerance_Get_Output;
-    
+
     pid->kp = kp;
     pid->ki = ki;
     pid->kd = kd;
     pid->max_out = max_out;
     pid->max_iout = max_iout;
+    pid->tolerance = tolerance;
 }
 
 /* 接口函数实现 --------------------------------------------------------------*/
