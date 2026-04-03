@@ -4,6 +4,7 @@
 #include "../../Core/Inc/bsp.h"
 
 /* 私有变量 ------------------------------------------------------------------*/
+#define BUS_VOLTAGE 24.0f
 static DJI_MOTOR_OLD_DRIVES *motor_drives[DJI_MOTOR_NUM];
 static uint8_t motor_num = 0;
 
@@ -195,6 +196,8 @@ void DJI_Motor_Old_Init(DJI_MOTOR_OLD_DRIVES* user_motor, CAN_DRIVES* user_can, 
                     float kp, float ki, float kd, float max_out, float max_iout) {
     // 绑定接口
     user_motor->Set_Motor_State = DJI_Motor_Old_Set_State;
+    user_motor->Set_Power_Limit = DJI_Motor_Old_Set_Power_Limit;
+    user_motor->Get_Power_Limit = DJI_Motor_Old_Get_Power_Limit;
     user_motor->Get_Motor_Speed = DJI_Motor_Old_Get_Speed;
     user_motor->Get_Motor_Angle = DJI_Motor_Old_Get_Angle;
     user_motor->Get_Motor_Current = DJI_Motor_Old_Get_Current;
@@ -204,6 +207,7 @@ void DJI_Motor_Old_Init(DJI_MOTOR_OLD_DRIVES* user_motor, CAN_DRIVES* user_can, 
     user_motor->motor_type = motor_type;
     user_motor->control_mode = mode;
     user_motor->target = 0;
+    user_motor->power_limit = 72.0f;
 
     switch (motor_type) {
         case GM6020_old:
@@ -287,6 +291,10 @@ void DJI_Motor_Old_Execute(CAN_DRIVES* user_can) {
             current_target = (int16_t)motor->pid_controller.out;
         }
 
+        const int16_t current_limit = (int16_t)(motor->power_limit / BUS_VOLTAGE / 3.0f * 16384.0f);
+        if (current_target > current_limit)  current_target = (int16_t) current_limit;
+        if (current_target < -current_limit) current_target = (int16_t)-current_limit;
+
         switch (motor->ctrl_id) {
             case GM6020_CURRENT_CONTROL_ID_1:
                 GM6020_control_id_1_frame[2 * motor->id - 2] = (uint8_t)(current_target >> 8);
@@ -353,6 +361,26 @@ void DJI_Motor_Old_Set_State(void *motor, float target) {
     } else {
         user_motor->target = target;
     }
+}
+
+/**
+* @brief 设置电机功率上限
+* @param motor        大疆电机驱动结构体指针
+* @param power_limit  功率上限 单位：W
+*/
+void DJI_Motor_Old_Set_Power_Limit(void* motor, const float power_limit) {
+    DJI_MOTOR_OLD_DRIVES* dji_motor = (DJI_MOTOR_OLD_DRIVES*)motor;
+    dji_motor->power_limit = power_limit;
+}
+
+/**
+* @brief 获取电机功率上限
+* @param motor 大疆电机驱动结构体指针
+* @return 功率上限 单位：W
+*/
+float DJI_Motor_Old_Get_Power_Limit(void* motor) {
+    const DJI_MOTOR_OLD_DRIVES* dji_motor = (DJI_MOTOR_OLD_DRIVES*)motor;
+    return dji_motor->power_limit;
 }
 
 /**

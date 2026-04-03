@@ -62,6 +62,7 @@ typedef struct {
     Dji_Controller_Type controller_type;  /* 电调型号 */
     Dji_Control_Mode control_mode;        /* 控制模式 */
     float target;                         /* 开环模式目标值 */
+    float power_limit;                    /* 功率限制上限 单位：W */
     uint8_t id;                           /* 电机 ID (1 ~ 7) */
     uint16_t ctrl_id;                     /* 控制帧 ID */
     uint16_t fdb_id;                      /* 反馈帧 ID */
@@ -82,6 +83,8 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can);
 
 /* 接口函数声明 --------------------------------------------------------------*/
 void DJI_Motor_Set_State(void* motor, float value);
+void DJI_Motor_Set_Power_Limit(void* motor, float power_limit);
+float DJI_Motor_Get_Power_Limit(void* motor);
 float DJI_Motor_Get_Speed(void* motor);
 float DJI_Motor_Get_Angle(void* motor);
 float DJI_Motor_Get_Current(void* motor);
