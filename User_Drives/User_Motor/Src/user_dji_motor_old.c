@@ -86,29 +86,31 @@ static float PID_Calculate_Old(PID_Controller_OLD *pid, const float target, cons
 
     pid->Pout = pid->kp * pid->err[0];
 
-    const float p_range = 50.0f;
+    const float p_range = 100.0f;
     if (pid->err[0] > p_range) {
-        pid->Pout = pid->kp * ((pid->err[0] - p_range) * 0.05f + p_range);
+        pid->Pout = pid->kp * ((pid->err[0] - p_range) * 0.1f + p_range);
     }
     if (pid->err[0] < -p_range) {
-        pid->Pout = pid->kp * ((pid->err[0] + p_range) * 0.05f - p_range);
+        pid->Pout = pid->kp * ((pid->err[0] + p_range) * 0.1f - p_range);
     }
 
     pid->Iout += pid->ki * pid->err[0];
 
     pid->Dout = pid->kd * (pid->err[0] - pid->err[1]);
 
-    if        (fabsf(pid->err[0] - pid->err[1]) < 2) {
+    if        (fabsf(pid->err[0] - pid->err[1]) < 5) {
         pid->Dout = pid->Dout * 0.30f;
-    } else if (fabsf(pid->err[0] - pid->err[1]) < 5) {
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 45) {
         pid->Dout = pid->Dout * 0.40f;
-    } else if (fabsf(pid->err[0] - pid->err[1]) < 10) {
-        pid->Dout = pid->Dout * 0.55f;
-    } else if (fabsf(pid->err[0] - pid->err[1]) < 15) {
-        pid->Dout = pid->Dout * 0.75f;
-    } else if (fabsf(pid->err[0] - pid->err[1]) < 30) {
-        pid->Dout = pid->Dout * 0.85f;
-    } else if (fabsf(pid->err[0] - pid->err[1]) < 80) {
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 125) {
+        pid->Dout = pid->Dout * 0.50f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 250) {
+        pid->Dout = pid->Dout * 0.60f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 500) {
+        pid->Dout = pid->Dout * 0.70f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 1000) {
+        pid->Dout = pid->Dout * 0.80f;
+    } else if (fabsf(pid->err[0] - pid->err[1]) < 2000) {
         pid->Dout = pid->Dout * 0.90f;
     }
 

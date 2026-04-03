@@ -80,14 +80,14 @@ void user_can_2_callback(void * user_can) {
             SwerveChassis_InverseKinematics(&user_swerve_chassis);
 
             const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 600.0f;
-            gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.129f;
             gimbal_respect_chassis_angle -= d_theta_turret;
+            gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.129f;
 
             can_chassis_condition.vx_current = (int16_t) (user_swerve_chassis.vx_current * 1000.0f);
-            can_chassis_condition.vx_current = (int16_t) (user_swerve_chassis.vy_current * 1000.0f);
+            can_chassis_condition.vy_current = (int16_t) (user_swerve_chassis.vy_current * 1000.0f);
             can_chassis_condition.gimbal_respect_chassis_angle = gimbal_respect_chassis_angle;
 
-            CAN_Send(&user_can_1, CAN_CHASSIS_MOTION_ID, (uint8_t*)&can_chassis_condition, 8);
+            CAN_Send(&user_can_2, CAN_CHASSIS_MOTION_ID, (uint8_t*)&can_chassis_condition, 8);
 
             gimbal_turn_angle -= d_theta_turret;
 
@@ -129,7 +129,7 @@ void user_can_2_callback(void * user_can) {
                 init_flag = 0;
             }
 
-            gimbal_respect_chassis_angle += angle_z_diff - gimbal_turn_angle;
+            gimbal_respect_chassis_angle += gimbal_turn_angle - angle_z_diff * 0.0f;
 
             gimbal_turn_angle = 0.0f;
             break;

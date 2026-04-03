@@ -165,11 +165,14 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset - 180.0f;
         wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
 
-        // 计算加零点偏移后转向电机的目标角度
+        // 先劣弧优化
+        OptimizeSteerAngle(wheel);
+
+        // 再加零点偏移
         wheel->steer_angle_target = wheel->steer_angle_target + wheel->steer_angle_offset;
 
-        // 劣弧优化
-        OptimizeSteerAngle(wheel);
+        // 归一化到 [-180, 180]
+        wheel->steer_angle_target = Math_WrapAngleDeg(wheel->steer_angle_target);
 
         // 设置转向电机目标
         wheel->steer_motor->Set_Motor_State(wheel->steer_motor, wheel->steer_angle_target + 180.0f);
@@ -208,7 +211,7 @@ void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
         SwerveWheel* wheel = wheels[i];
 
         // 读取当前转向角度
-        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset;
+        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset - 180.0f;
         wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
 
 
