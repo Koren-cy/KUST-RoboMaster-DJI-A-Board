@@ -139,10 +139,10 @@ int main(void)
   PID_Init(&RR_M3508_PID, 3.0f, 0.0f, 5.0f, 16000.0f, 0.0f);
   PID_Init(&RL_M3508_PID, 3.0f, 0.0f, 5.0f, 16000.0f, 0.0f);
 
-  DJI_Motor_Old_Init(&FR_GM6020, &user_can_1, 1, GM6020_old, Rotor_angle_old, 48.0f , 0.0f, 360.0f, 16000.0f, 0);
-  DJI_Motor_Old_Init(&FL_GM6020, &user_can_1, 3, GM6020_old, Rotor_angle_old, 48.0f , 0.0f, 360.0f, 16000.0f, 0);
-  DJI_Motor_Old_Init(&RR_GM6020, &user_can_1, 2, GM6020_old, Rotor_angle_old, 48.0f , 0.0f, 360.0f, 16000.0f, 0);
-  DJI_Motor_Old_Init(&RL_GM6020, &user_can_1, 4, GM6020_old, Rotor_angle_old, 48.0f , 0.0f, 360.0f, 16000.0f, 0);
+  DJI_Motor_Old_Init(&FR_GM6020, &user_can_1, 1, GM6020_old, Rotor_angle_old, 52.0f , 0.0f, 360.0f, 16000.0f, 0);
+  DJI_Motor_Old_Init(&FL_GM6020, &user_can_1, 3, GM6020_old, Rotor_angle_old, 52.0f , 0.0f, 360.0f, 16000.0f, 0);
+  DJI_Motor_Old_Init(&RR_GM6020, &user_can_1, 2, GM6020_old, Rotor_angle_old, 52.0f , 0.0f, 360.0f, 16000.0f, 0);
+  DJI_Motor_Old_Init(&RL_GM6020, &user_can_1, 4, GM6020_old, Rotor_angle_old, 52.0f , 0.0f, 360.0f, 16000.0f, 0);
 
   DJI_Motor_Old_Set_Power_Limit(&FR_GM6020, 60);
   DJI_Motor_Old_Set_Power_Limit(&FL_GM6020, 60);
@@ -159,7 +159,7 @@ int main(void)
   DJI_Motor_Set_Power_Limit(&FR_M3508, 40);
   DJI_Motor_Set_Power_Limit(&FR_M3508, 40);
 
-  LADRC_Init(&YAW_GM6020_LADRC, 21.0f, 400.0f, 62.0f,0.1f, 15000.0f, 0.001f);
+  LADRC_Init(&YAW_GM6020_LADRC, 21.0f, 400.0f, 64.0f,0.1f, 15000.0f, 0.001f);
   DJI_Motor_Init(&YAW_GM6020, &user_can_1, 5, 130.0f, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&YAW_GM6020_LADRC);
 
   SwerveChassis_Init(&user_swerve_chassis, 0.430835f, 0.114f / 2, 15.764705882f,
