@@ -11,17 +11,21 @@
  * @param controller_b    并联控制器B指针
  * @param coef_a          控制器A输出混合系数
  * @param coef_b          控制器B输出混合系数
+ * @param max_out         最大输出限幅
  */
 void Parallel_Controller_Init(Parallel_Controller* parallel,
                               CONTROLLER_INTERFACE* controller_a,
                               CONTROLLER_INTERFACE* controller_b,
-                              const float coef_a, const float coef_b) {
+                              const float coef_a, const float coef_b,
+                              const float max_out) {
     memset(parallel, 0, sizeof(Parallel_Controller));
 
     // 绑定接口函数
     parallel->Set_Target = Parallel_Controller_Set_Target;
     parallel->Calculate = Parallel_Controller_Calculate;
     parallel->Get_Output = Parallel_Controller_Get_Output;
+    parallel->Set_MaxOut = Parallel_Controller_Set_MaxOut;
+    parallel->Get_MaxOut = Parallel_Controller_Get_MaxOut;
 
     // 绑定子控制器
     parallel->controller_a = controller_a;
@@ -30,6 +34,9 @@ void Parallel_Controller_Init(Parallel_Controller* parallel,
     // 初始化混合系数
     parallel->coef_a = coef_a;
     parallel->coef_b = coef_b;
+
+    // 初始化控制器参数
+    parallel->max_out = max_out;
 
     // 初始化状态变量
     parallel->target = 0.0f;
@@ -75,6 +82,13 @@ float Parallel_Controller_Calculate(void* controller, const float feedback_a, co
     parallel->output = parallel->coef_a * parallel->output_a
                      + parallel->coef_b * parallel->output_b;
 
+    // 输出限幅
+    if (parallel->output > parallel->max_out) {
+        parallel->output = parallel->max_out;
+    } else if (parallel->output < -parallel->max_out) {
+        parallel->output = -parallel->max_out;
+    }
+
     return parallel->output;
 }
 
@@ -86,4 +100,24 @@ float Parallel_Controller_Calculate(void* controller, const float feedback_a, co
 float Parallel_Controller_Get_Output(void* controller) {
     const Parallel_Controller* parallel = (Parallel_Controller*)controller;
     return parallel->output;
+}
+
+/**
+ * @brief 设置并连控制器最大输出限幅
+ * @param controller 控制器结构体指针
+ * @param max_out    最大输出限幅值
+ */
+void Parallel_Controller_Set_MaxOut(void* controller, const float max_out) {
+    Parallel_Controller* parallel = (Parallel_Controller*)controller;
+    parallel->max_out = max_out;
+}
+
+/**
+ * @brief 获取并连控制器最大输出限幅
+ * @param controller 控制器结构体指针
+ * @return 并连控制器最大输出限幅值
+ */
+float Parallel_Controller_Get_MaxOut(void* controller) {
+    const Parallel_Controller* parallel = (Parallel_Controller*)controller;
+    return parallel->max_out;
 }

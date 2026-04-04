@@ -28,6 +28,8 @@ void LADRC_Init(LADRC_Controller *ladrc,
     ladrc->Set_Target = LADRC_Set_Target;
     ladrc->Calculate = LADRC_Calculate;
     ladrc->Get_Output = LADRC_Get_Output;
+    ladrc->Set_MaxOut = LADRC_Set_MaxOut;
+    ladrc->Get_MaxOut = LADRC_Get_MaxOut;
     
     // 初始化线性扩张状态观测器
     ladrc->leso.wc = wc;
@@ -94,6 +96,26 @@ float LADRC_Calculate(void* controller, const float main_feedback, const float s
 float LADRC_Get_Output(void* controller) {
     const LADRC_Controller* ladrc = (LADRC_Controller*)controller;
     return ladrc->out;
+}
+
+/**
+ * @brief 设置 LADRC 最大输出限幅
+ * @param controller 控制器结构体指针
+ * @param max_out    最大输出限幅值
+ */
+void LADRC_Set_MaxOut(void* controller, const float max_out) {
+    LADRC_Controller* ladrc = (LADRC_Controller*)controller;
+    ladrc->max_out = max_out;
+}
+
+/**
+ * @brief 获取 LADRC 最大输出限幅
+ * @param controller 控制器结构体指针
+ * @return LADRC 最大输出限幅值
+ */
+float LADRC_Get_MaxOut(void* controller) {
+    const LADRC_Controller* ladrc = (LADRC_Controller*)controller;
+    return ladrc->max_out;
 }
 
 /* 私有函数实现 --------------------------------------------------------------*/

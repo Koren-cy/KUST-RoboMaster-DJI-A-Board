@@ -41,6 +41,8 @@ void ADRC_Init(ADRC_Controller *adrc,
     adrc->Set_Target = ADRC_Set_Target;
     adrc->Calculate = ADRC_Calculate;
     adrc->Get_Output = ADRC_Get_Output;
+    adrc->Set_MaxOut = ADRC_Set_MaxOut;
+    adrc->Get_MaxOut = ADRC_Get_MaxOut;
     
     // 初始化跟踪微分器
     adrc->td.r = r;
@@ -120,6 +122,26 @@ float ADRC_Calculate(void* controller, const float main_feedback, const float su
 float ADRC_Get_Output(void* controller) {
     const ADRC_Controller* adrc = (ADRC_Controller*)controller;
     return adrc->out;
+}
+
+/**
+ * @brief 设置 ADRC 最大输出限幅
+ * @param controller 控制器结构体指针
+ * @param max_out    最大输出限幅值
+ */
+void ADRC_Set_MaxOut(void* controller, const float max_out) {
+    ADRC_Controller* adrc = (ADRC_Controller*)controller;
+    adrc->max_out = max_out;
+}
+
+/**
+ * @brief 获取 ADRC 最大输出限幅
+ * @param controller 控制器结构体指针
+ * @return ADRC 最大输出限幅值
+ */
+float ADRC_Get_MaxOut(void* controller) {
+    const ADRC_Controller* adrc = (ADRC_Controller*)controller;
+    return adrc->max_out;
 }
 
 /* 私有函数实现 --------------------------------------------------------------*/

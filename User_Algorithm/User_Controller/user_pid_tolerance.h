@@ -34,6 +34,8 @@ void PID_Tolerance_Init(PID_Tolerance_Controller *pid, float kp, float ki, float
 void PID_Tolerance_Set_Target(void* controller, float target);
 float PID_Tolerance_Calculate(void* controller, float main_feedback, float sub_feedback);
 float PID_Tolerance_Get_Output(void* controller);
+void PID_Tolerance_Set_MaxOut(void* controller, float max_out);
+float PID_Tolerance_Get_MaxOut(void* controller);
 
 
 #endif // USER_PID_TOLERANCE_H

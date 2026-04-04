@@ -21,6 +21,8 @@ void PID_Init(PID_Controller *pid, const float kp, const float ki, const float k
     pid->Set_Target = PID_Set_Target;
     pid->Calculate = PID_Calculate;
     pid->Get_Output = PID_Get_Output;
+    pid->Set_MaxOut = PID_Set_MaxOut;
+    pid->Get_MaxOut = PID_Get_MaxOut;
     
     pid->kp = kp;
     pid->ki = ki;
@@ -88,4 +90,24 @@ float PID_Calculate(void* controller, const float main_feedback, const float sub
 float PID_Get_Output(void* controller) {
     const PID_Controller* pid = (PID_Controller*)controller;
     return pid->out;
+}
+
+/**
+* @brief 设置 PID 最大输出限幅
+* @param controller 控制器结构体指针
+* @param max_out    最大输出限幅值
+*/
+void PID_Set_MaxOut(void* controller, const float max_out) {
+    PID_Controller* pid = (PID_Controller*)controller;
+    pid->max_out = max_out;
+}
+
+/**
+* @brief 获取 PID 最大输出限幅
+* @param controller 控制器结构体指针
+* @return PID 最大输出限幅值
+*/
+float PID_Get_MaxOut(void* controller) {
+    const PID_Controller* pid = (PID_Controller*)controller;
+    return pid->max_out;
 }

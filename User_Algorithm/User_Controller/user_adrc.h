@@ -71,6 +71,8 @@ void ADRC_Init(ADRC_Controller *adrc,
 void ADRC_Set_Target(void* controller, float target);
 float ADRC_Calculate(void* controller, float main_feedback, float sub_feedback);
 float ADRC_Get_Output(void* controller);
+void ADRC_Set_MaxOut(void* controller, float max_out);
+float ADRC_Get_MaxOut(void* controller);
 
 
 #endif // USER_ADRC_H

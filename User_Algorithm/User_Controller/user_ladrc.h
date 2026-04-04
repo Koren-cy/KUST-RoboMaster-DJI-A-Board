@@ -52,6 +52,8 @@ void LADRC_Init(LADRC_Controller *ladrc,
 void LADRC_Set_Target(void* controller, float target);
 float LADRC_Calculate(void* controller, float main_feedback, float sub_feedback);
 float LADRC_Get_Output(void* controller);
+void LADRC_Set_MaxOut(void* controller, float max_out);
+float LADRC_Get_MaxOut(void* controller);
 
 
 #endif // USER_LADRC_H

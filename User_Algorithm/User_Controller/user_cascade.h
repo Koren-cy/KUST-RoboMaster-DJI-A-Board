@@ -12,10 +12,11 @@
 */
 typedef struct {
     CONTROLLER_INTERFACE_FUNC
-    
+
     CONTROLLER_INTERFACE* outer_controller;   /* 外环控制器指针 */
     CONTROLLER_INTERFACE* inner_controller;   /* 内环控制器指针 */
-    
+
+    float max_out;                            /* 最大输出限幅 */
     float target;                             /* 外环目标值 */
     float output;                             /* 最终输出值 */
 } Cascade_Controller;
@@ -23,11 +24,14 @@ typedef struct {
 /* 函数声明 ------------------------------------------------------------------*/
 void Cascade_Controller_Init(Cascade_Controller *cascade,
                              CONTROLLER_INTERFACE* outer_controller,
-                             CONTROLLER_INTERFACE* inner_controller);
+                             CONTROLLER_INTERFACE* inner_controller,
+                             float max_out);
 
 /* 接口函数声明 --------------------------------------------------------------*/
 void Cascade_Controller_Set_Target(void* controller, float target);
 float Cascade_Controller_Calculate(void* controller, float outer_feedback, float inner_feedback);
 float Cascade_Controller_Get_Output(void* controller);
+void Cascade_Controller_Set_MaxOut(void* controller, float max_out);
+float Cascade_Controller_Get_MaxOut(void* controller);
 
 #endif // USER_CASCADE_H

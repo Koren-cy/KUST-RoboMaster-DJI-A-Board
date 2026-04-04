@@ -12,18 +12,24 @@
 */
 void Cascade_Controller_Init(Cascade_Controller *cascade,
                              CONTROLLER_INTERFACE* outer_controller,
-                             CONTROLLER_INTERFACE* inner_controller) {
+                             CONTROLLER_INTERFACE* inner_controller,
+                             float max_out) {
     memset(cascade, 0, sizeof(Cascade_Controller));
     
     // 绑定接口函数
     cascade->Set_Target = Cascade_Controller_Set_Target;
     cascade->Calculate = Cascade_Controller_Calculate;
     cascade->Get_Output = Cascade_Controller_Get_Output;
-    
+    cascade->Set_MaxOut = Cascade_Controller_Set_MaxOut;
+    cascade->Get_MaxOut = Cascade_Controller_Get_MaxOut;
+
     // 绑定内外环控制器
     cascade->outer_controller = outer_controller;
     cascade->inner_controller = inner_controller;
-    
+
+    // 初始化控制器参数
+    cascade->max_out = max_out;
+
     // 初始化状态变量
     cascade->target = 0.0f;
     cascade->output = 0.0f;
@@ -66,7 +72,14 @@ float Cascade_Controller_Calculate(void* controller, const float outer_feedback,
     
     // 计算内环输出
     cascade->output = inner->Calculate(cascade->inner_controller, inner_feedback, 0.0f);
-    
+
+    // 输出限幅
+    if (cascade->output > cascade->max_out) {
+        cascade->output = cascade->max_out;
+    } else if (cascade->output < -cascade->max_out) {
+        cascade->output = -cascade->max_out;
+    }
+
     return cascade->output;
 }
 
@@ -78,4 +91,24 @@ float Cascade_Controller_Calculate(void* controller, const float outer_feedback,
 float Cascade_Controller_Get_Output(void* controller) {
     const Cascade_Controller* cascade = (Cascade_Controller*)controller;
     return cascade->output;
+}
+
+/**
+* @brief 设置串级控制器最大输出限幅
+* @param controller 控制器结构体指针
+* @param max_out    最大输出限幅值
+*/
+void Cascade_Controller_Set_MaxOut(void* controller, const float max_out) {
+    Cascade_Controller* cascade = (Cascade_Controller*)controller;
+    cascade->max_out = max_out;
+}
+
+/**
+* @brief 获取串级控制器最大输出限幅
+* @param controller 控制器结构体指针
+* @return 串级控制器最大输出限幅值
+*/
+float Cascade_Controller_Get_MaxOut(void* controller) {
+    const Cascade_Controller* cascade = (Cascade_Controller*)controller;
+    return cascade->max_out;
 }

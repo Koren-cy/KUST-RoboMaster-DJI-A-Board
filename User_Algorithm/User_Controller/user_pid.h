@@ -33,6 +33,8 @@ void PID_Init(PID_Controller *pid, float kp, float ki, float kd,
 void PID_Set_Target(void* controller, float target);
 float PID_Calculate(void* controller, float main_feedback, float sub_feedback);
 float PID_Get_Output(void* controller);
+void PID_Set_MaxOut(void* controller, float max_out);
+float PID_Get_MaxOut(void* controller);
 
 
 #endif // USER_PID_H

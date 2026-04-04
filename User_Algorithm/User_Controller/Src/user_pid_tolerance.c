@@ -23,6 +23,8 @@ void PID_Tolerance_Init(PID_Tolerance_Controller *pid, const float kp, const flo
     pid->Set_Target = PID_Tolerance_Set_Target;
     pid->Calculate = PID_Tolerance_Calculate;
     pid->Get_Output = PID_Tolerance_Get_Output;
+    pid->Set_MaxOut = PID_Tolerance_Set_MaxOut;
+    pid->Get_MaxOut = PID_Tolerance_Get_MaxOut;
 
     pid->kp = kp;
     pid->ki = ki;
@@ -115,4 +117,24 @@ float PID_Tolerance_Calculate(void* controller, const float main_feedback, const
 float PID_Tolerance_Get_Output(void* controller) {
     const PID_Tolerance_Controller* pid = (PID_Tolerance_Controller*)controller;
     return pid->out;
+}
+
+/**
+* @brief 设置带容差 PID 最大输出限幅
+* @param controller 控制器结构体指针
+* @param max_out    最大输出限幅值
+*/
+void PID_Tolerance_Set_MaxOut(void* controller, const float max_out) {
+    PID_Tolerance_Controller* pid = (PID_Tolerance_Controller*)controller;
+    pid->max_out = max_out;
+}
+
+/**
+* @brief 获取带容差 PID 最大输出限幅
+* @param controller 控制器结构体指针
+* @return 带容差 PID 最大输出限幅值
+*/
+float PID_Tolerance_Get_MaxOut(void* controller) {
+    const PID_Tolerance_Controller* pid = (PID_Tolerance_Controller*)controller;
+    return pid->max_out;
 }

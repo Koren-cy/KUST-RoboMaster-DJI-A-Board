@@ -3,8 +3,10 @@
 #include "../../User_Algorithm/user_coord.h"
 
 /* 私有宏定义 ----------------------------------------------------------------*/
-#define RPM_TO_RAD(RPM) ((RPM) * TWO_PI / 60.0f)
-#define RAD_TO_RPM(RAD) ((RAD) * 60.0f / TWO_PI)
+#define RPM_TO_RAD(RPM)    ((RPM) * TWO_PI / 60.0f)
+#define RAD_TO_RPM(RAD)    ((RAD) * 60.0f / TWO_PI)
+#define BUS_VOLTAGE        24.0f
+#define TORQUE_CURRENT_TO_POWER(torque)  (((torque) / 16384.0f) * (BUS_VOLTAGE) * 3.0f)
 
 /* 函数体 --------------------------------------------------------------------*/
 
@@ -65,6 +67,15 @@ void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radiu
     chassis->wheel_rr.reverse = rr_reverse;
 }
 
+
+/**
+* @brief 设置底盘总功率上限
+* @param chassis     底盘状态结构体指针
+* @param power_limit 功率上限 (W)
+*/
+void SwerveChassis_Set_Power_Limit(SwerveChassisState* chassis, float power_limit) {
+    chassis->total_power_limit = power_limit;
+}
 
 /**
 * @brief 舵轮底盘运动学正解
@@ -187,8 +198,48 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         // 设置驱动电机目标
         wheel->wheel_motor->Set_Motor_State(wheel->wheel_motor, motor_rpm * (float)wheel->reverse * chassis->ratio);
     }
-}
 
+    // 估算4个转向电机上周期实际功耗
+    float steer_powers[4];
+    float steer_power_sum = 0.0f;
+    for (int i = 0; i < 4; i++) {
+        steer_powers[i] = fabsf(TORQUE_CURRENT_TO_POWER(wheels[i]->steer_motor->torque_current));
+        steer_power_sum += steer_powers[i];
+    }
+
+    // 估算4个轮电机上周期实际功耗
+    float wheel_powers[4];
+    float wheel_power_sum = 0.0f;
+    for (int i = 0; i < 4; i++) {
+        wheel_powers[i] = fabsf(TORQUE_CURRENT_TO_POWER(wheels[i]->wheel_motor->torque_current));
+        wheel_power_sum += wheel_powers[i];
+    }
+
+    // 计算比例系数
+    const float total_estimate = steer_power_sum + wheel_power_sum;
+    float scale = (total_estimate > 0.01f) ? (chassis->total_power_limit / total_estimate) : 1.0f;
+    if (scale > 1.0f) scale = 1.0f;
+
+    // 通过 Set_Power_Limit 设置4个转向电机的功率限制
+    for (int i = 0; i < 4; i++) {
+        const float steer_limit = steer_powers[i] * scale;
+        wheels[i]->steer_motor->Set_Power_Limit(wheels[i]->steer_motor, steer_limit);
+    }
+
+    // 通过 Set_Power_Limit 设置4个轮电机的功率限制
+    const float steer_allocated = steer_power_sum * scale;
+    float wheel_budget = chassis->total_power_limit - steer_allocated;
+    if (wheel_budget < 0.0f) wheel_budget = 0.0f;
+    chassis->remaining_power = wheel_budget;
+
+    if (wheel_power_sum > 0.01f) {
+        const float wheel_scale = wheel_budget / wheel_power_sum;
+        for (int i = 0; i < 4; i++) {
+            const float wheel_limit = wheel_powers[i] * wheel_scale;
+            wheels[i]->wheel_motor->Set_Power_Limit(wheels[i]->wheel_motor, wheel_limit);
+        }
+    }
+}
 
 /**
 * @brief 舵轮底盘逆向运动学解算
@@ -205,66 +256,54 @@ void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
         &chassis->wheel_rr
     };
 
-    // 对每个轮子进行处理
     for (int i = 0; i < 4; i++) {
         SwerveWheel* wheel = wheels[i];
 
-        // 读取当前转向角度
         wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset - 180.0f;
         wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
 
-
-        // 读取当前驱动速度
         const float wheel_rpm = (float) wheel->wheel_motor->rotor_speed / chassis->ratio;
         wheel->drive_speed_current = RPM_TO_RAD(wheel_rpm) * chassis->wheel_radius;
     }
 
-    // 获取各轮子的实际速度向量
     CartesianCoord_Point v_fl, v_fr, v_rl, v_rr;
-    
-    // 将极坐标速度转换为笛卡尔坐标
+
     const PolarCoord_Point polar_fl = {chassis->wheel_fl.drive_speed_current * (float)chassis->wheel_fl.reverse, chassis->wheel_fl.steer_angle_current, 0.0f};
     const PolarCoord_Point polar_fr = {chassis->wheel_fr.drive_speed_current * (float)chassis->wheel_fr.reverse, chassis->wheel_fr.steer_angle_current, 0.0f};
     const PolarCoord_Point polar_rl = {chassis->wheel_rl.drive_speed_current * (float)chassis->wheel_rl.reverse, chassis->wheel_rl.steer_angle_current, 0.0f};
     const PolarCoord_Point polar_rr = {chassis->wheel_rr.drive_speed_current * (float)chassis->wheel_rr.reverse, chassis->wheel_rr.steer_angle_current, 0.0f};
-    
+
     PolarToCartesian(&polar_fl, &v_fl);
     PolarToCartesian(&polar_fr, &v_fr);
     PolarToCartesian(&polar_rl, &v_rl);
     PolarToCartesian(&polar_rr, &v_rr);
-    
-    // 计算各轮子在底盘坐标系中的位置
+
     const CartesianCoord_Point pos_fl = {-r * 0.707107f,  r  * 0.707107f, 0.0f};
     const CartesianCoord_Point pos_fr = {-r * 0.707107f, -r * 0.707107f, 0.0f};
     const CartesianCoord_Point pos_rl = {r  * 0.707107f,  r * 0.707107f, 0.0f};
     const CartesianCoord_Point pos_rr = {r  * 0.707107f, -r * 0.707107f, 0.0f};
 
-    // 计算平移速度
     CartesianCoord_Point v_sum = {0.0f, 0.0f, 0.0f};
     Add_Cartesian(&v_sum, &v_fl, &v_sum);
     Add_Cartesian(&v_sum, &v_fr, &v_sum);
     Add_Cartesian(&v_sum, &v_rl, &v_sum);
     Add_Cartesian(&v_sum, &v_rr, &v_sum);
-    
+
     chassis->vx_current = v_sum.x / 4.0f;
     chassis->vy_current = v_sum.y / 4.0f;
-    
-    // 计算旋转角速度
+
     const CartesianCoord_Point v_trans = {chassis->vx_current, chassis->vy_current, 0.0f};
-    
-    // 计算每个轮子的旋转分量
+
     CartesianCoord_Point v_rot_fl, v_rot_fr, v_rot_rl, v_rot_rr;
     Subtract_Cartesian(&v_fl, &v_trans, &v_rot_fl);
     Subtract_Cartesian(&v_fr, &v_trans, &v_rot_fr);
     Subtract_Cartesian(&v_rl, &v_trans, &v_rot_rl);
     Subtract_Cartesian(&v_rr, &v_trans, &v_rot_rr);
-    
-    // 计算角速度
+
     const float omega_fl = (v_rot_fl.x * (-pos_fl.y) + v_rot_fl.y * pos_fl.x) / (r * r);
     const float omega_fr = (v_rot_fr.x * (-pos_fr.y) + v_rot_fr.y * pos_fr.x) / (r * r);
     const float omega_rl = (v_rot_rl.x * (-pos_rl.y) + v_rot_rl.y * pos_rl.x) / (r * r);
     const float omega_rr = (v_rot_rr.x * (-pos_rr.y) + v_rot_rr.y * pos_rr.x) / (r * r);
-    
-    // 取平均值
+
     chassis->omega_current = (omega_fl + omega_fr + omega_rl + omega_rr) / 4.0f;
 }

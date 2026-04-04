@@ -35,6 +35,8 @@ typedef struct {
     float wheelbase_radius;    // 轮子到底盘中心的距离 (m)
     float wheel_radius;        // 轮子的半径 (m)
     float ratio;               // 轮电机减速比
+    float total_power_limit;   // 底盘总功率上限 (W)
+    float remaining_power;     // 当前剩余可分配给轮电机的功率 (W)
     SwerveWheel wheel_fl;
     SwerveWheel wheel_fr;
     SwerveWheel wheel_rl;
@@ -51,5 +53,6 @@ void SwerveChassis_Init(SwerveChassisState* chassis, float wheelbase_radius, flo
 void SwerveChassis_Kinematics(SwerveChassisState* chassis, float vx, float vy, float omega);
 void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis);
 void SwerveChassis_InverseKinematics(SwerveChassisState* chassis);
+void SwerveChassis_Set_Power_Limit(SwerveChassisState* chassis, float power_limit);
 
 #endif //__SWERVE_CHASSIS_H__
