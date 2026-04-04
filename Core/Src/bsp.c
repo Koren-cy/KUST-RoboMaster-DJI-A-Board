@@ -81,7 +81,7 @@ void user_can_2_callback(void * user_can) {
 
             const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 600.0f;
             gimbal_respect_chassis_angle -= d_theta_turret;
-            gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.1925f;
+            gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.1950f;
 
             can_chassis_condition.vx_current = (int16_t) (user_swerve_chassis.vx_current * 1000.0f);
             can_chassis_condition.vy_current = (int16_t) (user_swerve_chassis.vy_current * 1000.0f);
@@ -98,7 +98,7 @@ void user_can_2_callback(void * user_can) {
             SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_chassis_motion_command.ω_theta_chassis * 1.0f * TWO_PI / 660.0f);
 
             SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
-            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 10.0f);
+            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 20.0f);
             DJI_Motor_Old_Execute(&user_can_1);
             DJI_Motor_Execute(&user_can_1);
 
@@ -129,7 +129,7 @@ void user_can_2_callback(void * user_can) {
                 init_flag = 0;
             }
 
-            gimbal_respect_chassis_angle += gimbal_turn_angle - angle_z_diff * 0.06f;
+            gimbal_respect_chassis_angle += gimbal_turn_angle - angle_z_diff * 0.0f;
 
             gimbal_turn_angle = 0.0f;
             break;

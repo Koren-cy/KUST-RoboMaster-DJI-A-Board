@@ -223,7 +223,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
     // 通过 Set_Power_Limit 设置4个转向电机的功率限制
     for (int i = 0; i < 4; i++) {
         const float steer_limit = steer_powers[i] * scale;
-        wheels[i]->steer_motor->Set_Power_Limit(wheels[i]->steer_motor, steer_limit);
+        wheels[i]->steer_motor->Set_Power_Limit(wheels[i]->steer_motor, steer_limit + 10);
     }
 
     // 通过 Set_Power_Limit 设置4个轮电机的功率限制
@@ -236,7 +236,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         const float wheel_scale = wheel_budget / wheel_power_sum;
         for (int i = 0; i < 4; i++) {
             const float wheel_limit = wheel_powers[i] * wheel_scale;
-            wheels[i]->wheel_motor->Set_Power_Limit(wheels[i]->wheel_motor, wheel_limit);
+            wheels[i]->wheel_motor->Set_Power_Limit(wheels[i]->wheel_motor, wheel_limit + 5);
         }
     }
 }
