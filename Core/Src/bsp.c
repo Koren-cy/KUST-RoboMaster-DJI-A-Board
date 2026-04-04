@@ -174,3 +174,6 @@ float gimbal_respect_chassis_angle = 0.0f;
 
 // 云台相对转动 单位：度
 float gimbal_turn_angle = 0.0f;
+
+// 陀螺仪
+HWT906_DRIVES user_gyroscope_1 = {0};

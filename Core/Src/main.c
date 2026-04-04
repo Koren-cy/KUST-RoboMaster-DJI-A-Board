@@ -169,6 +169,8 @@ int main(void)
    -1,-1,1,-1);
   SwerveChassis_Set_Power_Limit(&user_swerve_chassis, 60.0f);
 
+  HWT906_Init(&user_gyroscope_1, &, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

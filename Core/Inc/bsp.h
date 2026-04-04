@@ -116,5 +116,8 @@ extern float gimbal_respect_chassis_angle;
 // 云台相对转动 单位：度
 extern float gimbal_turn_angle;
 
+// 陀螺仪
+#include "../../User_Drives/user_HWT906.h"
+extern HWT906_DRIVES user_gyroscope_1;
 
 #endif // USER_BSP_H
