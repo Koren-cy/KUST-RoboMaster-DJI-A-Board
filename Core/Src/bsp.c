@@ -79,7 +79,14 @@ void user_can_2_callback(void * user_can) {
 
             const float d_theta_turret = (float) can_chassis_motion_command.d_theta_turret / 600.0f;
             gimbal_respect_chassis_angle -= d_theta_turret;
-            gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.1025f;
+
+            gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.1925f;
+            gimbal_respect_chassis_angle -= delta_angle * 0.0f;
+
+            // gimbal_respect_chassis_angle -= user_swerve_chassis.omega_current * 0.1925f * 0.5f;
+            // gimbal_respect_chassis_angle -= delta_angle * 0.5f;
+
+            delta_angle = 0.0f;
 
             can_chassis_condition.vx_current = (int16_t) (user_swerve_chassis.vx_current * 1000.0f);
             can_chassis_condition.vy_current = (int16_t) (user_swerve_chassis.vy_current * 1000.0f);
@@ -96,40 +103,10 @@ void user_can_2_callback(void * user_can) {
             SwerveChassis_Kinematics(&user_swerve_chassis, move_vector.x, move_vector.y, (float) can_chassis_motion_command.ω_theta_chassis * 0.8f * TWO_PI / 660.0f + 0.0002f);
 
             SwerveChassis_Set_Motor_Target(&user_swerve_chassis);
-            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle + user_swerve_chassis.omega_current * 10.0f);
+            DJI_Motor_Set_State(&YAW_GM6020, gimbal_respect_chassis_angle - user_swerve_chassis.omega_current * 13.0f);
             DJI_Motor_Old_Execute(&user_can_1);
             DJI_Motor_Execute(&user_can_1);
 
-            break;
-
-        case CAN_GYROSCOPE_ID:
-            can_gyroscope_data.angle_z        = (uint16_t)(receive_data[0] << 0 | receive_data[1] << 8);
-            can_gyroscope_data.undefinition_1 = (int16_t) (receive_data[2] << 0 | receive_data[3] << 8);
-            can_gyroscope_data.undefinition_2 = (int16_t) (receive_data[4] << 0 | receive_data[5] << 8);
-            can_gyroscope_data.undefinition_3 = (int16_t) (receive_data[6] << 0 | receive_data[7] << 8);
-
-            static float angle_z[2] = {0};
-
-            angle_z[1] = angle_z[0];
-            angle_z[0] = (float) can_gyroscope_data.angle_z / 100.0f;
-
-            float angle_z_diff = angle_z[0] - angle_z[1];
-
-            if (angle_z_diff > 180.0f) {
-                angle_z_diff -= 360.0f;
-            } else if (angle_z_diff < -180.0f) {
-                angle_z_diff += 360.0f;
-            }
-
-            static uint8_t init_flag = 1;
-            if (init_flag) {
-                angle_z_diff = 0;
-                init_flag = 0;
-            }
-
-            gimbal_respect_chassis_angle += gimbal_turn_angle - angle_z_diff * 0.0f;
-
-            gimbal_turn_angle = 0.0f;
             break;
         #endif
         default: ;
@@ -174,6 +151,8 @@ float gimbal_respect_chassis_angle = 0.0f;
 
 // 云台相对转动 单位：度
 float gimbal_turn_angle = 0.0f;
+
+float delta_angle = 0.0f;
 
 // 陀螺仪
 HWT906_DRIVES user_gyroscope_1 = {0};

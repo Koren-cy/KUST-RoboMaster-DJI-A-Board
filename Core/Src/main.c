@@ -159,7 +159,7 @@ int main(void)
   DJI_Motor_Set_Power_Limit(&FR_M3508, 40);
   DJI_Motor_Set_Power_Limit(&FR_M3508, 40);
 
-  LADRC_Init(&YAW_GM6020_LADRC, 21.0f, 400.0f, 64.0f,0.1f, 15000.0f, 0.001f);
+  LADRC_Init(&YAW_GM6020_LADRC, 21.0f, 400.0f, 62.0f,0.1f, 15000.0f, 0.001f);
   DJI_Motor_Init(&YAW_GM6020, &user_can_1, 5, 130.0f, GM6020, Rotor_angle, (CONTROLLER_INTERFACE*)&YAW_GM6020_LADRC);
 
   SwerveChassis_Init(&user_swerve_chassis, 0.430835f, 0.114f / 2, 15.764705882f,
@@ -169,7 +169,7 @@ int main(void)
    -1,-1,1,-1);
   SwerveChassis_Set_Power_Limit(&user_swerve_chassis, 60.0f);
 
-  HWT906_Init(&user_gyroscope_1, &, 1);
+  HWT906_Init(&user_gyroscope_1, &user_debug_uart);
 
   /* USER CODE END 2 */
 

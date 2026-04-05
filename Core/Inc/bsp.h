@@ -53,10 +53,9 @@ typedef struct {
     int16_t v_x;              /* 云台坐标系下底盘的受限横移线速度 单位：mm/s */
 } CAN_CHASSIS_MOTION_PROTOCOL;
 typedef struct {
-    uint16_t angle_z;         /* 陀螺仪 Z轴角度 0 ~ 36000 对应 0 ~ 360 度*/
+    float angle_z;            /* 陀螺仪 Z轴角度 */
     int16_t undefinition_1;   /* 未定义 */
     int16_t undefinition_2;   /* 未定义 */
-    int16_t undefinition_3;   /* 未定义 */
 } CAN_GYROSCOPE_PROTOCOL;
 typedef struct {
     int16_t vx_current;                     /* 底盘实际 vx 速度 单位： mm/s */
@@ -119,5 +118,8 @@ extern float gimbal_turn_angle;
 // 陀螺仪
 #include "../../User_Drives/user_HWT906.h"
 extern HWT906_DRIVES user_gyroscope_1;
+
+//
+extern float delta_angle;
 
 #endif // USER_BSP_H
