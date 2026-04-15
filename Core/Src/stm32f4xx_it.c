@@ -192,54 +192,6 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-  static float raw_angle_z[2] = {0};
-
-  raw_angle_z[1] = raw_angle_z[0];
-  raw_angle_z[0] = DJI_Motor_Get_Angle(&YAW_GM6020);
-
-  float raw_angle_z_diff = raw_angle_z[0] - raw_angle_z[1];
-
-  if (raw_angle_z_diff > 180.0f) {
-    raw_angle_z_diff -= 360.0f;
-  } else if (raw_angle_z_diff < -180.0f) {
-    raw_angle_z_diff += 360.0f;
-  }
-
-  static uint8_t raw_init_flag = 1;
-  if (raw_init_flag) {
-    raw_angle_z_diff = 0;
-    raw_init_flag = 0;
-  }
-
-  static float raw_zero_angle_z = 0;
-  raw_zero_angle_z += raw_angle_z_diff;
-
-  can_gyroscope_data.angle_z        = Math_WrapAngleDeg(user_gyroscope_1.user_angle.angle_z + raw_zero_angle_z);
-  can_gyroscope_data.undefinition_1 = 0;
-  can_gyroscope_data.undefinition_2 = 0;
-  CAN_Send(&user_can_2, CAN_GYROSCOPE_ID, (uint8_t*)&can_gyroscope_data, 8);
-
-  static float angle_z[2] = {0};
-  angle_z[1] = angle_z[0];
-  angle_z[0] = can_gyroscope_data.angle_z;
-
-  float angle_z_diff = angle_z[0] - angle_z[1];
-
-  if (angle_z_diff > 180.0f) {
-    angle_z_diff -= 360.0f;
-  } else if (angle_z_diff < -180.0f) {
-    angle_z_diff += 360.0f;
-  }
-
-  static uint8_t init_flag = 1;
-  if (init_flag) {
-    angle_z_diff = 0;
-    init_flag = 0;
-  }
-
-  gimbal_respect_chassis_angle += gimbal_turn_angle / 2.0f;
-  delta_angle += angle_z_diff;
-  gimbal_turn_angle = 0.0f;
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();

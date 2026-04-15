@@ -3,8 +3,6 @@
 #include "main.h"
 #ifdef HAL_TIM_MODULE_ENABLED
 
-/* 包含头文件 ----------------------------------------------------------------*/
-
 /* 类型定义 ------------------------------------------------------------------*/
 /**
 * @brief  PWM 驱动结构体
@@ -23,4 +21,4 @@ uint32_t PWM_Set_Duty(PWM_DRIVES *user_pwm, float duty);
 uint32_t PWM_Set_Frequency(PWM_DRIVES *user_pwm, uint32_t freq);
 
 #endif /* HAL_TIM_MODULE_ENABLED */
-#endif  // USER_PWM_H
+#endif // USER_PWM_H
