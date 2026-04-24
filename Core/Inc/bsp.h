@@ -25,6 +25,7 @@ extern CCMRAM uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP];
 // 调试串口
 #include "../../User_Drives/user_uart.h"
 extern UART_DRIVES user_debug_uart;
+extern UART_DRIVES user_uart_3;
 
 // 状态灯
 #include "../../User_Drives/user_led.h"
@@ -45,5 +46,9 @@ extern BUZZER_DRIVES user_buzzer_1;
 #include "../../User_Application/user_startup_music.h"
 extern STARTUP_MUSIC_DRIVES user_startup_music;
 extern SysTick_Task user_startup_music_task;
+
+// LED 闪烁
+extern SysTick_Task LED_Blink_Task;
+void LED_Blink_Callback(void *arg);
 
 #endif // USER_BSP_H
