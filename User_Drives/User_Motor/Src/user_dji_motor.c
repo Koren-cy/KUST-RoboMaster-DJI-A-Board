@@ -142,8 +142,7 @@ static void DJI_Motor_Handle(void* user_can) {
                 break;
             }
             case Servo_angle: {
-                const float feedback = DJI_Motor_Get_Angle(motor);
-                float error =  motor->target - feedback;
+                float error =  motor->target - (float)motor->rotor_angle / 8191.0f * 360.0f;
 
                 if (error > 180.0f)
                     error -= 360.0f;
@@ -235,7 +234,6 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can) {
 * @brief 设置电机运动状态
 * @param motor 电机驱动结构体指针
 * @param value 目标值
-* @note  如果电机的当前控制模式为开环电流控制模式，则目标值会被直接发送给电机。
 */
 void DJI_Motor_Set_State(void* motor, const float value) {
     DJI_MOTOR_DRIVES* dji_motor = (DJI_MOTOR_DRIVES*)motor;

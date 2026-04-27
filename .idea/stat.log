@@ -28239,3 +28239,14 @@
 {"ts":1777280782051,"action":"IDE_ACTIVATED"}
 {"ts":1777280783786,"action":"IDE_DEACTIVATED"}
 {"ts":1777280788210,"action":"IDE_ACTIVATED"}
+{"ts":1777281096468,"action":"IDE_DEACTIVATED"}
+{"ts":1777281099287,"action":"IDE_ACTIVATED"}
+{"ts":1777281101644,"action":"IDE_DEACTIVATED"}
+{"ts":1777281185164,"action":"IDE_ACTIVATED"}
+{"ts":1777281186574,"action":"PROJECT_CLOSED","tags":{"PROJECT_NAME":"KUST-RoboMaster-DJI-A-Board"}}
+{"ts":1777281460182,"action":"FILE_OPENED","file":"/User_Drives/User_Motor/Src/user_dji_motor.c","tags":{"FILE_LINE_OF_CODE":"322"}}
+{"ts":1777281460462,"action":"PROJECT_OPENED","tags":{"PROJECT_NAME":"KUST-RoboMaster-DJI-A-Board"}}
+{"ts":1777281579909,"action":"FILE_CLOSED","file":"/User_Drives/User_Motor/Src/user_dji_motor.c","tags":{"FILE_LINE_OF_CODE":"321"}}
+{"ts":1777281579909,"action":"FILE_OPENED","file":"/User_Drives/User_Motor/user_dji_motor.h","tags":{"FILE_LINE_OF_CODE":"97"}}
+{"ts":1777281594244,"action":"FILE_CLOSED","file":"/User_Drives/User_Motor/user_dji_motor.h","tags":{"FILE_LINE_OF_CODE":"97"}}
+{"ts":1777281594244,"action":"FILE_OPENED","file":"/User_Drives/User_Motor/Src/user_dji_motor.c","tags":{"FILE_LINE_OF_CODE":"321"}}
