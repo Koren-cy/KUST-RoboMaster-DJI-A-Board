@@ -19,7 +19,7 @@ static void DJI_Motor_Handle(void* user_can);
 * @brief 初始化大疆电机
 * @param user_motor          大疆电机驱动结构体指针
 * @param user_can            CAN 总线结构体指针
-* @param id                  电机 ID (1 ~ 7)
+* @param id                  电机 ID (1 ~ 8) 注意：GM6020 仅支持 1 ~ 7
 * @param rotor_angle_offset  电机零点偏移量 单位：角度
 * @param motor_type          电机型号
 * @param mode                控制模式
@@ -29,20 +29,22 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const ui
                     const Dji_Motor_Type motor_type, const Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller) {
 
     // 绑定接口
-    user_motor->Set_Motor_State = DJI_Motor_Set_State;
-    user_motor->Set_Power_Limit = DJI_Motor_Set_Power_Limit;
-    user_motor->Get_Power_Limit = DJI_Motor_Get_Power_Limit;
-    user_motor->Get_Motor_Speed = DJI_Motor_Get_Speed;
-    user_motor->Get_Motor_Angle = DJI_Motor_Get_Angle;
-    user_motor->Get_Motor_Current = DJI_Motor_Get_Current;
+    user_motor->Set_Motor_State        = DJI_Motor_Set_State;
+    user_motor->Set_Power_Limit        = DJI_Motor_Set_Power_Limit;
+    user_motor->Set_Rotor_Angle_Offset = DJI_Motor_Set_Rotor_Angle_Offset;
+    user_motor->Get_Power_Limit        = DJI_Motor_Get_Power_Limit;
+    user_motor->Get_Motor_Speed        = DJI_Motor_Get_Speed;
+    user_motor->Get_Motor_Angle        = DJI_Motor_Get_Angle;
+    user_motor->Get_Motor_Current      = DJI_Motor_Get_Current;
     
     user_motor->can = user_can;
     user_motor->id = id;
     user_motor->motor_type = motor_type;
     user_motor->control_mode = mode;
     user_motor->power_limit = 72.0f;
-    user_motor->rotor_angle_offset = (int32_t)((float)rotor_angle_offset / 360.0f * 8191.0f);
     user_motor->controller = controller;
+
+    DJI_Motor_Set_Rotor_Angle_Offset(user_motor, rotor_angle_offset);
 
     switch (motor_type) {
         case GM6020:
@@ -109,29 +111,50 @@ static void DJI_Motor_Handle(void* user_can) {
 
         int32_t delta_angle = motor->rotor_angle - last_rotor_angle;
         
-        if (delta_angle > 4096) {
-            delta_angle -= 8192;
-        } else if (delta_angle < -4096) {
-            delta_angle += 8192;
+        if (delta_angle >= 4096) {
+            delta_angle -= 8191;
+        } else if (delta_angle <= -4096) {
+            delta_angle += 8191;
         }
         
         motor->total_angle += delta_angle;
-        motor->total_angle += motor->rotor_angle_offset;
-        motor->rotor_angle_offset = 0;
 
         if (motor->control_mode == OpenLoop_current)
             continue;
 
         switch (motor->control_mode) {
-            case Rotor_speed:
-                motor->controller->Calculate(motor->controller, DJI_Motor_Get_Speed(motor),0.0f);
+            case Rotor_speed: {
+                motor->controller->Calculate(motor->controller,
+                    DJI_Motor_Get_Speed(motor),
+                     DJI_Motor_Get_Current(motor));
                 break;
-            case Rotor_angle:
-                motor->controller->Calculate(motor->controller, DJI_Motor_Get_Angle(motor),DJI_Motor_Get_Speed(motor));
+            }
+            case Rotor_angle: {
+                motor->controller->Calculate(motor->controller,
+                    DJI_Motor_Get_Angle(motor),
+                     DJI_Motor_Get_Speed(motor));
                 break;
-            case Torque_current:
-                motor->controller->Calculate(motor->controller, DJI_Motor_Get_Current(motor),0.0f);
+            }
+            case Rotor_current: {
+                motor->controller->Calculate(motor->controller,
+                    DJI_Motor_Get_Current(motor),
+                     0.0f);
                 break;
+            }
+            case Servo_angle: {
+                const float feedback = DJI_Motor_Get_Angle(motor);
+                float error =  motor->target - feedback;
+
+                if (error > 180.0f)
+                    error -= 360.0f;
+                if (error < -180.0f)
+                    error += 360.0f;
+
+                motor->controller->Calculate(motor->controller,
+                    -error,
+                     DJI_Motor_Get_Speed(motor));
+                break;
+            }
             default:
                 break;
         }
@@ -196,29 +219,15 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can) {
         }
     }
 
-    for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
-        const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
-        if (motor->can != user_can)
-            continue;
+    if (GM6020_control_id_1_sign)
+        CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_1, GM6020_control_id_1_frame, 8);
+    if (GM6020_control_id_2_sign)
+        CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_2, GM6020_control_id_2_frame, 8);
+    if (C6x0_control_id_1_sign)
+        CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_1,   C6x0_control_id_1_frame,   8);
+    if (C6x0_control_id_2_sign)
+        CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_2,   C6x0_control_id_2_frame,   8);
 
-        if (GM6020_control_id_1_sign) {
-            CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_1, GM6020_control_id_1_frame, 8);
-            GM6020_control_id_1_sign = 0;
-        }
-        if (GM6020_control_id_2_sign) {
-            CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_2, GM6020_control_id_2_frame, 8);
-            GM6020_control_id_2_sign = 0;
-        }
-        if (C6x0_control_id_1_sign) {
-            CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_1, C6x0_control_id_1_frame, 8);
-            C6x0_control_id_1_sign = 0;
-        }
-        if (C6x0_control_id_2_sign) {
-            CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_2, C6x0_control_id_2_frame, 8);
-            C6x0_control_id_2_sign = 0;
-        }
-
-    }
 }
 
 /* 接口函数实现 --------------------------------------------------------------*/
@@ -226,14 +235,25 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can) {
 * @brief 设置电机运动状态
 * @param motor 电机驱动结构体指针
 * @param value 目标值
+* @note  如果电机的当前控制模式为开环电流控制模式，则目标值会被直接发送给电机。
 */
 void DJI_Motor_Set_State(void* motor, const float value) {
     DJI_MOTOR_DRIVES* dji_motor = (DJI_MOTOR_DRIVES*)motor;
-    if (dji_motor->control_mode == OpenLoop_current) {
-        dji_motor->target = value;
-    } else {
-        dji_motor->controller->Set_Target(dji_motor->controller, value);
+
+    dji_motor->target = value;
+
+    switch (dji_motor->control_mode) {
+        case Rotor_angle:
+        case Rotor_speed:
+        case Rotor_current:
+        // case Servo_angle:
+        // case OpenLoop_current:
+            dji_motor->controller->Set_Target(dji_motor->controller, value);
+            break;
+        default:
+            break;
     }
+
 }
 
 /**
@@ -244,6 +264,18 @@ void DJI_Motor_Set_State(void* motor, const float value) {
 void DJI_Motor_Set_Power_Limit(void* motor, const float power_limit) {
     DJI_MOTOR_DRIVES* dji_motor = (DJI_MOTOR_DRIVES*)motor;
     dji_motor->power_limit = power_limit;
+}
+
+/**
+ * @brief 设置电机转子零点偏移角度
+ * @param motor 大疆电机驱动结构体指针
+ * @param angle 电机转子零点偏移角度 单位：度
+ */
+void DJI_Motor_Set_Rotor_Angle_Offset(void* motor, const float angle) {
+    DJI_MOTOR_DRIVES* dji_motor = (DJI_MOTOR_DRIVES*)motor;
+    const int16_t rotor_angle_offset = (int16_t)(angle / 360.0f * 8191.0f);
+    dji_motor->total_angle += rotor_angle_offset - dji_motor->rotor_angle_offset;
+    dji_motor->rotor_angle_offset = rotor_angle_offset;
 }
 
 /**

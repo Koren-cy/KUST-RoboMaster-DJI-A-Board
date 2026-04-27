@@ -48,7 +48,8 @@ typedef enum {
 typedef enum {
     Rotor_angle,      /* 多圈角度控制模式 单位：度 */
     Rotor_speed,      /* 转子速度控制模式 单位：RPM */
-    Torque_current,   /* 转矩电流控制模式 目标值范围 (-3000 ~ 3000) 单位：mA */
+    Rotor_current,    /* 转矩电流控制模式 目标值范围 (-3000 ~ 3000) 单位：mA */
+    Servo_angle,      /* 单圈角度控制模式 单位：度 */
     OpenLoop_current, /* 开环电流控制模式 目标值范围 (-16384 ~ 16384) */
 } Dji_Control_Mode;
 
@@ -61,14 +62,14 @@ typedef struct {
     Dji_Motor_Type motor_type;            /* 电机型号 */
     Dji_Controller_Type controller_type;  /* 电调型号 */
     Dji_Control_Mode control_mode;        /* 控制模式 */
-    float target;                         /* 开环模式目标值 */
+    float target;                         /* 目标值 */
     float power_limit;                    /* 功率限制上限 单位：W */
     uint8_t id;                           /* 电机 ID (1 ~ 7) */
     uint16_t ctrl_id;                     /* 控制帧 ID */
     uint16_t fdb_id;                      /* 反馈帧 ID */
-    uint16_t rotor_angle;                 /* 转子原始角度 (0 ~ 8191) */
-    volatile int32_t rotor_angle_offset;  /* 角度零点偏移量 单位：角度 该数值在 DJI_Motor_Handle 调用后会被加到多圈角度中，然后该数值会被清 0 */
-    int32_t total_angle;                  /* 多圈角度 单位是编码器的脉冲数 */
+    uint16_t rotor_angle;                 /* 转子角度 单位：编码器的脉冲数 (0 ~ 8191) */
+    int16_t rotor_angle_offset;           /* 角度零点偏移量 单位：编码器的脉冲数 */
+    int32_t total_angle;                  /* 多圈角度 单位：编码器的脉冲数 */
     int16_t rotor_speed;                  /* 转子速度 单位: rpm */
     int16_t torque_current;               /* 转矩电流 */
     uint8_t temperate;                    /* 温度 单位: 摄氏度 */
@@ -84,6 +85,8 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can);
 /* 接口函数声明 --------------------------------------------------------------*/
 void DJI_Motor_Set_State(void* motor, float value);
 void DJI_Motor_Set_Power_Limit(void* motor, float power_limit);
+void DJI_Motor_Set_Rotor_Angle_Offset(void* motor, float angle);
+
 float DJI_Motor_Get_Power_Limit(void* motor);
 float DJI_Motor_Get_Speed(void* motor);
 float DJI_Motor_Get_Angle(void* motor);

@@ -2,6 +2,8 @@
 #include "./user_JScope_Transmit.h"
 #include "../Core/Inc/bsp.h"
 
+#ifdef HAL_TIM_MODULE_ENABLED
+
 /* 私有宏定义 ----------------------------------------------------------------*/
 #define JSCOPE_BUFFER_INDEX     1                   // JScope 使用的 RTT 缓冲区索引
 
@@ -27,3 +29,5 @@ void JScope_Transmit(const uint32_t delta_time) {
     jscope_transmit.timestamp += delta_time;
     SEGGER_RTT_Write(JSCOPE_BUFFER_INDEX, &jscope_transmit, sizeof(jscope_transmit));
 }
+
+#endif /* HAL_TIM_MODULE_ENABLED */
