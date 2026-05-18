@@ -10,7 +10,7 @@ static DJI_MOTOR_DRIVES* motor_drives[DJI_MOTOR_NUM];
 static uint8_t motor_num = 0;
 
 /* 私有函数声明 --------------------------------------------------------------*/
-
+static void DJI_Motor_Execute(void* user_can);
 static void DJI_Motor_Handle(void* user_can);
 
 /* 函数体 --------------------------------------------------------------------*/
@@ -83,9 +83,13 @@ void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, const ui
     motor_drives[motor_num] = user_motor;
     motor_num++;
 
-    if (is_callback_register == 0)
+    if (is_callback_register == 0) {
         CAN_RegisterCallback(user_can, DJI_Motor_Handle);
-
+        SysTick_Task* DJI_Motor_Execute_Task = (SysTick_Task*)malloc(sizeof(SysTick_Task));
+        SysTick_InitTask(DJI_Motor_Execute_Task, user_can, 100,
+            MOTOR_EXECUTE_PERIOD,Task_REPEAT, DJI_Motor_Execute);
+        SysTick_StartTask(DJI_Motor_Execute_Task);
+    }
 }
 
 /**
@@ -165,7 +169,9 @@ static void DJI_Motor_Handle(void* user_can) {
 * @param user_can CAN 总线驱动结构体指针
 * @note  将所有电机控制指令一并打包发送
 */
-void DJI_Motor_Execute(CAN_DRIVES* user_can) {
+static void DJI_Motor_Execute(void* user_can) {
+    CAN_DRIVES* can = (CAN_DRIVES*)user_can;
+
     uint8_t GM6020_control_id_1_frame[8] = {0};
     uint8_t GM6020_control_id_2_frame[8] = {0};
     uint8_t C6x0_control_id_1_frame[8] = {0};
@@ -177,7 +183,7 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can) {
 
     for (uint8_t motor_index = 0; motor_index < motor_num; motor_index++) {
         const DJI_MOTOR_DRIVES *motor = motor_drives[motor_index];
-        if (motor->can != user_can)
+        if (motor->can != can)
             continue;
 
         int16_t current_target = 0;
@@ -219,13 +225,13 @@ void DJI_Motor_Execute(CAN_DRIVES* user_can) {
     }
 
     if (GM6020_control_id_1_sign)
-        CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_1, GM6020_control_id_1_frame, 8);
+        CAN_Send(can, GM6020_CURRENT_CONTROL_ID_1, GM6020_control_id_1_frame, 8);
     if (GM6020_control_id_2_sign)
-        CAN_Send(user_can, GM6020_CURRENT_CONTROL_ID_2, GM6020_control_id_2_frame, 8);
+        CAN_Send(can, GM6020_CURRENT_CONTROL_ID_2, GM6020_control_id_2_frame, 8);
     if (C6x0_control_id_1_sign)
-        CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_1,   C6x0_control_id_1_frame,   8);
+        CAN_Send(can, C6x0_CURRENT_CONTROL_ID_1,   C6x0_control_id_1_frame,   8);
     if (C6x0_control_id_2_sign)
-        CAN_Send(user_can, C6x0_CURRENT_CONTROL_ID_2,   C6x0_control_id_2_frame,   8);
+        CAN_Send(can, C6x0_CURRENT_CONTROL_ID_2,   C6x0_control_id_2_frame,   8);
 
 }
 

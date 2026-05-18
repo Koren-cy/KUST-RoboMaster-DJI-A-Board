@@ -10,6 +10,8 @@
 #include "../../User_Algorithm/User_Controller/user_controller.h"
 
 /* 宏定义 --------------------------------------------------------------------*/
+#define MOTOR_EXECUTE_PERIOD          (  2  )
+
 #define GM6020_CURRENT_CONTROL_ID_1   (0x1FE)
 #define GM6020_CURRENT_CONTROL_ID_2   (0x2FE)
 #define GM6020_FEEDBACK_BASE_ID       (0x204)
@@ -79,8 +81,6 @@ typedef struct {
 /* 函数声明 ------------------------------------------------------------------*/
 void DJI_Motor_Init(DJI_MOTOR_DRIVES *user_motor, CAN_DRIVES* user_can, uint8_t id, float rotor_angle_offset,
                     Dji_Motor_Type motor_type, Dji_Control_Mode mode, CONTROLLER_INTERFACE* controller);
-
-void DJI_Motor_Execute(CAN_DRIVES* user_can);
 
 /* 接口函数声明 --------------------------------------------------------------*/
 void DJI_Motor_Set_State(void* motor, float value);

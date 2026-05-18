@@ -4,8 +4,6 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "main.h"
 #include "../User_Drives/User_Motor/user_dji_motor.h"
-#include "../User_Drives/User_Motor/user_dji_motor_old.h"
-
 
 /* 常量定义 ------------------------------------------------------------------*/
 
@@ -14,11 +12,11 @@
 
 // 单个舵轮状态
 typedef struct {
-    DJI_MOTOR_DRIVES* wheel_motor; // 驱动轮电机
+    MOTOR_INTERFACE* wheel_motor;  // 驱动轮电机
     float drive_speed_current;     // 驱动轮速度 (m/s)
     float drive_speed_target;      // 驱动轮目标速度 (m/s)
     int8_t reverse;                // 正转为1，反转为-1
-    DJI_MOTOR_OLD_DRIVES* steer_motor; // 转向轮电机
+    MOTOR_INTERFACE* steer_motor;  // 转向轮电机
     float steer_angle_current;     // 当前转向角度 (deg)
     float steer_angle_target;      // 目标转向角度 (deg)
     float steer_angle_offset;      // 转向角度零点偏移 (deg)
@@ -45,10 +43,10 @@ typedef struct {
 
 /* 函数声明 ------------------------------------------------------------------*/
 void SwerveChassis_Init(SwerveChassisState* chassis, float wheelbase_radius, float wheel_radius, float ratio,
-    DJI_MOTOR_DRIVES* fl_wheel,      DJI_MOTOR_DRIVES* fr_wheel,      DJI_MOTOR_DRIVES* rl_wheel,      DJI_MOTOR_DRIVES* rr_wheel,
-    DJI_MOTOR_OLD_DRIVES* fl_steer,  DJI_MOTOR_OLD_DRIVES* fr_steer,  DJI_MOTOR_OLD_DRIVES* rl_steer,  DJI_MOTOR_OLD_DRIVES* rr_steer,
-    float fl_steer_offset,          float fr_steer_offset,            float rl_steer_offset,           float rr_steer_offset,
-    int8_t fl_reverse,              int8_t fr_reverse,                int8_t rl_reverse,               int8_t rr_reverse);
+    MOTOR_INTERFACE* fl_wheel,  MOTOR_INTERFACE* fr_wheel,  MOTOR_INTERFACE* rl_wheel,  MOTOR_INTERFACE* rr_wheel,
+    MOTOR_INTERFACE* fl_steer,  MOTOR_INTERFACE* fr_steer,  MOTOR_INTERFACE* rl_steer,  MOTOR_INTERFACE* rr_steer,
+    float fl_steer_offset,      float fr_steer_offset,      float rl_steer_offset,      float rr_steer_offset,
+    int8_t fl_reverse,          int8_t fr_reverse,          int8_t rl_reverse,          int8_t rr_reverse);
 
 void SwerveChassis_Kinematics(SwerveChassisState* chassis, float vx, float vy, float omega);
 void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis);

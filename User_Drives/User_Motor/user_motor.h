@@ -7,7 +7,7 @@
     void  (*Set_Rotor_Angle_Offset)(void* motor, float angle); /* 设置电机转子零点偏移角度 单位：度 */ \
     float (*Get_Power_Limit)(void* motor);                     /* 获取电机功率上限 单位：W */ \
     float (*Get_Motor_Speed)(void* motor);                     /* 获取电机转速 单位：rpm */ \
-    float (*Get_Motor_Angle)(void* motor);                     /* 获取电机多圈角度 单位：度 */ \
+    float (*Get_Motor_Angle)(void* motor);                     /* 获取电机角度 单位：度 */ \
     float (*Get_Motor_Current)(void* motor);                   /* 获取电机转矩电流 单位：mA */
 
 /* 电机接口结构体 */

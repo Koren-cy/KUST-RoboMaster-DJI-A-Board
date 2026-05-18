@@ -34,10 +34,10 @@
 * @param rr_reverse 左后轮反转
 */
 void SwerveChassis_Init(SwerveChassisState* chassis, const float wheelbase_radius, const float wheel_radius, const float ratio,
-    DJI_MOTOR_DRIVES* fl_wheel,      DJI_MOTOR_DRIVES* fr_wheel,      DJI_MOTOR_DRIVES* rl_wheel,      DJI_MOTOR_DRIVES* rr_wheel,
-    DJI_MOTOR_OLD_DRIVES* fl_steer,  DJI_MOTOR_OLD_DRIVES* fr_steer,  DJI_MOTOR_OLD_DRIVES* rl_steer,  DJI_MOTOR_OLD_DRIVES* rr_steer,
-    const float fl_steer_offset,     const float fr_steer_offset,     const float rl_steer_offset,     const float rr_steer_offset,
-    const int8_t fl_reverse,         const int8_t fr_reverse,         const int8_t rl_reverse,         const int8_t rr_reverse) {
+    MOTOR_INTERFACE* fl_wheel,    MOTOR_INTERFACE* fr_wheel,    MOTOR_INTERFACE* rl_wheel,    MOTOR_INTERFACE* rr_wheel,
+    MOTOR_INTERFACE* fl_steer,    MOTOR_INTERFACE* fr_steer,    MOTOR_INTERFACE* rl_steer,    MOTOR_INTERFACE* rr_steer,
+    const float fl_steer_offset,  const float fr_steer_offset,  const float rl_steer_offset,  const float rr_steer_offset,
+    const int8_t fl_reverse,      const int8_t fr_reverse,      const int8_t rl_reverse,      const int8_t rr_reverse) {
 
     chassis->vx_target = 0.0f;
     chassis->vy_target = 0.0f;
@@ -203,7 +203,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
     float steer_powers[4];
     float steer_power_sum = 0.0f;
     for (int i = 0; i < 4; i++) {
-        steer_powers[i] = fabsf(TORQUE_CURRENT_TO_POWER(wheels[i]->steer_motor->torque_current));
+        steer_powers[i] = fabsf(TORQUE_CURRENT_TO_POWER(wheels[i]->steer_motor->Get_Motor_Current(wheels[i])));
         steer_power_sum += steer_powers[i];
     }
 
@@ -211,7 +211,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
     float wheel_powers[4];
     float wheel_power_sum = 0.0f;
     for (int i = 0; i < 4; i++) {
-        wheel_powers[i] = fabsf(TORQUE_CURRENT_TO_POWER(wheels[i]->wheel_motor->torque_current));
+        wheel_powers[i] = fabsf(TORQUE_CURRENT_TO_POWER(wheels[i]->wheel_motor->Get_Motor_Current(wheels[i])));
         wheel_power_sum += wheel_powers[i];
     }
 
