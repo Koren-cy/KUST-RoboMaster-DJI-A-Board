@@ -51,4 +51,11 @@ extern SysTick_Task user_startup_music_task;
 extern SysTick_Task LED_Blink_Task;
 void LED_Blink_Callback(void *arg);
 
+// 大疆电机
+#include "../../User_Drives/User_Motor/user_dji_motor.h"
+extern DJI_MOTOR_DRIVES user_top_motor;
+extern DJI_MOTOR_DRIVES user_bottom_motor;
+extern DJI_MOTOR_DRIVES user_left_motor;
+extern DJI_MOTOR_DRIVES user_right_motor;
+
 #endif // USER_BSP_H

@@ -56,5 +56,8 @@ void LED_Blink_Callback(void *arg) {
     LED_Toggle(led);
 }
 
-
-
+// 大疆电机
+DJI_MOTOR_DRIVES user_top_motor    = {0};
+DJI_MOTOR_DRIVES user_bottom_motor = {0};
+DJI_MOTOR_DRIVES user_left_motor   = {0};
+DJI_MOTOR_DRIVES user_right_motor  = {0};

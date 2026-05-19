@@ -143,6 +143,12 @@ int main(void)
   SysTick_InitTask(&LED_Blink_Task, &user_red_led, 10, 800, Task_REPEAT, LED_Blink_Callback);
   SysTick_StartTask(&LED_Blink_Task);
 
+  // 大疆电机
+  DJI_Motor_Init(&user_top_motor,    &user_can_1, 3, 0.0f, GM6020, OpenLoop_current, NULL);
+  DJI_Motor_Init(&user_bottom_motor, &user_can_1, 2, 0.0f, GM6020, OpenLoop_current, NULL);
+  DJI_Motor_Init(&user_left_motor,   &user_can_1, 6, 0.0f, GM6020, OpenLoop_current, NULL);
+  DJI_Motor_Init(&user_right_motor,  &user_can_1, 4, 0.0f, GM6020, OpenLoop_current, NULL);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
