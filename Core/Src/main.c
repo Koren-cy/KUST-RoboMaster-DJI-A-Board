@@ -53,6 +53,7 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart1_rx;
+DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart3_rx;
 DMA_HandleTypeDef hdma_usart3_tx;
 DMA_HandleTypeDef hdma_usart6_rx;
@@ -137,8 +138,8 @@ int main(void)
   Buzzer_Init(&user_buzzer_1, &htim12, TIM_CHANNEL_1, 90000000);
   
   // 初始化启动音乐
-  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, bad_apple, sizeof(bad_apple) / sizeof(bad_apple[0]));
-  StartupMusic_Start(&user_startup_music);
+  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, dji_starting_music, sizeof(dji_starting_music) / sizeof(dji_starting_music[0]));
+  // StartupMusic_Start(&user_startup_music);
 
   SysTick_InitTask(&LED_Blink_Task, &user_red_led, 10, 800, Task_REPEAT, LED_Blink_Callback);
   SysTick_StartTask(&LED_Blink_Task);
@@ -148,6 +149,11 @@ int main(void)
   DJI_Motor_Init(&user_bottom_motor, &user_can_1, 2, 0.0f, GM6020, OpenLoop_current, NULL);
   DJI_Motor_Init(&user_left_motor,   &user_can_1, 6, 0.0f, GM6020, OpenLoop_current, NULL);
   DJI_Motor_Init(&user_right_motor,  &user_can_1, 4, 0.0f, GM6020, OpenLoop_current, NULL);
+
+  // 方程求解器
+  Newton_Init(&user_newton_solver, 2);
+  Newton_SetFunc(&user_newton_solver, res_func_1);
+  Newton_SetFunc(&user_newton_solver, res_func_2);
 
   /* USER CODE END 2 */
 
@@ -511,6 +517,9 @@ static void MX_DMA_Init(void)
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
+  /* DMA2_Stream7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 
 }
 

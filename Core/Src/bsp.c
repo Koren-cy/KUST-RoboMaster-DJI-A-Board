@@ -61,3 +61,12 @@ DJI_MOTOR_DRIVES user_top_motor    = {0};
 DJI_MOTOR_DRIVES user_bottom_motor = {0};
 DJI_MOTOR_DRIVES user_left_motor   = {0};
 DJI_MOTOR_DRIVES user_right_motor  = {0};
+
+// 方程求解器
+NEWTON_SOLVER user_newton_solver = {0};
+float res_func_1(const float* x, const float* param) {
+    return 3 * x[0] + -1 * x[1] - 1;
+};
+float res_func_2(const float* x, const float* param) {
+    return 1 * x[0] +  2 * x[1] - 12;
+};

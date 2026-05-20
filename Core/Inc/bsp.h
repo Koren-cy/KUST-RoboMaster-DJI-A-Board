@@ -58,4 +58,11 @@ extern DJI_MOTOR_DRIVES user_bottom_motor;
 extern DJI_MOTOR_DRIVES user_left_motor;
 extern DJI_MOTOR_DRIVES user_right_motor;
 
+// 方程求解器
+#include "../../User_Algorithm/user_newton.h"
+extern NEWTON_SOLVER user_newton_solver;
+float res_func_1(const float* x, const float* param);
+float res_func_2(const float* x, const float* param);
+
+
 #endif // USER_BSP_H

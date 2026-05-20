@@ -62,6 +62,7 @@ extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 extern DMA_HandleTypeDef hdma_usart3_tx;
 extern DMA_HandleTypeDef hdma_usart6_rx;
@@ -196,20 +197,15 @@ void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
-  static float user_top_motor_angle    = 0.0f;
-  static float user_bottom_motor_angle = 0.0f;
-  static float user_left_motor_angle   = 0.0f;
-  static float user_right_motor_angle  = 0.0f;
+  static float top_motor_angle    = 0.0f;
+  static float bottom_motor_angle = 0.0f;
+  static float left_motor_angle   = 0.0f;
+  static float right_motor_angle  = 0.0f;
 
-  static float user_top_motor_angle_old    = 0.0f;
-  static float user_bottom_motor_angle_old = 0.0f;
-  static float user_left_motor_angle_old   = 0.0f;
-  static float user_right_motor_angle_old  = 0.0f;
-
-  static float top_angle_delta    = 0.0f;
-  static float bottom_angle_delta = 0.0f;
-  static float left_angle_delta   = 0.0f;
-  static float right_angle_delta  = 0.0f;
+  static float top_motor_angle_old    = 0.0f;
+  static float bottom_motor_angle_old = 0.0f;
+  static float left_motor_angle_old   = 0.0f;
+  static float right_motor_angle_old  = 0.0f;
 
   static float top_wire_length    = 114.0f;
   static float bottom_wire_length = 114.0f;
@@ -220,44 +216,45 @@ void SysTick_Handler(void)
 
   if (init_sign) {
     init_sign = 0;
-    user_top_motor_angle_old    = DJI_Motor_Get_Angle(&user_top_motor);
-    user_bottom_motor_angle_old = DJI_Motor_Get_Angle(&user_bottom_motor);
-    user_left_motor_angle_old   = DJI_Motor_Get_Angle(&user_left_motor);
-    user_right_motor_angle_old  = DJI_Motor_Get_Angle(&user_right_motor);
+    top_motor_angle_old    = DJI_Motor_Get_Angle(&user_top_motor);
+    bottom_motor_angle_old = DJI_Motor_Get_Angle(&user_bottom_motor);
+    left_motor_angle_old   = DJI_Motor_Get_Angle(&user_left_motor);
+    right_motor_angle_old  = DJI_Motor_Get_Angle(&user_right_motor);
   } else {
-    user_top_motor_angle_old    = user_top_motor_angle;
-    user_bottom_motor_angle_old = user_bottom_motor_angle;
-    user_left_motor_angle_old   = user_left_motor_angle;
-    user_right_motor_angle_old  = user_right_motor_angle;
+    top_motor_angle_old    = top_motor_angle;
+    bottom_motor_angle_old = bottom_motor_angle;
+    left_motor_angle_old   = left_motor_angle;
+    right_motor_angle_old  = right_motor_angle;
   }
 
-  user_top_motor_angle    = DJI_Motor_Get_Angle(&user_top_motor);
-  user_bottom_motor_angle = DJI_Motor_Get_Angle(&user_bottom_motor);
-  user_left_motor_angle   = DJI_Motor_Get_Angle(&user_left_motor);
-  user_right_motor_angle  = DJI_Motor_Get_Angle(&user_right_motor);
+  top_motor_angle    = DJI_Motor_Get_Angle(&user_top_motor);
+  bottom_motor_angle = DJI_Motor_Get_Angle(&user_bottom_motor);
+  left_motor_angle   = DJI_Motor_Get_Angle(&user_left_motor);
+  right_motor_angle  = DJI_Motor_Get_Angle(&user_right_motor);
 
-  top_angle_delta    = user_top_motor_angle - user_top_motor_angle_old;
-  bottom_angle_delta = user_bottom_motor_angle - user_bottom_motor_angle_old;
-  left_angle_delta   = user_left_motor_angle - user_left_motor_angle_old;
-  right_angle_delta  = user_right_motor_angle - user_right_motor_angle_old;
+  top_wire_length    -= (top_motor_angle - top_motor_angle_old)       * 0.01745329251994f * 7.0f;
+  bottom_wire_length += (bottom_motor_angle - bottom_motor_angle_old) * 0.01745329251994f * 7.0f;
+  left_wire_length   += (left_motor_angle - left_motor_angle_old)     * 0.01745329251994f * 7.0f;
+  right_wire_length  -= (right_motor_angle - right_motor_angle_old)   * 0.01745329251994f * 7.0f;
 
-  top_wire_length    += top_angle_delta    * 0.01745329251994f * 7.0f;
-  bottom_wire_length += bottom_angle_delta * 0.01745329251994f * 7.0f;
-  left_wire_length   += left_angle_delta   * 0.01745329251994f * 7.0f;
-  right_wire_length  += right_angle_delta  * 0.01745329251994f * 7.0f;
+  const float estimated_val[2] = {0, 0};
+  Newton_Solve(&user_newton_solver, NULL, estimated_val);
+  const float x = Newton_GetX(&user_newton_solver)[0];
+  const float y = Newton_GetX(&user_newton_solver)[1];
 
-  UART_Printf(&user_uart_3,"Horizontal: %d \nvertical: %d",
-    top_wire_length - bottom_wire_length,
-    right_wire_length - left_wire_length);
+  UART_Printf(&user_debug_uart,"%d,%d\n", (int32_t)x, (int32_t)y);
+
+  const float tension_current = 900.0f;
+  DJI_Motor_Set_State(&user_top_motor,   -tension_current);
+  DJI_Motor_Set_State(&user_bottom_motor, tension_current);
+  DJI_Motor_Set_State(&user_left_motor,   tension_current);
+  DJI_Motor_Set_State(&user_right_motor, -tension_current);
+
+  DJI_Motor_Execute(&user_can_1);
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-  DJI_Motor_Set_State(&user_top_motor,    -900.0f);
-  DJI_Motor_Set_State(&user_bottom_motor,  900.0f);
-  DJI_Motor_Set_State(&user_left_motor,    900.0f);
-  DJI_Motor_Set_State(&user_right_motor,  -900.0f);
-  DJI_Motor_Execute(&user_can_1);
   SysTick_Handle();
   /* USER CODE END SysTick_IRQn 1 */
 }
@@ -407,6 +404,20 @@ void DMA2_Stream6_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
 
   /* USER CODE END DMA2_Stream6_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream7 global interrupt.
+  */
+void DMA2_Stream7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 1 */
 }
 
 /**
