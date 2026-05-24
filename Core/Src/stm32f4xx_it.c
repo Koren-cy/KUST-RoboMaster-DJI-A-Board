@@ -232,23 +232,20 @@ void SysTick_Handler(void)
   left_motor_angle   = DJI_Motor_Get_Angle(&user_left_motor);
   right_motor_angle  = DJI_Motor_Get_Angle(&user_right_motor);
 
-  top_wire_length    -= (top_motor_angle - top_motor_angle_old)       * 0.01745329251994f * 7.0f;
-  bottom_wire_length += (bottom_motor_angle - bottom_motor_angle_old) * 0.01745329251994f * 7.0f;
-  left_wire_length   += (left_motor_angle - left_motor_angle_old)     * 0.01745329251994f * 7.0f;
-  right_wire_length  -= (right_motor_angle - right_motor_angle_old)   * 0.01745329251994f * 7.0f;
+  top_wire_length    -= ( top_motor_angle    - top_motor_angle_old    ) * 0.01745329251994f * 15.5f;
+  bottom_wire_length -= ( bottom_motor_angle - bottom_motor_angle_old ) * 0.01745329251994f * 15.5f;
+  left_wire_length   += ( left_motor_angle   - left_motor_angle_old   ) * 0.01745329251994f * 15.5f;
+  right_wire_length  -= ( right_motor_angle  - right_motor_angle_old  ) * 0.01745329251994f * 15.5f;
 
-  const float estimated_val[2] = {0, 0};
-  Newton_Solve(&user_newton_solver, NULL, estimated_val);
-  const float x = Newton_GetX(&user_newton_solver)[0];
-  const float y = Newton_GetX(&user_newton_solver)[1];
+  UART_Printf(&user_debug_uart,"channels: %d, %d\n",
+  (int32_t)(top_wire_length - bottom_wire_length),
+  (int32_t)(right_wire_length - left_wire_length));
 
-  UART_Printf(&user_debug_uart,"%d,%d\n", (int32_t)x, (int32_t)y);
-
-  const float tension_current = 900.0f;
-  DJI_Motor_Set_State(&user_top_motor,   -tension_current);
-  DJI_Motor_Set_State(&user_bottom_motor, tension_current);
-  DJI_Motor_Set_State(&user_left_motor,   tension_current);
-  DJI_Motor_Set_State(&user_right_motor, -tension_current);
+  const float tension_current = 1500.0f;
+  DJI_Motor_Set_State(&user_top_motor,    -tension_current);
+  DJI_Motor_Set_State(&user_bottom_motor, -tension_current);
+  DJI_Motor_Set_State(&user_left_motor,    tension_current);
+  DJI_Motor_Set_State(&user_right_motor,  -tension_current);
 
   DJI_Motor_Execute(&user_can_1);
 

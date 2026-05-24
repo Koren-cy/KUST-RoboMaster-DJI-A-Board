@@ -6,7 +6,7 @@
 /* 包含头文件 ----------------------------------------------------------------*/
 #include "user_motor.h"
 #include "../../Core/Inc/bsp_config.h"
-#include "../user_can.h"
+#include "../User_Peripheral/user_can.h"
 #include "../../User_Algorithm/User_Controller/user_controller.h"
 
 /* 宏定义 --------------------------------------------------------------------*/

@@ -150,11 +150,6 @@ int main(void)
   DJI_Motor_Init(&user_left_motor,   &user_can_1, 6, 0.0f, GM6020, OpenLoop_current, NULL);
   DJI_Motor_Init(&user_right_motor,  &user_can_1, 4, 0.0f, GM6020, OpenLoop_current, NULL);
 
-  // 方程求解器
-  Newton_Init(&user_newton_solver, 2);
-  Newton_SetFunc(&user_newton_solver, res_func_1);
-  Newton_SetFunc(&user_newton_solver, res_func_2);
-
   /* USER CODE END 2 */
 
   /* Infinite loop */

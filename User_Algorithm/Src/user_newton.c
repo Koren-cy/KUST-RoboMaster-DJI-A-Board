@@ -16,20 +16,8 @@ static void Newton_ComputeJacobian(NEWTON_SOLVER* solver);
 */
 void Newton_Init(NEWTON_SOLVER* solver, const uint8_t n) {
     solver->n = n;
-    solver->func_idx = 0;
-    solver->iterations = 0;
-    solver->converged = 0;
-    solver->residual = 0.0f;
     solver->eps = NEWTON_EPSILON;
     solver->max_iter = NEWTON_MAX_ITERS;
-
-    for (uint8_t i = 0; i < NEWTON_MAX_DIMS; i++) {
-        solver->funcs[i] = NULL;
-        solver->x[i] = 0.0f;
-        solver->f[i] = 0.0f;
-        for (uint8_t j = 0; j < NEWTON_MAX_DIMS; j++)
-            solver->J[i * NEWTON_MAX_DIMS + j] = 0.0f;
-    }
 }
 
 /**
@@ -38,10 +26,8 @@ void Newton_Init(NEWTON_SOLVER* solver, const uint8_t n) {
 * @param func   方程函数指针
 */
 void Newton_SetFunc(NEWTON_SOLVER* solver, const NEWTON_Func func) {
-    if (solver->func_idx < NEWTON_MAX_DIMS) {
-        solver->funcs[solver->func_idx] = func;
-        solver->func_idx++;
-    }
+    solver->funcs[solver->func_idx] = func;
+    solver->func_idx++;
 }
 
 /**
@@ -52,11 +38,7 @@ void Newton_SetFunc(NEWTON_SOLVER* solver, const NEWTON_Func func) {
 * @return       收敛标志 1: 收敛 0: 未收敛
 */
 uint8_t Newton_Solve(NEWTON_SOLVER* solver, const float* param, const float* x0) {
-    if (solver->n == 0 || solver->func_idx != solver->n)
-        return 0;
-
-    for (uint8_t i = 0; i < solver->n; i++)
-        solver->x[i] = x0[i];
+    memcpy(solver->x, x0 , solver->n * sizeof(float));
 
     solver->param = param;
 
