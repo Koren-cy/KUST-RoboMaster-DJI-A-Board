@@ -172,7 +172,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         SwerveWheel* wheel = wheels[i];
 
         // 读取当前转向角度
-        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset - 180.0f;
+        wheel->steer_angle_current = (float)wheel->steer_motor->Get_Motor_Angle(wheel->steer_motor) - wheel->steer_angle_offset - 180.0f;
         wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
 
         // 先劣弧优化
@@ -192,7 +192,7 @@ void SwerveChassis_Set_Motor_Target(SwerveChassisState* chassis) {
         const float motor_rpm = RAD_TO_RPM(wheel_angular_velocity);
         
         // 读取当前驱动速度
-        const float wheel_rpm = (float) wheel->wheel_motor->rotor_speed / chassis->ratio;
+        const float wheel_rpm = (float) wheel->wheel_motor->Get_Motor_Speed(wheel->wheel_motor) / chassis->ratio;
         wheel->drive_speed_current = RPM_TO_RAD(wheel_rpm) * chassis->wheel_radius;
 
         // 设置驱动电机目标
@@ -259,10 +259,10 @@ void SwerveChassis_InverseKinematics(SwerveChassisState* chassis) {
     for (int i = 0; i < 4; i++) {
         SwerveWheel* wheel = wheels[i];
 
-        wheel->steer_angle_current = (float)wheel->steer_motor->rotor_angle * 360.0f / 8191.0f - wheel->steer_angle_offset - 180.0f;
+        wheel->steer_angle_current = (float)wheel->steer_motor->Get_Motor_Angle(wheel->steer_motor) - wheel->steer_angle_offset - 180.0f;
         wheel->steer_angle_current = Math_WrapAngleDeg(wheel->steer_angle_current);
 
-        const float wheel_rpm = (float) wheel->wheel_motor->rotor_speed / chassis->ratio;
+        const float wheel_rpm = (float) wheel->wheel_motor->Get_Motor_Speed(wheel->wheel_motor) / chassis->ratio;
         wheel->drive_speed_current = RPM_TO_RAD(wheel_rpm) * chassis->wheel_radius;
     }
 

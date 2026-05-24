@@ -15,7 +15,7 @@
 void Buzzer_Init(BUZZER_DRIVES *user_buzzer, TIM_HandleTypeDef *htim, const uint32_t channel, const uint32_t tim_clock) {
     memset(user_buzzer, 0, sizeof(BUZZER_DRIVES));
     
-    PWM_Init(&user_buzzer->pwm, htim, channel, tim_clock);
+    PWM_Init(&user_buzzer->pwm, htim, channel, PWM_16BIT, tim_clock);
     user_buzzer->state = BUZZER_OFF;
     user_buzzer->frequency = 0;
     

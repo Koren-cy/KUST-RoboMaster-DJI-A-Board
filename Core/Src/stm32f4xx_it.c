@@ -247,8 +247,6 @@ void SysTick_Handler(void)
   DJI_Motor_Set_State(&user_left_motor,    tension_current);
   DJI_Motor_Set_State(&user_right_motor,  -tension_current);
 
-  DJI_Motor_Execute(&user_can_1);
-
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */

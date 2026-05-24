@@ -48,10 +48,10 @@ typedef enum {
 * @brief 控制模式
 */
 typedef enum {
+    Servo_angle,      /* 单圈角度控制模式 单位：度 */
     Rotor_angle,      /* 多圈角度控制模式 单位：度 */
     Rotor_speed,      /* 转子速度控制模式 单位：RPM */
     Rotor_current,    /* 转矩电流控制模式 目标值范围 (-3000 ~ 3000) 单位：mA */
-    Servo_angle,      /* 单圈角度控制模式 单位：度 */
     OpenLoop_current, /* 开环电流控制模式 目标值范围 (-16384 ~ 16384) */
 } Dji_Control_Mode;
 
