@@ -1,11 +1,36 @@
 #ifndef USER_BSP_CONFIG_H
 #define USER_BSP_CONFIG_H
 
-/* 全局配置 ------------------------------------------------------------------*/
+/* 时钟参数 ------------------------------------------------------------------*/
 
+#define APB1_CLK         (     HAL_RCC_GetPCLK1Freq()    )
+#define APB1_TIM_CLK     ( 2 * HAL_RCC_GetPCLK1Freq()    )
+#define APB2_CLK         (     HAL_RCC_GetPCLK2Freq()    )
+#define APB2_TIM_CLK     ( 2 * HAL_RCC_GetPCLK2Freq()    )
+#define HCLK_CLK         (     HAL_RCC_GetHCLKFreq()     )
+#define SYS_CLK          (     HAL_RCC_GetSysClockFreq() )
+
+#define TIM1_CLK         APB2_TIM_CLK
+#define TIM8_CLK         APB2_TIM_CLK
+#define TIM9_CLK         APB2_TIM_CLK
+#define TIM10_CLK        APB2_TIM_CLK
+#define TIM11_CLK        APB2_TIM_CLK
+
+#define TIM2_CLK         APB1_TIM_CLK
+#define TIM3_CLK         APB1_TIM_CLK
+#define TIM4_CLK         APB1_TIM_CLK
+#define TIM5_CLK         APB1_TIM_CLK
+#define TIM6_CLK         APB1_TIM_CLK
+#define TIM7_CLK         APB1_TIM_CLK
+#define TIM12_CLK        APB1_TIM_CLK
+#define TIM13_CLK        APB1_TIM_CLK
+#define TIM14_CLK        APB1_TIM_CLK
 
 /* 接口定义 ------------------------------------------------------------------*/
 #define MAX_SYSTICK_TASK      (32)        /* 滴答定时器最大任务数量 */
+
+#define TIMER_NUM             (14)        /* 开发板的定时器总数 */
+#define TIMER_CALLBACK_NUM    (8)         /* 通用定时器回调函数数量 */
 
 #define UART_NUM              (5)         /* 开发板的 UART 总数 */
 #define UART_CALLBACK_NUM     (8)         /* 最大回调函数数量 */

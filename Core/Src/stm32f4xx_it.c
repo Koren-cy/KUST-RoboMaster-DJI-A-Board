@@ -62,9 +62,13 @@ extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart1_tx;
+extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart3_tx;
 extern DMA_HandleTypeDef hdma_usart6_rx;
 extern DMA_HandleTypeDef hdma_usart6_tx;
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart3;
 extern UART_HandleTypeDef huart6;
 /* USER CODE BEGIN EV */
 
@@ -193,6 +197,58 @@ void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
+  static float top_motor_angle    = 0.0f;
+  static float bottom_motor_angle = 0.0f;
+  static float left_motor_angle   = 0.0f;
+  static float right_motor_angle  = 0.0f;
+
+  static float top_motor_angle_old    = 0.0f;
+  static float bottom_motor_angle_old = 0.0f;
+  static float left_motor_angle_old   = 0.0f;
+  static float right_motor_angle_old  = 0.0f;
+
+  static float top_wire_length    = 114.0f;
+  static float bottom_wire_length = 114.0f;
+  static float left_wire_length   = 114.0f;
+  static float right_wire_length  = 114.0f;
+
+  static uint8_t init_sign = 1;
+
+  if (init_sign) {
+    init_sign = 0;
+    top_motor_angle_old    = DJI_Motor_Get_Angle(&user_top_motor);
+    bottom_motor_angle_old = DJI_Motor_Get_Angle(&user_bottom_motor);
+    left_motor_angle_old   = DJI_Motor_Get_Angle(&user_left_motor);
+    right_motor_angle_old  = DJI_Motor_Get_Angle(&user_right_motor);
+  } else {
+    top_motor_angle_old    = top_motor_angle;
+    bottom_motor_angle_old = bottom_motor_angle;
+    left_motor_angle_old   = left_motor_angle;
+    right_motor_angle_old  = right_motor_angle;
+  }
+
+  top_motor_angle    = DJI_Motor_Get_Angle(&user_top_motor);
+  bottom_motor_angle = DJI_Motor_Get_Angle(&user_bottom_motor);
+  left_motor_angle   = DJI_Motor_Get_Angle(&user_left_motor);
+  right_motor_angle  = DJI_Motor_Get_Angle(&user_right_motor);
+
+  top_wire_length    -= ( top_motor_angle    - top_motor_angle_old    ) * 0.01745329251994f * 15.5f;
+  bottom_wire_length -= ( bottom_motor_angle - bottom_motor_angle_old ) * 0.01745329251994f * 15.5f;
+  left_wire_length   += ( left_motor_angle   - left_motor_angle_old   ) * 0.01745329251994f * 15.5f;
+  right_wire_length  -= ( right_motor_angle  - right_motor_angle_old  ) * 0.01745329251994f * 15.5f;
+
+  UART_Printf(&user_debug_uart,"channels: %d, %d\n",
+  (int32_t)(top_wire_length - bottom_wire_length),
+  (int32_t)(right_wire_length - left_wire_length));
+
+  const float tension_current = 1500.0f;
+  DJI_Motor_Set_State(&user_top_motor,    -tension_current);
+  DJI_Motor_Set_State(&user_bottom_motor, -tension_current);
+  DJI_Motor_Set_State(&user_left_motor,    tension_current);
+  DJI_Motor_Set_State(&user_right_motor,  -tension_current);
+
+  DJI_Motor_Execute(&user_can_1);
+
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -206,6 +262,34 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles DMA1 stream1 global interrupt.
+  */
+void DMA1_Stream1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream1_IRQn 0 */
+
+  /* USER CODE END DMA1_Stream1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart3_rx);
+  /* USER CODE BEGIN DMA1_Stream1_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 stream3 global interrupt.
+  */
+void DMA1_Stream3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Stream3_IRQn 0 */
+
+  /* USER CODE END DMA1_Stream3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart3_tx);
+  /* USER CODE BEGIN DMA1_Stream3_IRQn 1 */
+
+  /* USER CODE END DMA1_Stream3_IRQn 1 */
+}
 
 /**
   * @brief This function handles CAN1 RX0 interrupts.
@@ -247,6 +331,20 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART3 global interrupt.
+  */
+void USART3_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART3_IRQn 0 */
+
+  /* USER CODE END USART3_IRQn 0 */
+  HAL_UART_IRQHandler(&huart3);
+  /* USER CODE BEGIN USART3_IRQn 1 */
+
+  /* USER CODE END USART3_IRQn 1 */
 }
 
 /**
@@ -303,6 +401,20 @@ void DMA2_Stream6_IRQHandler(void)
   /* USER CODE BEGIN DMA2_Stream6_IRQn 1 */
 
   /* USER CODE END DMA2_Stream6_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA2 stream7 global interrupt.
+  */
+void DMA2_Stream7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 1 */
 }
 
 /**

@@ -4,7 +4,7 @@
 #ifdef HAL_TIM_MODULE_ENABLED
 
 /* 包含头文件 ----------------------------------------------------------------*/
-#include "../User_Drives/user_buzzer.h"
+#include "../User_Drives/User_Basic/user_buzzer.h"
 #include "../User_Architect/user_systick.h"
 
 /* 类型定义 ------------------------------------------------------------------*/

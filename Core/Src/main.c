@@ -50,8 +50,12 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim12;
 
 UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart6;
 DMA_HandleTypeDef hdma_usart1_rx;
+DMA_HandleTypeDef hdma_usart1_tx;
+DMA_HandleTypeDef hdma_usart3_rx;
+DMA_HandleTypeDef hdma_usart3_tx;
 DMA_HandleTypeDef hdma_usart6_rx;
 DMA_HandleTypeDef hdma_usart6_tx;
 
@@ -69,6 +73,7 @@ static void MX_CAN1_Init(void);
 static void MX_CAN2_Init(void);
 static void MX_TIM12_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -114,10 +119,12 @@ int main(void)
   MX_CAN2_Init();
   MX_TIM12_Init();
   MX_TIM2_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   JScope_Init(&htim2);
 
   UART_Init(&user_debug_uart, &huart6);
+  UART_Init(&user_uart_3, &huart3);
 
   LED_Init(&user_red_led, LED_RED_GPIO_Port, LED_RED_Pin, 1);
   LED_Init(&user_green_led, LED_GREEN_GPIO_Port, LED_GREEN_Pin, 1);
@@ -131,8 +138,17 @@ int main(void)
   Buzzer_Init(&user_buzzer_1, &htim12, TIM_CHANNEL_1, 90000000);
   
   // 初始化启动音乐
-  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, bad_apple, sizeof(bad_apple) / sizeof(bad_apple[0]));
-  StartupMusic_Start(&user_startup_music);
+  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, dji_starting_music, sizeof(dji_starting_music) / sizeof(dji_starting_music[0]));
+  // StartupMusic_Start(&user_startup_music);
+
+  SysTick_InitTask(&LED_Blink_Task, &user_red_led, 10, 800, Task_REPEAT, LED_Blink_Callback);
+  SysTick_StartTask(&LED_Blink_Task);
+
+  // 大疆电机
+  DJI_Motor_Init(&user_top_motor,    &user_can_1, 3, 0.0f, GM6020, OpenLoop_current, NULL);
+  DJI_Motor_Init(&user_bottom_motor, &user_can_1, 2, 0.0f, GM6020, OpenLoop_current, NULL);
+  DJI_Motor_Init(&user_left_motor,   &user_can_1, 6, 0.0f, GM6020, OpenLoop_current, NULL);
+  DJI_Motor_Init(&user_right_motor,  &user_can_1, 4, 0.0f, GM6020, OpenLoop_current, NULL);
 
   /* USER CODE END 2 */
 
@@ -405,6 +421,39 @@ static void MX_USART1_UART_Init(void)
 }
 
 /**
+  * @brief USART3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART3_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART3_Init 0 */
+
+  /* USER CODE END USART3_Init 0 */
+
+  /* USER CODE BEGIN USART3_Init 1 */
+
+  /* USER CODE END USART3_Init 1 */
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 115200;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART3_Init 2 */
+
+  /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
   * @brief USART6 Initialization Function
   * @param None
   * @retval None
@@ -445,8 +494,15 @@ static void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA2_CLK_ENABLE();
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
+  /* DMA1_Stream1_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
+  /* DMA1_Stream3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream3_IRQn);
   /* DMA2_Stream1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
@@ -456,6 +512,9 @@ static void MX_DMA_Init(void)
   /* DMA2_Stream6_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
+  /* DMA2_Stream7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream7_IRQn);
 
 }
 
@@ -476,6 +535,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
