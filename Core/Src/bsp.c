@@ -22,24 +22,44 @@ uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP] = {0};
 /* 接口定义 --------------------------------------------------------------------*/
 
 // 调试串口
-UART_DRIVES user_debug_uart = {0};
-UART_DRIVES user_uart_3 = {0};
+UART_DRIVES ros_uart = {0};
+int32_t direction_angle = 0; // -180 ~ 180 度
+int32_t current_angle = 0;   // -180 ~ 180 度
+int32_t axial_speed = 0;     // -1000 ~ 1000 无纲量
+int32_t forward_speed = 0;   // -1000 ~ 1000 无纲量
+void ros_uart_callback (void *user_uart) {
+    UART_DRIVES *uart = (UART_DRIVES*)user_uart;
+    uint8_t receive_data[64];
+
+    if (UART_GetDataWithH(uart, receive_data, "\n")) {
+        sscanf((char *)&receive_data[1], "\n%d,%d,%d",
+        (int *)&direction_angle,
+        (int *)current_angle,
+        (int *)&forward_speed);
+
+        PID_Set_Target(&direction_pid_controller, (float)direction_angle);
+        axial_speed = (int32_t)PID_Calculate(&direction_pid_controller, (float)current_angle, 0);
+
+        const int32_t left_val  = forward_speed - axial_speed;
+        const int32_t right_val = forward_speed + axial_speed;
+
+        if (left_val < 0)
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_SET);
+        if (left_val > 0)
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2, GPIO_PIN_RESET);
+        if (right_val < 0)
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_SET);
+        if (right_val > 0)
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
+
+        PWM_Set_Duty(&left_motor, (float)abs(left_val)  / 2000.0f);
+        PWM_Set_Duty(&right_motor,(float)abs(right_val) / 2000.0f);
+    }
+}
 
 // 状态灯
-LED_DRIVES user_red_led = {0};
+LED_DRIVES user_red_led   = {0};
 LED_DRIVES user_green_led = {0};
-
-// can 总线
-CAN_DRIVES user_can_1 = {0};
-CAN_DRIVES user_can_2 = {0};
-
-void user_can_2_callback(void * user_can) {
-    const CAN_DRIVES *can = (CAN_DRIVES*)user_can;
-    uint8_t receive_data[8];
-
-    memcpy(receive_data, can->rx_msg.Data, 8);
-
-}
 
 // 蜂鸣器
 BUZZER_DRIVES user_buzzer_1 = {0};
@@ -48,7 +68,6 @@ BUZZER_DRIVES user_buzzer_1 = {0};
 STARTUP_MUSIC_DRIVES user_startup_music = {0};
 SysTick_Task user_startup_music_task = {0};
 
-
 // LED 闪烁
 SysTick_Task LED_Blink_Task = {0};
 void LED_Blink_Callback(void *arg) {
@@ -56,8 +75,9 @@ void LED_Blink_Callback(void *arg) {
     LED_Toggle(led);
 }
 
-// 大疆电机
-DJI_MOTOR_DRIVES user_top_motor    = {0};
-DJI_MOTOR_DRIVES user_bottom_motor = {0};
-DJI_MOTOR_DRIVES user_left_motor   = {0};
-DJI_MOTOR_DRIVES user_right_motor  = {0};
+// PWM 电机
+PWM_DRIVES left_motor;
+PWM_DRIVES right_motor;
+
+// PID 方向角度闭环
+PID_Controller direction_pid_controller = {0};

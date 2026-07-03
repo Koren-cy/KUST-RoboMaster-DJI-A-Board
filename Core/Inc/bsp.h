@@ -24,19 +24,17 @@ extern CCMRAM uint8_t JScope_RTT_UpBuffer[BUFFER_SIZE_UP];
 
 // 调试串口
 #include "../../User_Drives/User_Peripheral/user_uart.h"
-extern UART_DRIVES user_debug_uart;
-extern UART_DRIVES user_uart_3;
+extern int32_t direction_angle;
+extern int32_t current_angle;
+extern int32_t axial_speed;
+extern int32_t forward_speed;
+extern UART_DRIVES ros_uart;
+void ros_uart_callback (void *user_uart);
 
 // 状态灯
 #include "../../User_Drives/User_Basic/user_led.h"
 extern LED_DRIVES user_red_led;
 extern LED_DRIVES user_green_led;
-
-// can 总线
-#include "../../User_Drives/User_Peripheral/user_can.h"
-extern CAN_DRIVES user_can_1;
-extern CAN_DRIVES user_can_2;
-void user_can_2_callback(void * user_can);
 
 // 蜂鸣器
 #include "../../User_Drives/User_Basic/user_buzzer.h"
@@ -51,12 +49,13 @@ extern SysTick_Task user_startup_music_task;
 extern SysTick_Task LED_Blink_Task;
 void LED_Blink_Callback(void *arg);
 
-// 大疆电机
-#include "../../User_Drives/User_Motor/user_dji_motor.h"
-extern DJI_MOTOR_DRIVES user_top_motor;
-extern DJI_MOTOR_DRIVES user_bottom_motor;
-extern DJI_MOTOR_DRIVES user_left_motor;
-extern DJI_MOTOR_DRIVES user_right_motor;
+// PWM 电机
+#include "../../User_Drives/User_Peripheral/user_pwm.h"
+extern PWM_DRIVES left_motor;
+extern PWM_DRIVES right_motor;
 
+// PID 方向角度闭环
+#include "../../User_Algorithm/User_Controller/user_pid.h"
+extern PID_Controller direction_pid_controller;
 
 #endif // USER_BSP_H

@@ -197,56 +197,6 @@ void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
-  static float top_motor_angle    = 0.0f;
-  static float bottom_motor_angle = 0.0f;
-  static float left_motor_angle   = 0.0f;
-  static float right_motor_angle  = 0.0f;
-
-  static float top_motor_angle_old    = 0.0f;
-  static float bottom_motor_angle_old = 0.0f;
-  static float left_motor_angle_old   = 0.0f;
-  static float right_motor_angle_old  = 0.0f;
-
-  static float top_wire_length    = 114.0f;
-  static float bottom_wire_length = 114.0f;
-  static float left_wire_length   = 114.0f;
-  static float right_wire_length  = 114.0f;
-
-  static uint8_t init_sign = 1;
-
-  if (init_sign) {
-    init_sign = 0;
-    top_motor_angle_old    = DJI_Motor_Get_Angle(&user_top_motor);
-    bottom_motor_angle_old = DJI_Motor_Get_Angle(&user_bottom_motor);
-    left_motor_angle_old   = DJI_Motor_Get_Angle(&user_left_motor);
-    right_motor_angle_old  = DJI_Motor_Get_Angle(&user_right_motor);
-  } else {
-    top_motor_angle_old    = top_motor_angle;
-    bottom_motor_angle_old = bottom_motor_angle;
-    left_motor_angle_old   = left_motor_angle;
-    right_motor_angle_old  = right_motor_angle;
-  }
-
-  top_motor_angle    = DJI_Motor_Get_Angle(&user_top_motor);
-  bottom_motor_angle = DJI_Motor_Get_Angle(&user_bottom_motor);
-  left_motor_angle   = DJI_Motor_Get_Angle(&user_left_motor);
-  right_motor_angle  = DJI_Motor_Get_Angle(&user_right_motor);
-
-  top_wire_length    -= ( top_motor_angle    - top_motor_angle_old    ) * 0.01745329251994f * 15.5f;
-  bottom_wire_length -= ( bottom_motor_angle - bottom_motor_angle_old ) * 0.01745329251994f * 15.5f;
-  left_wire_length   += ( left_motor_angle   - left_motor_angle_old   ) * 0.01745329251994f * 15.5f;
-  right_wire_length  -= ( right_motor_angle  - right_motor_angle_old  ) * 0.01745329251994f * 15.5f;
-
-  UART_Printf(&user_debug_uart,"channels: %d, %d\n",
-  (int32_t)(top_wire_length - bottom_wire_length),
-  (int32_t)(right_wire_length - left_wire_length));
-
-  const float tension_current = 1500.0f;
-  DJI_Motor_Set_State(&user_top_motor,    -tension_current);
-  DJI_Motor_Set_State(&user_bottom_motor, -tension_current);
-  DJI_Motor_Set_State(&user_left_motor,    tension_current);
-  DJI_Motor_Set_State(&user_right_motor,  -tension_current);
-
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */

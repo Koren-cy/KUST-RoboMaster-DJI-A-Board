@@ -1,3 +1,7 @@
 /.kiro/
 /.vscode/
 /Debug/
+# Project-local tools (cppcheck etc.) — binaries not tracked in git
+/.claude/tools/
+# Python virtual environment
+/.venv/

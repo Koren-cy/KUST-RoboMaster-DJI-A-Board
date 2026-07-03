@@ -123,32 +123,33 @@ int main(void)
   /* USER CODE BEGIN 2 */
   JScope_Init(&htim2);
 
-  UART_Init(&user_debug_uart, &huart6);
-  UART_Init(&user_uart_3, &huart3);
+  UART_Init(&ros_uart, &huart6);
+  UART_RegisterCallback(&ros_uart, ros_uart_callback);
 
   LED_Init(&user_red_led, LED_RED_GPIO_Port, LED_RED_Pin, 1);
   LED_Init(&user_green_led, LED_GREEN_GPIO_Port, LED_GREEN_Pin, 1);
   LED_On(&user_green_led);
 
-  CAN_Init(&user_can_1, &hcan1);
-  CAN_Init(&user_can_2, &hcan2);
-  CAN_RegisterCallback(&user_can_2, user_can_2_callback);
-
   // 初始化蜂鸣器
-  Buzzer_Init(&user_buzzer_1, &htim12, TIM_CHANNEL_1, 90000000);
+  Buzzer_Init(&user_buzzer_1, &htim12, TIM_CHANNEL_1, TIM12_CLK);
   
   // 初始化启动音乐
-  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, dji_starting_music, sizeof(dji_starting_music) / sizeof(dji_starting_music[0]));
-  // StartupMusic_Start(&user_startup_music);
+  StartupMusic_Init(&user_startup_music, &user_buzzer_1, &user_startup_music_task, bad_apple, sizeof(bad_apple) / sizeof(bad_apple[0]));
+  StartupMusic_Start(&user_startup_music);
 
-  SysTick_InitTask(&LED_Blink_Task, &user_red_led, 10, 800, Task_REPEAT, LED_Blink_Callback);
+  SysTick_InitTask(&LED_Blink_Task, &user_red_led, 10, 500, Task_REPEAT, LED_Blink_Callback);
   SysTick_StartTask(&LED_Blink_Task);
 
-  // 大疆电机
-  DJI_Motor_Init(&user_top_motor,    &user_can_1, 3, 0.0f, GM6020, OpenLoop_current, NULL);
-  DJI_Motor_Init(&user_bottom_motor, &user_can_1, 2, 0.0f, GM6020, OpenLoop_current, NULL);
-  DJI_Motor_Init(&user_left_motor,   &user_can_1, 6, 0.0f, GM6020, OpenLoop_current, NULL);
-  DJI_Motor_Init(&user_right_motor,  &user_can_1, 4, 0.0f, GM6020, OpenLoop_current, NULL);
+  PWM_Init(&left_motor, &htim2, TIM_CHANNEL_1, PWM_16BIT, TIM2_CLK);
+  PWM_Init(&right_motor, &htim2, TIM_CHANNEL_2, PWM_16BIT, TIM2_CLK);
+
+  PWM_Set_Frequency(&left_motor, 50);
+  PWM_Set_Frequency(&right_motor, 50);
+
+  PWM_Set_Duty(&left_motor, 0.0f);
+  PWM_Set_Duty(&right_motor, 0.0f);
+
+  PID_Init(&direction_pid_controller, 10.0f, 0.0f, 0.0f, 1000.0f, 0.0f);
 
   /* USER CODE END 2 */
 
@@ -304,6 +305,7 @@ static void MX_TIM2_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
 
@@ -323,15 +325,32 @@ static void MX_TIM2_Init(void)
   {
     Error_Handler();
   }
+  if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
+  HAL_TIM_MspPostInit(&htim2);
 
 }
 
@@ -469,7 +488,7 @@ static void MX_USART6_UART_Init(void)
 
   /* USER CODE END USART6_Init 1 */
   huart6.Instance = USART6;
-  huart6.Init.BaudRate = 921600;
+  huart6.Init.BaudRate = 115200;
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;
@@ -547,6 +566,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOH, POWER_24V_1_Pin|POWER_24V_2_Pin|POWER_24V_3_Pin|POWER_24V_4_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
@@ -565,6 +587,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PA2 PA3 */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LED_RED_Pin */
   GPIO_InitStruct.Pin = LED_RED_Pin;

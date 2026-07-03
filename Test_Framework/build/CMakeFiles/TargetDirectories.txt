@@ -1,5 +1,0 @@
-C:/Users/Koren/RoboMaster/KUST-RoboMaster-DJI-A-Board/Test_Framework/build/CMakeFiles/all_tests.dir
-C:/Users/Koren/RoboMaster/KUST-RoboMaster-DJI-A-Board/Test_Framework/build/CMakeFiles/run_tests.dir
-C:/Users/Koren/RoboMaster/KUST-RoboMaster-DJI-A-Board/Test_Framework/build/CMakeFiles/test.dir
-C:/Users/Koren/RoboMaster/KUST-RoboMaster-DJI-A-Board/Test_Framework/build/CMakeFiles/edit_cache.dir
-C:/Users/Koren/RoboMaster/KUST-RoboMaster-DJI-A-Board/Test_Framework/build/CMakeFiles/rebuild_cache.dir
