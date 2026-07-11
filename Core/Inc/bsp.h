@@ -54,6 +54,13 @@ void LED_Blink_Callback(void *arg);
 extern PWM_DRIVES left_motor;
 extern PWM_DRIVES right_motor;
 
+// 电机占空比梯形平滑
+#include "../../User_Algorithm/User_Motion/user_trapezoid.h"
+extern TRAP_Profile left_duty_planner;
+extern TRAP_Profile right_duty_planner;
+extern SysTick_Task servo_ramp_task;
+void Servo_Ramp_Callback(void *arg);
+
 // PID 方向角度闭环
 #include "../../User_Algorithm/User_Controller/user_pid.h"
 extern PID_Controller direction_pid_controller;
