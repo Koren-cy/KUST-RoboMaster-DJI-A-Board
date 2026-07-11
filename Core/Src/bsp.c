@@ -4,14 +4,6 @@
 #include <stdio.h>
 #include "../../User_Algorithm/user_coord.h"
 
-/* 私有宏定义 ----------------------------------------------------------------*/
-// 电机占空比梯形平滑 (占空比 0~1 的斜坡限速/限加速)
-#define SERVO_RAMP_TICK_MS   20                              /* 刷新周期 ms */
-#define SERVO_RAMP_DT        (SERVO_RAMP_TICK_MS / 1000.0f)  /* 固定步长 s */
-#define SERVO_RAMP_VMAX      0.5f                            /* 占空比最大变化速度 (/s) */
-#define SERVO_RAMP_AMAX      5.0f                            /* 占空比最大变化加速度 (/s^2) */
-
-
 /* 主循环注册表 --------------------------------------------------------------*/
 void (*loop_event[MAX_LOOP_EVENT])(void) = {0};
 uint8_t loop_event_num = 0;
@@ -59,16 +51,6 @@ void ros_uart_callback (void *user_uart) {
         if (right_val > 0)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
 
-        /* 首次收到指令时懒加载占空比平滑任务 (避免改动 main.c 主循环) */
-        if (servo_ramp_task.state != Task_RUNNING) {
-            Trap_Init(&left_duty_planner,  0.0f, SERVO_RAMP_VMAX, SERVO_RAMP_AMAX);
-            Trap_Init(&right_duty_planner, 0.0f, SERVO_RAMP_VMAX, SERVO_RAMP_AMAX);
-            SysTick_InitTask(&servo_ramp_task, NULL, SERVO_RAMP_TICK_MS,
-                             SERVO_RAMP_TICK_MS, Task_REPEAT, Servo_Ramp_Callback);
-            SysTick_StartTask(&servo_ramp_task);
-        }
-
-        /* 不直接写 PWM, 改为下发目标占空比, 由 Servo_Ramp_Callback 平滑推进 */
         Trap_Plan(&left_duty_planner,  (float)abs(left_val)  / 2000.0f);
         Trap_Plan(&right_duty_planner, (float)abs(right_val) / 2000.0f);
     }

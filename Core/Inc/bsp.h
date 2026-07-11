@@ -5,6 +5,13 @@
 #include "main.h"
 #include "../../SEGGER_RTT/SEGGER_RTT.h"
 
+/* 全局配置 ----------------------------------------------------------------*/
+// 电机占空比梯形平滑
+#define SERVO_RAMP_TICK_MS   20                              /* 刷新周期 ms */
+#define SERVO_RAMP_DT        (SERVO_RAMP_TICK_MS / 1000.0f)  /* 固定步长 s */
+#define SERVO_RAMP_VMAX      0.2f                            /* 占空比最大变化速度  (/s) */
+#define SERVO_RAMP_AMAX      2.0f                            /* 占空比最大变化加速度 (/s^2) */
+
 /* 全局注册表 ----------------------------------------------------------------*/
 #define MAX_LOOP_EVENT 32
 void LOOP_EVENT_Handle(void);

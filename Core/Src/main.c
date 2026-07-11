@@ -151,6 +151,12 @@ int main(void)
 
   PID_Init(&direction_pid_controller, 10.0f, 0.0f, 0.0f, 1000.0f, 0.0f);
 
+  Trap_Init(&left_duty_planner,  0.0f, SERVO_RAMP_VMAX, SERVO_RAMP_AMAX);
+  Trap_Init(&right_duty_planner, 0.0f, SERVO_RAMP_VMAX, SERVO_RAMP_AMAX);
+  SysTick_InitTask(&servo_ramp_task, NULL, SERVO_RAMP_TICK_MS,
+                   SERVO_RAMP_TICK_MS, Task_REPEAT, Servo_Ramp_Callback);
+  SysTick_StartTask(&servo_ramp_task);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
